@@ -8,7 +8,11 @@ from cpgf.version import MOTOR_VERSION, PREPARATION_VERSION, RULES_VERSION
 
 from .evidence import governance_for_trail
 from .families import family_for_trail, normalize_trail_code
-from .validation import DEFAULT_VALIDATION_STATUS, ValidationStatus, attach_validation_status
+from .validation import (
+    DEFAULT_VALIDATION_STATUS,
+    ValidationStatus,
+    attach_validation_status,
+)
 
 
 EVIDENCE_ID_CANDIDATES: tuple[str, ...] = (
@@ -67,7 +71,9 @@ def tag_evidence(
         if evidence_id_column not in result.columns:
             raise ValueError(f"Coluna de evidência ausente: {evidence_id_column}")
         result["ID_EVIDENCIA"] = result[evidence_id_column].astype("string")
-        duplicated = result["ID_EVIDENCIA"].notna() & result["ID_EVIDENCIA"].duplicated(keep=False)
+        duplicated = result["ID_EVIDENCIA"].notna() & result["ID_EVIDENCIA"].duplicated(
+            keep=False
+        )
         if duplicated.any():
             examples = result.loc[duplicated, "ID_EVIDENCIA"].drop_duplicates().head(5).tolist()
             raise ValueError(
