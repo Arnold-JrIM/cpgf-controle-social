@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "canonical_input": true,
+  "input": {
+    "filename": "CPGF_201301_a_202607.csv",
+    "rows": 1876087,
+    "bytes": 522462305,
+    "sha256": "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b"
+  },
+  "versions": {
+    "preparation_baseline": "1.0.0",
+    "preparation_production": "1.1.0",
+    "rules": "1.2.0",
+    "motor": "1.3.2"
+  },
+  "baseline": {
+    "portador_column": "PORTADOR_ID_BASELINE",
+    "counts": {
+      "T01": 49675,
+      "T02": 14,
+      "T03": 7534,
+      "T04": 1384,
+      "T05": 1693,
+      "T06": 233,
+      "T07": 1089,
+      "T08": 12,
+      "T09": 46941
+    },
+    "pass": true
+  },
+  "production": {
+    "portador_column": "PORTADOR_ID",
+    "counts": {
+      "T01": 49675,
+      "T02": 14,
+      "T03": 7534,
+      "T04": 1384,
+      "T05": 1693,
+      "T06": 233,
+      "T07": 1088,
+      "T08": 12,
+      "T09": 46941
+    },
+    "pass": true
+  },
+  "note": "Manifesto sem dados transacionais brutos. A diferença T07 1089→1088 decorre exclusivamente da identidade composta da Preparação 1.1.0 e não reescreve a baseline histórica."
+}
