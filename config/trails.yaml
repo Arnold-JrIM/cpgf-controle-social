@@ -10,9 +10,9 @@ baseline_regression:
 trails:
   T01: {name: "Despesa realizada em final de semana", implementation_status: "ported"}
   T02: {name: "Compra parcelada", implementation_status: "ported"}
-  T03: {name: "Repetição exata", implementation_status: "ready_for_porting"}
-  T04: {name: "Repetição multiportador", implementation_status: "ready_for_porting"}
-  T05: {name: "Recorrência de aquisições", implementation_status: "ready_for_porting"}
+  T03: {name: "Repetição exata", implementation_status: "ported"}
+  T04: {name: "Repetição multiportador", implementation_status: "ported"}
+  T05: {name: "Recorrência de aquisições", implementation_status: "ported"}
   T06: {name: "Concentração em fornecedor", implementation_status: "placeholder"}
   T07: {name: "Saques sucessivos", implementation_status: "ready_for_porting"}
   T08: {name: "Lei de Benford", implementation_status: "placeholder"}
