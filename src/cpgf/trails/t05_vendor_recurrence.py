@@ -39,7 +39,12 @@ def _eligible_t05(staged: pd.DataFrame, portador_column: str) -> pd.DataFrame:
         & staged["FAVORECIDO_IDENTIFICADO"].fillna(False)
     )
     eligible = staged.loc[mask].copy()
-    eligible["_PORTADOR_T05"] = eligible[portador_column].astype("string")
+    portador_key = eligible[portador_column].astype("string")
+    drop_columns = {portador_column}
+    if "PORTADOR_ID" in eligible.columns:
+        drop_columns.add("PORTADOR_ID")
+    eligible = eligible.drop(columns=list(drop_columns), errors="ignore")
+    eligible["_PORTADOR_T05"] = portador_key
     eligible["ID_TRANSACAO"] = ensure_transaction_ids(staged).loc[eligible.index]
     return eligible
 
