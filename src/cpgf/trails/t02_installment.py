@@ -23,7 +23,7 @@ def detect_installment_transactions(staged: pd.DataFrame) -> pd.DataFrame:
     )
 
     transaction_ids = ensure_transaction_ids(staged)
-    mask = staged["TRANSAÇÃO"].astype("string").fillna("").str.strip().eq(COMPRA_PARCELADA)
+    mask = staged["TRANSAÇÃO"].astype("string").fillna("").eq(COMPRA_PARCELADA)
 
     selected = staged.loc[mask].copy()
     selected_ids = transaction_ids.loc[mask]
