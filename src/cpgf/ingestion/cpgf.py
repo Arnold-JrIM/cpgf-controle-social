@@ -11,7 +11,12 @@ from typing import Any
 import requests
 
 from .manifests import file_record
-from .validators import has_zip_signature, next_competence, validate_competence, validate_cpgf_header
+from .validators import (
+    has_zip_signature,
+    next_competence,
+    validate_competence,
+    validate_cpgf_header,
+)
 
 DEFAULT_BASE_URL = "https://portaldatransparencia.gov.br/download-de-dados/cpgf"
 BLOCKED_STATUS_CODES = {403, 429}
