@@ -1,9 +1,10 @@
 name: full-regression-canonical
 
 on:
-  push:
-    branches:
-      - test/full-regression-execution
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   full-regression:
