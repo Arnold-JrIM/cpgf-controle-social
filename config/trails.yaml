@@ -1,10 +1,18 @@
 metadata:
-  status: "PORTED_PENDING_FULL_REGRESSION"
+  status: "FULL_REGRESSION_VALIDATED"
   rules_version: "1.2.0"
   baseline_preparation_version: "1.0.0"
   production_preparation_version: "1.1.0"
   baseline_file: "CPGF_201301_a_202607.csv"
   baseline_sha256: "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b"
+  full_regression:
+    status: "PASS"
+    executed_at_utc: "2026-08-14T22:53:18Z"
+    workflow_run_id: 31847885454
+    execution_head_sha: "a194db07ca96c5e26d0e38abbfa5c00f9c83f409"
+    canonical_input: true
+    baseline_mode_pass: true
+    production_mode_pass: true
 baseline_regression:
   expected_counts: {T01: 49675, T02: 14, T03: 7534, T04: 1384, T05: 1693, T06: 233, T07: 1089, T08: 12, T09: 46941}
 production_expectations:
