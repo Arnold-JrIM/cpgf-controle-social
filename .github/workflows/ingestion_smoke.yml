@@ -1,0 +1,38 @@
+name: ingestion-smoke
+
+on:
+  push:
+    branches:
+      - "test/ingestion-smoke"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install project
+        run: python -m pip install -e .
+
+      - name: Run live ingestion smoke test
+        run: python scripts/smoke_ingestion.py
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingestion-smoke-report
+          path: data/outputs/smoke/ingestion_smoke.json
+          if-no-files-found: warn
+          retention-days: 14
