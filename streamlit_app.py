@@ -2,7 +2,6 @@ import streamlit as st
 
 from cpgf.version import APP_VERSION, GEO_VERSION, MOTOR_VERSION, RULES_VERSION
 
-
 st.set_page_config(
     page_title="CPGF — Controle Social",
     page_icon="💳",
