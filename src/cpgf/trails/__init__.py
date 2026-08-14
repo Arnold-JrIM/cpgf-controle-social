@@ -5,6 +5,8 @@ from .t04_multi_cardholder import run_t04
 from .t05_vendor_recurrence import run_t05
 from .t06_vendor_concentration import run_t06
 from .t07_withdrawals import run_t07
+from .t08_benford import run_t08
+from .t09_limits import run_t09
 
 __all__ = [
     "run_t01",
@@ -14,4 +16,6 @@ __all__ = [
     "run_t05",
     "run_t06",
     "run_t07",
+    "run_t08",
+    "run_t09",
 ]
