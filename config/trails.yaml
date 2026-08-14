@@ -1,18 +1,19 @@
 metadata:
-  status: "FROZEN_CONTRACT_NOT_YET_PORTED"
+  status: "PARTIALLY_PORTED"
   rules_version: "1.2.0"
-  preparation_version: "1.0.0"
+  baseline_preparation_version: "1.0.0"
+  production_preparation_version: "1.1.0"
   baseline_file: "CPGF_201301_a_202607.csv"
   baseline_sha256: "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b"
 baseline_regression:
   expected_counts: {T01: 49675, T02: 14, T03: 7534, T04: 1384, T05: 1693, T06: 233, T07: 1089, T08: 12, T09: 46941}
 trails:
-  T01: {name: "Despesa realizada em final de semana", implementation_status: "placeholder"}
-  T02: {name: "Compra parcelada", implementation_status: "placeholder"}
-  T03: {name: "Repetição exata", implementation_status: "blocked_by_portador_identity_gate"}
-  T04: {name: "Repetição multiportador", implementation_status: "blocked_by_portador_identity_gate"}
-  T05: {name: "Recorrência de aquisições", implementation_status: "blocked_by_portador_identity_gate"}
+  T01: {name: "Despesa realizada em final de semana", implementation_status: "ported"}
+  T02: {name: "Compra parcelada", implementation_status: "ported"}
+  T03: {name: "Repetição exata", implementation_status: "ready_for_porting"}
+  T04: {name: "Repetição multiportador", implementation_status: "ready_for_porting"}
+  T05: {name: "Recorrência de aquisições", implementation_status: "ready_for_porting"}
   T06: {name: "Concentração em fornecedor", implementation_status: "placeholder"}
-  T07: {name: "Saques sucessivos", implementation_status: "blocked_by_portador_identity_gate"}
+  T07: {name: "Saques sucessivos", implementation_status: "ready_for_porting"}
   T08: {name: "Lei de Benford", implementation_status: "placeholder"}
   T09: {name: "Proximidade a limites financeiros", implementation_status: "placeholder"}
