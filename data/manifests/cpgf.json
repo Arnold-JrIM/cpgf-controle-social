@@ -1,0 +1,28 @@
+{
+  "status": "baseline_frozen",
+  "dataset_file": "CPGF_201301_a_202607.csv",
+  "sha256": "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b",
+  "records": 1876087,
+  "competencies": 163,
+  "competence_start": "201301",
+  "competence_end": "202607",
+  "complete_transaction_years": [
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "partial_transaction_years": [
+    2012,
+    2026
+  ]
+}

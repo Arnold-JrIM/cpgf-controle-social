@@ -1,0 +1,18 @@
+{
+  "rules_version": "1.2.0",
+  "motor_governance_version": "1.3.2",
+  "geographic_enrichment_version": "1.1.0",
+  "rules_run_fingerprint": "fc82b5c4e19f2d1d91a8086e4f2a75f7677038bce4b25896e98c7323577668d9",
+  "motor_fingerprint": "8d03a9c13d6dbe79289cb696fdeb7e09a6e8c7fafc49d9944e046ed6b7d20acf",
+  "expected_counts": {
+    "T01": 49675,
+    "T02": 14,
+    "T03": 7534,
+    "T04": 1384,
+    "T05": 1693,
+    "T06": 233,
+    "T07": 1089,
+    "T08": 12,
+    "T09": 46941
+  }
+}

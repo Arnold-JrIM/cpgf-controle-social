@@ -1,0 +1,13 @@
+geographic_enrichment:
+  version: "1.1.0"
+  status: "FROZEN"
+  ug_key: "UG_ID"
+  ug_key_format: "six_digit_string"
+  source_reference_version: "2025"
+  interpretation: "UF da UG é localização cadastral, não necessariamente local físico da transação."
+  temporal_references:
+    TRANSACAO: {field: "ANO_TRANSACAO", main_metric: "VALOR_TRANSACIONADO_OBSERVAVEL"}
+    EXTRATO: {field: "ANO_EXTRATO_REF", main_metric: "VALOR_TOTAL_REGISTRADO"}
+  dashboard:
+    raw_fact_realtime_read: false
+    consume_preaggregated_tables: true

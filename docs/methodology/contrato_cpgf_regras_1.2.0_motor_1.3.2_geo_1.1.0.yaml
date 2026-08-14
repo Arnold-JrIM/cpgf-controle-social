@@ -1,0 +1,555 @@
+metadata:
+  document_status: FROZEN
+  rules_version: 1.2.0
+  motor_governance_version: 1.3.2
+  preparation_version: 1.0.0
+  freeze_date: '2026-08-13'
+  input_file: CPGF_201301_a_202607.csv
+  input_sha256: 300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b
+  rules_run_fingerprint: fc82b5c4e19f2d1d91a8086e4f2a75f7677038bce4b25896e98c7323577668d9
+  motor_fingerprint: 8d03a9c13d6dbe79289cb696fdeb7e09a6e8c7fafc49d9944e046ed6b7d20acf
+  baseline_records: 1876087
+  baseline_competencies: 163
+  baseline_complete_years:
+  - 2013
+  - 2025
+  partial_years:
+  - 2012
+  - 2026
+  status_statement: Regras T01-T09 congeladas em 1.2.0; motor/governança congelado em 1.3.2; enriquecimento geográfico
+    congelado em 1.1.0. Alterações metodológicas futuras exigem versionamento e evidência formal quando aplicável.
+  geographic_enrichment_version: 1.1.0
+  geographic_dimension_source_version: '2025'
+  geographic_siafi_sha256: ee2064fb5e0ce5e729365e1a1f2d80f92a55a659da8160cddd10db7f438c0634
+principles:
+- Sinal analítico não equivale a fraude, irregularidade ou fracionamento.
+- DATA_TRANSACAO é a referência temporal comportamental/normativa; competência do extrato é metadado de origem.
+- Comparações monetárias exatas usam centavos inteiros.
+- Cada sinal deve ser rastreável às transações que o originaram.
+- NIVEL_TRIAGEM é intra-trilha e não forma escala única de risco.
+- T08 e T09 são contextos e não aumentam a contagem de convergência núcleo.
+- Natureza da evidência é separada do status de validação.
+- Não existe score opaco obrigatório.
+- Parâmetros legais e definições determinísticas permanecem bloqueados.
+- Redundância estatística não exclui regra automaticamente.
+- Assertividade somente pode ser estimada após validação humana.
+baseline_regression:
+  expected_counts:
+    T01: 49675
+    T02: 14
+    T03: 7534
+    T04: 1384
+    T05: 1693
+    T06: 233
+    T07: 1089
+    T08: 12
+    T09: 46941
+  regression_result_v1_3_2: PASS_ZERO_DIFFERENCE_ALL_TRAILS
+evidence_families:
+  F1:
+    name: Conformidade operacional observável
+    trails:
+    - T01
+    - T02
+    independence_claim: false
+    interpretation: Família de evidência substantiva; associação deve ser medida empiricamente.
+  F2:
+    name: Repetição e recorrência de aquisições
+    trails:
+    - T03
+    - T04
+    - T05
+    independence_claim: false
+    interpretation: Família de evidência substantiva; associação deve ser medida empiricamente.
+  F3:
+    name: Estrutura e concentração de fornecedor
+    trails:
+    - T06
+    independence_claim: false
+    interpretation: Família de evidência substantiva; associação deve ser medida empiricamente.
+  F4:
+    name: Comportamento de saque
+    trails:
+    - T07
+    independence_claim: false
+    interpretation: Família de evidência substantiva; associação deve ser medida empiricamente.
+  F5:
+    name: Contexto estatístico forense
+    trails:
+    - T08
+    independence_claim: false
+    interpretation: Família de evidência substantiva; associação deve ser medida empiricamente.
+  F6:
+    name: Contexto normativo-financeiro
+    trails:
+    - T09
+    independence_claim: false
+    interpretation: Família de evidência substantiva; associação deve ser medida empiricamente.
+trails:
+  T01:
+    name: Despesa realizada em final de semana
+    role: Núcleo — transação; recorrência contextual
+    primary_unit: Transação; contexto UG × portador × ano
+    frozen_rule: Sinalizar compra efetiva em sábado ou domingo pela DATA TRANSAÇÃO. A recorrência anual por UG × portador
+      é contexto descritivo e não cria nova trilha.
+    parameters: Sábado/domingo. Sem limiar de recorrência congelado para novo alerta.
+    triage: ATENCAO no sinal individual.
+    normative_foundation: 'Guias e manuais de suprimento de fundos: necessidade de examinar justificativa de despesas
+      realizadas em final de semana.'
+    scientific_methodological_foundation: Fundamento científico predominantemente arquitetural em auditoria contínua;
+      a condição material é normativa.
+    central_limitation: A justificativa documental não está na base pública.
+    baseline: 49.675 sinais.
+    rules_version: 1.2.0
+  T02:
+    name: Transação classificada como compra parcelada
+    role: Núcleo — transação
+    primary_unit: Transação
+    frozen_rule: TRANSAÇÃO = 'CPP LOJISTA TRF P/FATURA - REAL', por correspondência exata.
+    parameters: Código operacional bloqueado.
+    triage: ATENCAO.
+    normative_foundation: 'Guias/manuais de suprimento: conferência de pagamentos à vista, totais e em uma única parcela.'
+    scientific_methodological_foundation: Fundamento científico predominantemente arquitetural em auditoria contínua;
+      a condição material é normativa.
+    central_limitation: O código operacional isolado não demonstra descumprimento.
+    baseline: 14 sinais.
+    rules_version: 1.2.0
+  T03:
+    name: Repetição exata de transações
+    role: Núcleo — grupo; T03-B apenas diagnóstico
+    primary_unit: Grupo de transações; ponte até linhas originais
+    frozen_rule: 'T03-A: UG + portador + favorecido + data + valor em centavos + tipo de transação. T03-B: repetição
+      integral apenas em registros observáveis; não entra na convergência.'
+    parameters: N≥2; REFORCADO quando N≥3. Comparações monetárias em centavos inteiros.
+    triage: ATENCAO para N=2; REFORCADO para N≥3.
+    normative_foundation: Monitoramento do uso do suprimento; sem presunção normativa de duplicidade.
+    scientific_methodological_foundation: Auditoria analítica e drill-down de duplicações; interpretação condicionada
+      ao contexto.
+    central_limitation: Transações legítimas podem compartilhar atributos idênticos. Não chamar automaticamente de
+      pagamento duplicado.
+    baseline: '7.534 grupos T03-A; T03-B: 7.523 grupos integralmente observáveis.'
+    rules_version: 1.2.0
+  T04:
+    name: Repetição multiportador
+    role: Núcleo — fornecedor
+    primary_unit: UG × fornecedor × data × valor
+    frozen_rule: Agrupar UG + fornecedor + data + valor e sinalizar quando houver pelo menos 2 portadores distintos.
+    parameters: ATENCAO=2 portadores; REFORCADO=3–4; MUITO_ELEVADO≥5.
+    triage: Faixas analíticas por número de portadores; não representam gradação jurídica.
+    normative_foundation: Monitoramento conjunto dos supridos da mesma UG para padrões de aquisições.
+    scientific_methodological_foundation: Análise relacional de padrões de compras; evidência não conclusiva.
+    central_limitation: O objeto adquirido não é observável.
+    baseline: 1.384 grupos.
+    rules_version: 1.2.0
+  T05:
+    name: Recorrência de aquisições
+    role: Núcleo — fornecedor
+    primary_unit: Episódio UG × fornecedor × ano
+    frozen_rule: Janela de 30 dias, ≥5 transações, ≥2 portadores e CV≤20%; janelas sobrepostas são deduplicadas mantendo
+      o episódio mais forte.
+    parameters: 'Baseline: 30 dias; N≥5; portadores≥2; CV≤0,20. REFORCADO quando CV≤0,10. Similaridade robusta em
+      ±20% da mediana como atributo.'
+    triage: ATENCAO / REFORCADO.
+    normative_foundation: Monitoramento de aquisições recorrentes e possível fracionamento no âmbito da UG.
+    scientific_methodological_foundation: Detecção de padrões e auditoria analítica; parâmetros calibrados empiricamente.
+    central_limitation: Sem objeto da despesa, não é possível confirmar fracionamento.
+    baseline: 1.693 episódios finais.
+    rules_version: 1.2.0
+  T06:
+    name: Concentração em fornecedor
+    role: Núcleo — estrutura do fornecedor/UG
+    primary_unit: UG × ano; fornecedor principal
+    frozen_rule: Elegível com ≥20 compras identificadas, ≥3 fornecedores e cobertura de valor identificado ≥80%; sinal
+      quando Top-1 por valor ≥50%.
+    parameters: ATENCAO 50–<70%; REFORCADO 70–<80%; MUITO_ELEVADO ≥80%. Calcular Top-1 por valor/quantidade, Top-5
+      e HHI.
+    triage: ATENCAO / REFORCADO / MUITO_ELEVADO.
+    normative_foundation: Boas práticas de razoabilidade e exame da estrutura de fornecedores.
+    scientific_methodological_foundation: Métricas de concentração, inclusive Top-1 e HHI, utilizadas como indicadores
+      estruturais.
+    central_limitation: Concentração não equivale a favorecimento ou direcionamento.
+    baseline: 233 UG-anos.
+    rules_version: 1.2.0
+  T07:
+    name: Recorrência de múltiplos saques
+    role: Núcleo — portador/UG; episódio diário como diagnóstico
+    primary_unit: 'T07-A: UG × portador × dia; T07-B: UG × portador × ano'
+    frozen_rule: T07-A identifica ≥2 saques no mesmo dia. T07-B prioriza portadores com ≥3 dias de múltiplos saques
+      e N_DIAS_MULTISAQUE ≥ P90 do ano, desde que existam ≥10 comparáveis.
+    parameters: ≥3 dias; quantil anual 90%; mínimo 10 comparáveis.
+    triage: T07-B é a saída prioritária da tabela-mestre.
+    normative_foundation: Saques devem estar relacionados às ações autorizadas no ato de concessão.
+    scientific_methodological_foundation: Monitoramento longitudinal de comportamento e priorização relativa.
+    central_limitation: A base pública não contém a autorização do saque.
+    baseline: 22.609 episódios diários diagnósticos; 1.089 portador-anos prioritários.
+    rules_version: 1.2.0
+  T08:
+    name: Lei de Newcomb-Benford
+    role: Contexto estatístico — não aumenta convergência núcleo
+    primary_unit: População; ano; UG × ano; valor/dígito; persistência
+    frozen_rule: Elegibilidade → D1 → D12 → MAD → Z/χ² auxiliares → Summation → Number Duplication → drill-down →
+      ranking relativo UG-ano → persistência relativa.
+    parameters: 'D12≥R$10; N<300 não aplicar; 300–999 exploratório; ≥1000 formal; ≥3000 maior robustez. Ranking relativo:
+      2013–2025, ≥10 UGs comparáveis, extremo ≥P90 do MAD D12.'
+    triage: Contexto; 12 extremos relativos na baseline.
+    normative_foundation: Não é regra jurídica; funciona como técnica analítica auxiliar.
+    scientific_methodological_foundation: Nigrini (2012) e literatura de Benford aplicada à auditoria.
+    central_limitation: Não conformidade não prova erro ou fraude; arredondamento e pontos de preço afetam a distribuição.
+    baseline: MAD D1=0,006939; MAD D12=0,002583; 12 extremos UG-ano; 3 UGs com persistência elevada.
+    rules_version: 1.2.0
+  T09:
+    name: Referências financeiras aplicáveis
+    role: Contexto normativo-financeiro — não aumenta convergência núcleo
+    primary_unit: Transação; agregado descritivo UG × fornecedor × ano
+    frozen_rule: 'Aplicar dimensão normativa pela data e comparar em centavos inteiros em dois cenários: compras/serviços
+      e obras/engenharia. Status por cenário: ABAIXO_FAIXA, PROXIMO_LIMITE, NO_LIMITE e ACIMA_LIMITE.'
+    parameters: Faixa de proximidade baseline=90%; limites normativos bloqueados; categoria real não escolhida automaticamente.
+    triage: INFORMATIVO para próximo/no limite; ATENCAO acima de pelo menos um cenário; REFORCADO acima de ambos.
+    normative_foundation: Portaria MF 95/2002 e Portaria Normativa MF 1.344/2023, conforme vigência, com valores legais
+      atualizados.
+    scientific_methodological_foundation: Uso de benchmarks normativos como contexto de triagem; não substitui enquadramento
+      jurídico.
+    central_limitation: Objeto/categoria e ato de concessão não estão disponíveis; não declarar fracionamento.
+    baseline: 46.941 sinais/contextos.
+    rules_version: 1.2.0
+governance:
+  analysis_units:
+    supplier_year:
+      unit: UG_FORNECEDOR_ANO
+      core_trails:
+      - T01
+      - T02
+      - T03
+      - T04
+      - T05
+      - T06
+      statistical_modeling_flags:
+      - T01
+      - T03
+      - T04
+      - T05
+      - T06
+      T08: UG-year context
+      T09: same UG-supplier-year context
+      complete_year_universe_n: 522053
+    ug_year:
+      unit: UG_ANO
+      core_trails:
+      - T01
+      - T02
+      - T03
+      - T04
+      - T05
+      - T06
+      - T07
+      statistical_modeling_flags:
+      - T01
+      - T03
+      - T04
+      - T05
+      - T06
+      - T07
+      context_trails:
+      - T08
+      - T09
+      complete_year_universe_n: 13785
+  exposure_control:
+    supplier_year:
+      type: FIXED_COUNT_BANDS
+      variable: N_COMPRAS_FORNECEDOR
+      field: BANDA_EXPOSICAO_FORNECEDOR
+      bands:
+      - code: B01_1
+        label: 1 compra
+        min: 1
+        max: 1
+      - code: B02_2
+        label: 2 compras
+        min: 2
+        max: 2
+      - code: B03_3_4
+        label: 3-4 compras
+        min: 3
+        max: 4
+      - code: B04_5_9
+        label: 5-9 compras
+        min: 5
+        max: 9
+      - code: B05_10_19
+        label: 10-19 compras
+        min: 10
+        max: 19
+      - code: B06_20_MAIS
+        label: 20+ compras
+        min: 20
+        max: null
+      coverage_requirement: 100% of eligible supplier-year units
+    ug_year:
+      type: ANNUAL_DECILES
+      variable: N_OPERACOES_EFETIVAS
+      field: DECIL_EXPOSICAO_ANUAL
+      n_deciles: 10
+  statistical_eligibility:
+    min_positive_units: 30
+    min_negative_units: 30
+    status_values:
+    - SUFICIENTE
+    - DIAGNOSTICO_ESTATISTICO_INSUFICIENTE
+    - SEM_VARIACAO
+    rule: Insufficient flags remain in the motor but are excluded from PCA/VIF.
+    known_rare_flag:
+      T02_supplier_year_positives: 1
+      T02_ug_year_positives: 7
+  redundancy_diagnostics:
+    primary:
+    - JACCARD
+    - PHI
+    - P_A_DADO_B
+    - P_B_DADO_A
+    - CONTRIBUICAO_MARGINAL
+    auxiliary:
+    - VIF
+    - CONDITION_INDEX
+    - PCA
+    automatic_rule_exclusion: false
+    vif_reference:
+      low_lt: 2.5
+      moderate_lt: 5
+      attention_lt: 10
+    validated_results:
+      supplier_max_vif: 1.0236278055060288
+      supplier_condition_index: 1.1785674042675054
+      ug_max_vif: 1.2094853129275394
+      ug_condition_index: 1.7018927175851917
+      supplier_pc1_variance: 0.2426051146895336
+      ug_pc1_variance: 0.306417946340089
+  family_marginality_baseline:
+    supplier_year:
+      F1:
+        signaled_units: 30457
+        exclusive_units: 29237
+        exclusive_share: 0.9599435269396198
+      F2:
+        signaled_units: 6000
+        exclusive_units: 4754
+        exclusive_share: 0.7923333333333333
+      F3:
+        signaled_units: 218
+        exclusive_units: 137
+        exclusive_share: 0.6284403669724771
+    ug_year:
+      F1:
+        signaled_units: 5092
+        exclusive_units: 3297
+        exclusive_share: 0.6474862529457973
+      F2:
+        signaled_units: 2476
+        exclusive_units: 771
+        exclusive_share: 0.311389337641357
+      F3:
+        signaled_units: 218
+        exclusive_units: 79
+        exclusive_share: 0.3623853211009174
+      F4:
+        signaled_units: 419
+        exclusive_units: 71
+        exclusive_share: 0.1694510739856801
+sensitivity_contract:
+  required_fields:
+  - TRILHA
+  - PARAMETRO
+  - VALOR_CENARIO
+  - METRICA
+  - UNIDADE_CONTAGEM
+  - VALOR_METRICA
+  - N_SINAIS_TOTAL_CENARIO
+  - N_SINAIS_BASELINE
+  - COMPARAVEL_COM_BASELINE
+  - TIPO_CONTROLE
+  - BASELINE
+  - OBSERVACAO
+  control_types:
+    locked:
+    - T01 weekend definition
+    - T02 transaction code
+    - T08 Benford formulas
+    - T09 legal limits
+    experimental:
+    - T03 min occurrences
+    - T04 min cardholders
+    - T05 analytical parameters
+    - T06 Top-1 thresholds
+    - T07 days/percentile
+    - T09 proximity band
+  special_semantics:
+    T05: 160-grid is calibration of representative groups and is not directly comparable to final episodes; production
+      simulator must rerun full episode/dedup logic.
+    T08: N represents population size and MAD/classification, not number of T08 signals.
+    T09: Adjustable proximity changes only the proximity subset; scenario total includes proximity + no-limit + above-limit
+      fixed cases.
+  baseline_t09:
+    near: 22954
+    fixed_at_or_above: 23987
+    total: 46941
+validation_protocol:
+  statuses:
+  - NAO_VALIDADO
+  - EM_ANALISE
+  - CONFIRMADO
+  - JUSTIFICADO
+  - FALSO_POSITIVO
+  - ERRO_DADO
+  - INCONCLUSIVO
+  automatic_confirmed: false
+  stratification: TRILHA x NIVEL_TRIAGEM
+  target_per_trail: 30
+  baseline_sample_n: 236
+  sampling: deterministic hash within stratum; redistribute unused quota across strata of the same trail
+  weight_formula: PESO_AMOSTRAL = N_POP_ESTRATO / N_AMOSTRA_ESTRATO
+  initial_reporting: Prefer results by trail and triage level. Global motor accuracy requires explicit weighting/design.
+  recalibration_rules:
+    CONFIRMADO: Preserve evidence and monitor stability.
+    JUSTIFICADO: Assess whether legitimate exception should enter eligibility.
+    FALSO_POSITIVO: Re-examine one parameter at a time and remeasure volume/overlap/marginality.
+    ERRO_DADO: Fix data layer; do not recalibrate rule because of source error.
+    INCONCLUSIVO: Review minimum evidence package before altering parameters.
+dashboard_contract:
+  tabs:
+  - Visão geral
+  - Motor de Trilhas
+  - Diagnóstico do Motor
+  - Sinais e Validação
+  - Metodologia
+  - Assistente IA
+  explainability: Show evidence type, family, parameters, exposure stratum, limitations and source transactions.
+  ai_may:
+  - explain structured evidence
+  - explain parameters
+  - retrieve normative foundation
+  - compare periods/entities
+  - state limitations/abstain
+  ai_must_not:
+  - declare fraud automatically
+  - declare fragmentation without object/documentation
+  - change legal limits
+  - treat correlation as causality
+  - hide rule version
+change_control:
+  rules_semver:
+    PATCH: implementation fix without rule semantic change
+    MINOR: parameter/population/classification/rule change affecting signals or explanation
+    MAJOR: change in analytical architecture or central methodological/legal construct
+  motor_semver:
+    PATCH: governance/interface contract fix without changing T01-T09 semantics
+    MINOR: change in governance method that materially changes interpretation/diagnostic output
+    MAJOR: change in governance architecture or validation construct
+  frozen_change_requirement: Update contract + tests + calibration evidence + specification + version in the same
+    change set.
+known_non_methodological_debt:
+- Regression CSV still uses legacy column name N_V131; production should use N_MOTOR_ATUAL.
+- Catalog output still uses legacy filename catalogo_trilhas_v1_3.csv; production should use stable catalogo_trilhas.csv
+  with internal version fields.
+geographic_enrichment:
+  version: 1.1.0
+  status: FROZEN
+  purpose: Enriquecer o fato CPGF com a UF cadastral da Unidade Gestora e produzir camadas territoriais para visualização
+    e drill-down; não constitui trilha de irregularidade.
+  dimension:
+    key: UG_ID
+    canonical_format: string de 6 dígitos
+    attribute: UF_UG
+    interpretation: Localização cadastral da Unidade Gestora; não representa necessariamente o local físico da transação.
+    sources:
+      SIAFI_DADOS_UG_2025:
+        type: CADASTRO_SIAFI
+        version: '2025'
+        sha256: ee2064fb5e0ce5e729365e1a1f2d80f92a55a659da8160cddd10db7f438c0634
+        dimension_rows: 49547
+      COMPLEMENTO_MANUAL_2026_08_13:
+        type: COMPLEMENTO_MANUAL
+        dimension_rows: 5
+        UGs:
+        - '511328'
+        - '511341'
+        - '510356'
+        - '110703'
+        - '110745'
+    dimension_total_ugs: 49552
+    cpgf_distinct_ugs: 2153
+    cpgf_match_siafi: 2148
+    cpgf_match_final: 2153
+    coverage_ug_pct: 100.0
+    coverage_records_pct: 100.0
+    geography_polygons: geobr / estados 2025
+  temporal_references:
+    TRANSACAO:
+      year_field: ANO_TRANSACAO
+      source_field: DATA TRANSAÇÃO
+      coverage: somente registros com data da transação observável
+      primary_metric: VALOR_TRANSACIONADO_OBSERVAVEL
+      use: comportamento temporal, compras, saques e integração com trilhas
+      years:
+      - 2012
+      - 2026
+      aggregate_rows: 405
+      value_total: 506719563.4200001
+      record_count: 1506714
+    EXTRATO:
+      year_field: ANO_EXTRATO_REF
+      source_field: ANO EXTRATO, com fallback técnico para COMPETENCIA_ARQUIVO
+      coverage: registros atribuíveis ao ano do extrato, inclusive sem DATA TRANSAÇÃO observável
+      primary_metric: VALOR_TOTAL_REGISTRADO
+      use: cobertura do extrato, sigilo e observabilidade
+      years:
+      - 2013
+      - 2026
+      aggregate_rows: 378
+      value_total: 976936749.9
+      record_count: 1876065
+      value_with_transaction_date: 506719563.41999996
+      value_with_transaction_date_pct: 51.86820574329588
+      sigilous_value: 470219284.18
+      sigilous_value_pct: 48.13200897889572
+      records_with_transaction_date: 1506714
+      records_with_transaction_date_pct: 80.31246252128791
+      sigilous_records: 369355
+      sigilous_records_pct: 19.687750690940877
+  observability:
+    value_metric: TAXA_OBSERVABILIDADE_VALOR
+    record_metric: TAXA_OBSERVABILIDADE_REGISTROS
+    interpretation: medidas de observabilidade da base pública; não são trilhas de irregularidade
+    non_exclusive_warning: Sigilo e observabilidade são dimensões relacionadas, mas não mutuamente exclusivas. Na
+      baseline, 4 registros (R$ 2.097,70) são classificados como sigilosos e ainda possuem DATA TRANSAÇÃO observável.
+  dashboard_contract:
+    semantic_long_table: agg_cpgf_uf_ano_dashboard_long.parquet
+    semantic_long_rows_baseline: 6615
+    reference_metric_pairs: 17
+    required_controls:
+    - REFERENCIA_TEMPORAL
+    - ANO
+    - METRICA
+    map_engine_poc: Folium
+    drilldown:
+    - Brasil
+    - UF da UG
+    - UG
+    - fornecedor/portador
+    - T01-T09
+  safeguards:
+  - UF da UG não representa necessariamente o local físico da transação.
+  - Não combinar ANO_TRANSACAO e ANO_EXTRATO em uma única métrica temporal.
+  - Sigilo e observabilidade devem ser analisados na referência do extrato.
+  - A dimensão geográfica não constitui trilha de irregularidade.
+  - Cobertura integral, quando usada na visão EXTRATO, significa cobertura do universo analítico positivo sem ajustes/contestações
+    definidos pelo pipeline.
+  - Sigilo e observabilidade não devem ser tratados como classes necessariamente complementares ou mutuamente exclusivas.
+  source_contract_file: contrato_territorial_geo_1.1.0.json
+  metric_catalog_file: catalogo_metricas_territoriais.csv
+production_acceptance:
+  geographic_enrichment:
+  - UG_ID tratado como string canônica de seis dígitos.
+  - UF_UG usada como localização cadastral da UG, nunca como local físico presumido da transação.
+  - Proveniência da UF preservada por FONTE_UF, TIPO_FONTE_UF e VERSAO_FONTE_UF.
+  - ANO_TRANSACAO e ANO_EXTRATO_REF mantidos separados; proibido ano híbrido.
+  - Sigilo e observabilidade reportados na referência EXTRATO.
+  - Camada geográfica permanece fora das regras T01-T09 e da contagem de convergência.

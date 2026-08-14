@@ -1,0 +1,19 @@
+sources:
+  cpgf:
+    role: "primary_official_source"
+    provider: "Portal da Transparência"
+    strategy: "monthly_competency_download"
+    competence_format: "YYYYMM"
+    initial_competence: "201301"
+    discovery_policy: "descobrir a última competência efetivamente disponível"
+    anti_bot_policy: "falhar com segurança; não contornar CAPTCHA"
+  siafi_ug:
+    role: "primary_official_source"
+    provider: "Tesouro Transparente"
+    dataset: "SIAFI - Relatório de Unidades Gestoras"
+    ckan_dataset_url: "https://www.tesourotransparente.gov.br/ckan/dataset/siafi-relatorio-unidades-gestoras"
+    strategy: "ckan_latest_csv_resource"
+    ug_key_format: "six_digit_string"
+  kaggle:
+    role: "public_reproducibility_snapshot"
+    dataset_slug: "arnoldjrim/dados-abertos-cpgf-2013-a-2026"

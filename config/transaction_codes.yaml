@@ -1,0 +1,14 @@
+transaction_codes:
+  compra_nacional: "COMPRA A/V - R$ - APRES"
+  compra_internacional: "COMPRA A/V - INT$ - APRES"
+  compra_parcelada: "CPP LOJISTA TRF P/FATURA - REAL"
+  saques_efetivos:
+    - "SAQUE CASH/ATM BB"
+    - "SAQUE - INT$ - APRES"
+    - "SAQUE MANUAL - CARTOES BB NA AGENCIA"
+    - "SAQUE - R$ - APRES"
+  ajustes_contestacao:
+    - "COMP A/V-SOL DISP C/CLI-R$ ANT VENC"
+    - "COMP A/V-SOL DISP C/CLI-R$ APOS VENC"
+    - "SAQUE BB B24HORAS-SOL C/CLIENTE"
+    - "VOUCHER - R$ - REVRS REAPR"

@@ -1,0 +1,2 @@
+case_id;description;expected_use
+SMOKE_001;Caso mínimo para carregamento;smoke_only

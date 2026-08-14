@@ -1,0 +1,25 @@
+ai:
+  orchestration: {framework: "langchain_langgraph", provider: "openai_api"}
+  modes:
+    demo:
+      credential_source: "streamlit_secrets"
+      authentication_required: true
+      persistent_quota_required_before_public_release: true
+      daily_question_limit: null
+    byok:
+      credential_source: "session_input"
+      persist_api_key: false
+      cache_llm_client_globally: false
+  routes: ["normative_rag", "data_query", "signal_explainer"]
+  sql_guardrail:
+    read_only: true
+    allowed_statement: "SELECT"
+    allow_ddl: false
+    allow_dml: false
+    allow_copy: false
+    row_limit_required: true
+    allowed_views_only: true
+  answer_guardrail:
+    forbid_automatic_fraud_conclusion: true
+    require_source_or_data_grounding: true
+    encourage_abstention_when_unsupported: true

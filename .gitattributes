@@ -1,0 +1,24 @@
+# Normalização de finais de linha
+* text=auto
+
+# Código e arquivos de configuração: sempre LF
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+*.ipynb text eol=lf
+*.sh text eol=lf
+*.txt text eol=lf
+*.cff text eol=lf
+
+# Arquivos binários
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary

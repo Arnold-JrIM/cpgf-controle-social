@@ -1,0 +1,39 @@
+{
+  "versao": "1.1.0",
+  "dimensao_geografica": {
+    "chave": "UG_ID",
+    "formato_chave": "string de 6 dígitos",
+    "atributo": "UF_UG",
+    "interpretacao": "Localização cadastral da Unidade Gestora; não representa necessariamente o local físico da transação.",
+    "fontes": [
+      "SIAFI_DADOS_UG_2025",
+      "COMPLEMENTO_MANUAL_2026_08_13"
+    ],
+    "cobertura_esperada_base_atual": "100%"
+  },
+  "referencias_temporais": {
+    "TRANSACAO": {
+      "campo_ano": "ANO_TRANSACAO",
+      "cobertura": "somente registros com DATA TRANSAÇÃO observável",
+      "metrica_principal": "VALOR_TRANSACIONADO_OBSERVAVEL",
+      "uso": "comportamento temporal, compras, saques e integração com trilhas"
+    },
+    "EXTRATO": {
+      "campo_ano": "ANO_EXTRATO_REF",
+      "cobertura": "registros atribuíveis ao ano do extrato, inclusive sem DATA TRANSAÇÃO observável",
+      "metrica_principal": "VALOR_TOTAL_REGISTRADO",
+      "uso": "cobertura integral, sigilo e observabilidade"
+    }
+  },
+  "agregados": {
+    "transacao": "/content/drive/MyDrive/Suprimentos de Fundos - CPGF/Analise_Geografica_CPGF_v1_1/03_agregados/agg_cpgf_uf_ano_transacao.parquet",
+    "extrato": "/content/drive/MyDrive/Suprimentos de Fundos - CPGF/Analise_Geografica_CPGF_v1_1/03_agregados/agg_cpgf_uf_ano_extrato.parquet",
+    "dashboard_long": "/content/drive/MyDrive/Suprimentos de Fundos - CPGF/Analise_Geografica_CPGF_v1_1/03_agregados/agg_cpgf_uf_ano_dashboard_long.parquet"
+  },
+  "salvaguardas": [
+    "UF da UG não representa necessariamente o local físico da transação.",
+    "Não combinar ANO_TRANSACAO e ANO_EXTRATO em uma única métrica temporal.",
+    "Sigilo e observabilidade devem ser analisados na referência do extrato.",
+    "A dimensão geográfica não constitui trilha de irregularidade."
+  ]
+}

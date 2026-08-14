@@ -1,0 +1,13 @@
+name: data-update
+# Manual no esqueleto. Ativar cron só após ingestão, fail-safe anti-bot, regressão e secrets Kaggle.
+on: {workflow_dispatch: {}}
+permissions: {contents: read}
+jobs:
+  contract-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install -e .
+      - run: python scripts/bootstrap_data.py --source official --dry-run

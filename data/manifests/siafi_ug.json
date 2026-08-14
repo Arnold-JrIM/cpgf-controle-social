@@ -1,0 +1,9 @@
+{
+  "status": "baseline_frozen_for_geo_1_1_0",
+  "source_version": "2025",
+  "sha256": "ee2064fb5e0ce5e729365e1a1f2d80f92a55a659da8160cddd10db7f438c0634",
+  "cpgf_distinct_ugs": 2153,
+  "direct_matches": 2148,
+  "manual_overrides": 5,
+  "coverage_pct": 100.0
+}
