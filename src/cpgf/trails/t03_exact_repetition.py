@@ -84,6 +84,10 @@ def detect_exact_repetition_groups(
         T03_REINFORCED_OCCURRENCES
     ).map({True: "REFORCADO", False: "ATENCAO"})
 
+    if groups.empty:
+        groups.insert(0, "ID_SINAL", pd.Series(index=groups.index, dtype="string"))
+        return groups.reset_index(drop=True)
+
     def signal_id(row: pd.Series) -> str:
         return keyed_signal_id_md5(
             "T03",
