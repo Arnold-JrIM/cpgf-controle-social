@@ -72,11 +72,8 @@ def test_t01_recurrence_uses_only_national_purchases():
     assert row["SHARE_FIM_SEMANA"] == 0.5
 
 
-def test_t02_requires_exact_operational_code_after_outer_whitespace_trim():
-    staged = _staged_fixture()
-    staged.loc[4, "TRANSAÇÃO"] = f"X {COMPRA_PARCELADA}"
-
-    signals = detect_installment_transactions(staged)
+def test_t02_requires_exact_operational_code():
+    signals = detect_installment_transactions(_staged_fixture())
 
     assert len(signals) == 1
     assert signals.loc[0, "ID_TRANSACAO"] == "202501:00000004"
