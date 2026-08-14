@@ -1,5 +1,5 @@
 metadata:
-  status: "PARTIALLY_PORTED"
+  status: "PORTED_PENDING_FULL_REGRESSION"
   rules_version: "1.2.0"
   baseline_preparation_version: "1.0.0"
   production_preparation_version: "1.1.0"
@@ -19,5 +19,5 @@ trails:
   T05: {name: "Recorrência de aquisições", implementation_status: "ported"}
   T06: {name: "Concentração em fornecedor", implementation_status: "ported"}
   T07: {name: "Saques sucessivos", implementation_status: "ported"}
-  T08: {name: "Lei de Benford", implementation_status: "placeholder"}
-  T09: {name: "Proximidade a limites financeiros", implementation_status: "placeholder"}
+  T08: {name: "Lei de Benford", implementation_status: "ported"}
+  T09: {name: "Proximidade a limites financeiros", implementation_status: "ported"}
