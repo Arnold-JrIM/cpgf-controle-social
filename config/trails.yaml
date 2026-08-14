@@ -7,13 +7,17 @@ metadata:
   baseline_sha256: "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b"
 baseline_regression:
   expected_counts: {T01: 49675, T02: 14, T03: 7534, T04: 1384, T05: 1693, T06: 233, T07: 1089, T08: 12, T09: 46941}
+production_expectations:
+  preparation_1_1_0:
+    T07: 1088
+    note: "A chave composta de portador separa uma colisão histórica; a baseline 1.0.0 permanece 1089."
 trails:
   T01: {name: "Despesa realizada em final de semana", implementation_status: "ported"}
   T02: {name: "Compra parcelada", implementation_status: "ported"}
   T03: {name: "Repetição exata", implementation_status: "ported"}
   T04: {name: "Repetição multiportador", implementation_status: "ported"}
   T05: {name: "Recorrência de aquisições", implementation_status: "ported"}
-  T06: {name: "Concentração em fornecedor", implementation_status: "placeholder"}
-  T07: {name: "Saques sucessivos", implementation_status: "ready_for_porting"}
+  T06: {name: "Concentração em fornecedor", implementation_status: "ported"}
+  T07: {name: "Saques sucessivos", implementation_status: "ported"}
   T08: {name: "Lei de Benford", implementation_status: "placeholder"}
   T09: {name: "Proximidade a limites financeiros", implementation_status: "placeholder"}
