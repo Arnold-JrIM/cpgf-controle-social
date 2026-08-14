@@ -1,6 +1,13 @@
 {
   "status": "PASS",
   "canonical_input": true,
+  "executed_at_utc": "2026-08-14T22:53:18Z",
+  "workflow": {
+    "run_id": 31847885454,
+    "execution_head_sha": "a194db07ca96c5e26d0e38abbfa5c00f9c83f409",
+    "artifact_id": 9236666405,
+    "artifact_digest": "sha256:8a6d733c87f86e7ad5393221d7a1a971e24c2f6329713f90b80f2091bfd97fd5"
+  },
   "input": {
     "filename": "CPGF_201301_a_202607.csv",
     "rows": 1876087,
