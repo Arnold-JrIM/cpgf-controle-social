@@ -79,6 +79,10 @@ def detect_multi_cardholder_groups(
 
     groups["NIVEL_TRIAGEM"] = groups["N_PORTADORES"].map(triage)
 
+    if groups.empty:
+        groups.insert(0, "ID_SINAL", pd.Series(index=groups.index, dtype="string"))
+        return groups.reset_index(drop=True)
+
     def signal_id(row: pd.Series) -> str:
         return keyed_signal_id_md5(
             "T04",
