@@ -1,0 +1,42 @@
+{
+  "status": "DIAGNOSTIC_COMPLETE_VERSION_DECISION_PENDING",
+  "date": "2026-08-14",
+  "input": {
+    "file": "CPGF_201301_a_202607.csv",
+    "sha256": "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b",
+    "rows": 1876087
+  },
+  "versions": {
+    "preparation_baseline": "1.0.0",
+    "rules": "1.2.0",
+    "motor_governance": "1.3.2"
+  },
+  "identity": {
+    "baseline_global_distinct_masked_cpf": 26273,
+    "baseline_distinct_ug_masked_cpf": 28178,
+    "candidate_distinct_ug_masked_cpf_name": 28186,
+    "masked_cpf_with_multiple_names": 410,
+    "masked_cpf_in_multiple_ugs": 1749,
+    "ug_masked_cpf_with_multiple_names": 8
+  },
+  "trail_impact": {
+    "T03": {"baseline": 7534, "candidate": 7534, "delta": 0},
+    "T04": {"baseline": 1384, "candidate": 1384, "delta": 0},
+    "T05": {"baseline": 1693, "candidate": 1693, "delta": 0, "affected_supplier_year_groups_recomputed": 275},
+    "T07_daily_episodes": {"baseline": 22609, "candidate": 22609, "delta": 0},
+    "T07_priority_portador_year": {"baseline": 1089, "candidate": 1088, "delta": -1}
+  },
+  "t03_sigilo_check": {
+    "eligible_rows": 1196756,
+    "sigiloso_rows_among_eligible": 0,
+    "signal_involved_rows": 18977,
+    "sigiloso_rows_among_signal_involved": 0
+  },
+  "recommendation": {
+    "preserve_historical_baseline": true,
+    "candidate_preparation_version": "1.1.0",
+    "keep_rules_version": "1.2.0",
+    "keep_motor_version": "1.3.2",
+    "decision_required_before_implementation": true
+  }
+}
