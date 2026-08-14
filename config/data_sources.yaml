@@ -2,18 +2,36 @@ sources:
   cpgf:
     role: "primary_official_source"
     provider: "Portal da Transparência"
+    dataset: "Cartão de Pagamento do Governo Federal"
+    base_url: "https://portaldatransparencia.gov.br/download-de-dados/cpgf"
     strategy: "monthly_competency_download"
     competence_format: "YYYYMM"
     initial_competence: "201301"
-    discovery_policy: "descobrir a última competência efetivamente disponível"
-    anti_bot_policy: "falhar com segurança; não contornar CAPTCHA"
+    baseline_end: "202607"
+    discovery_policy: >
+      Tentar sequencialmente a competência posterior à última conhecida e
+      encerrar no primeiro mês não disponível; não presumir que o mês atual
+      ou anterior já tenha sido publicado.
+    anti_bot_policy: >
+      Em HTTP 403/429, HTML, CAPTCHA ou validação humana, interromper com
+      segurança. Não contornar mecanismos de proteção e não atualizar o
+      manifest canônico.
+    preservation_policy: >
+      Preservar o CSV mensal como publicado; apenas padronizar o nome para
+      AAAAMM_CPGF.csv.
+
   siafi_ug:
     role: "primary_official_source"
     provider: "Tesouro Transparente"
     dataset: "SIAFI - Relatório de Unidades Gestoras"
     ckan_dataset_url: "https://www.tesourotransparente.gov.br/ckan/dataset/siafi-relatorio-unidades-gestoras"
+    ckan_api_url: "https://www.tesourotransparente.gov.br/ckan/api/3/action/package_show?id=siafi-relatorio-unidades-gestoras"
     strategy: "ckan_latest_csv_resource"
     ug_key_format: "six_digit_string"
+
   kaggle:
     role: "public_reproducibility_snapshot"
     dataset_slug: "arnoldjrim/dados-abertos-cpgf-2013-a-2026"
+    note: >
+      Kaggle é camada pública de distribuição/reprodução. Portal da
+      Transparência e Tesouro Transparente permanecem fontes primárias.
