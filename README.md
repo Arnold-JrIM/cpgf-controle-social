@@ -6,7 +6,8 @@ Projeto público de TCC para transformar dados abertos do **Cartão de Pagamento
 
 | Camada | Versão | Estado |
 |---|---:|---|
-| Preparação analítica | 1.0.0 | baseline |
+| Preparação analítica — produção | 1.1.0 | atual |
+| Preparação analítica — baseline | 1.0.0 | preservada para regressão |
 | Regras T01–T09 | 1.2.0 | congeladas |
 | Motor/Governança | 1.3.2 | congelado |
 | Enriquecimento geográfico | 1.1.0 | congelado |
@@ -37,14 +38,7 @@ Fontes oficiais
 
 ## Dados
 
-Os arquivos brutos completos **não são versionados no Git**. Há dois caminhos previstos:
-
-```bash
-python scripts/bootstrap_data.py --source kaggle --dry-run
-python scripts/bootstrap_data.py --source official --dry-run
-```
-
-Nesta versão inicial, os comandos formalizam a interface. A ingestão funcional será a próxima etapa.
+Os arquivos brutos completos **não são versionados no Git**. A camada de ingestão oferece dois caminhos: fontes oficiais e snapshot público do Kaggle. Os testes sem rede validam o contrato do código, e o workflow `ingestion-smoke` verifica periodicamente as superfícies externas sem contornar proteções do Portal.
 
 ### Fontes
 
@@ -72,13 +66,13 @@ Nesta versão inicial, os comandos formalizam a interface. A ingestão funcional
 | T08 | 12 |
 | T09 | 46.941 |
 
-Esses números são baseline de regressão sobre a mesma base, não metas para atualizações futuras.
+Esses números pertencem à baseline histórica com Preparação 1.0.0 e não são metas para bases futuras.
 
-## Gate técnico antes da migração das trilhas
+## Identidade do portador
 
-T03/T04/T05/T07 permanecem bloqueadas até o fechamento do teste de identidade de `PORTADOR_ID`. A implementação deverá comparar a chave do notebook com uma chave composta baseada em `UG_ID + CPF normalizado + nome normalizado` e documentar o impacto.
+O gate metodológico foi fechado. A produção utiliza `UG_ID + CPF normalizado + nome normalizado` como `PORTADOR_ID` na Preparação 1.1.0. A semântica 1.0.0 permanece disponível apenas para reprodução da baseline histórica.
 
-Veja `docs/architecture/pre_src_gate_portador.md`.
+Veja `docs/methodology/preparation_1_1_0.md`.
 
 ## Desenvolvimento
 
