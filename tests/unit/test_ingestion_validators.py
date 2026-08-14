@@ -25,5 +25,7 @@ def test_invalid_competence_raises():
 def test_cpgf_header_fixture_is_valid():
     fixture = Path(__file__).parents[2] / "data" / "fixtures" / "cpgf_minimal.csv"
     result = validate_cpgf_header(fixture)
+
     assert result["valid"] is True
-    assert result["same_reference_set"] is False
+    assert result["same_reference_set"] is True
+    assert result["same_reference_order"] is True
