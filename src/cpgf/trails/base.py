@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hashlib import md5
+from hashlib import md5, sha256
 from typing import Iterable
 
 import pandas as pd
@@ -53,8 +53,26 @@ def ensure_transaction_ids(frame: pd.DataFrame) -> pd.Series:
     return current.where(current.notna() & current.ne(""), generated)
 
 
+def _payload(code: str, parts: Iterable[object]) -> str:
+    tokens = [code, RULES_VERSION]
+    tokens.extend("" if part is None else str(part) for part in parts)
+    return "|".join(tokens)
+
+
+def keyed_signal_id_md5(code: str, *parts: object) -> str:
+    """ID determinístico de grupo compatível com T03/T04 da baseline."""
+    digest = md5(_payload(code, parts).encode("utf-8")).hexdigest()
+    return f"{code}_{digest}"
+
+
+def keyed_signal_id_sha256(code: str, *parts: object, length: int = 24) -> str:
+    """ID determinístico abreviado compatível com o helper histórico ``id_sinal``."""
+    digest = sha256(_payload(code, parts).encode("utf-8")).hexdigest()
+    return f"{code}_{digest[:length]}"
+
+
 def build_signal_ids(code: str, transaction_ids: pd.Series) -> pd.Series:
-    """Reproduz o identificador determinístico usado na baseline congelada."""
+    """Reproduz o identificador determinístico usado nas trilhas transacionais."""
 
     def signal_id(transaction_id: object) -> str:
         payload = f"{code}|{RULES_VERSION}|{transaction_id}"
