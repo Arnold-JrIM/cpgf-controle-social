@@ -19,6 +19,7 @@ from cpgf.knowledge import (
     SemanticKnowledgeRetriever,
 )
 from cpgf.knowledge.indexing import validate_semantic_index
+from cpgf.version import ROUTER_VERSION
 
 
 def _retriever(
@@ -82,6 +83,7 @@ def main() -> None:
     catalog_validation = validate_benchmark_against_catalog(suite, args.catalog)
     result: dict[str, object] = {
         "benchmark_version": suite.benchmark_version,
+        "router_version": ROUTER_VERSION,
         "catalog_validation": catalog_validation,
         "routing": evaluate_routing(suite),
     }
