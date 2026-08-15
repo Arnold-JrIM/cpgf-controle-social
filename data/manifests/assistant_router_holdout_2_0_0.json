@@ -1,0 +1,56 @@
+{
+  "holdout_version": "2.0.0",
+  "router_version": "1.1.0",
+  "app_version": "0.10.0-dev",
+  "base_main_sha": "898f883b54f4770893721b50886f1cd16a864000",
+  "frozen_before_first_valid_measurement_commit": "5d15ad8f002505b42e9f9d357f55b10c5b3fba62",
+  "holdout_sha256": "df48a03af598e86e84bac797f122404db8135c8b77caf19b7024ca52079a298b",
+  "development_benchmark_sha256": "be1a0245f597f9b2456aacdc6485187d6fdb9c52230f0072519d6387148b5820",
+  "previous_holdout_sha256": "429836fcee9c608478d63df3d69f64aebff4e1219431adf15ea3823b22ad5155",
+  "cases": 40,
+  "family_balance": {
+    "conceptual_normative": 8,
+    "serving_query": 8,
+    "trail_query": 8,
+    "motor_rule": 8,
+    "safety_interpretation": 8
+  },
+  "exact_question_overlap_with_prior_sets": 0,
+  "covers_trails": ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09"],
+  "preflight_schema_failure": {
+    "run": 31908988446,
+    "head_sha": "25796798f9470c7f87304647513029fa24957f5c",
+    "conclusion": "failure",
+    "reason": "BENCH-232 tinha deslocamento de colunas e o carregador Pydantic falhou antes de evaluate_routing(); nenhum caso foi roteado nessa tentativa.",
+    "treated_as_measurement": false
+  },
+  "first_valid_measurement": {
+    "run": 31909120082,
+    "head_sha": "fa6974448051551b3331955b7e7125cab61ba5c5",
+    "conclusion": "success",
+    "artifact_id": 9253168342,
+    "artifact_digest": "sha256:9bc94210ed4fac816fd26bcb30bae262e710d951e9191d828f5fda4cf51c8e20",
+    "evaluation_json_sha256": "76d12eddc3e8500e48181817346fd7ab1b1167ce7bb285f52d4072131895d999",
+    "exact": 23,
+    "accuracy": 0.575,
+    "errors": 17
+  },
+  "per_expected_route": {
+    "knowledge": {"cases": 8, "exact": 8, "accuracy": 1.0},
+    "overview": {"cases": 4, "exact": 1, "accuracy": 0.25},
+    "ugs": {"cases": 2, "exact": 2, "accuracy": 1.0},
+    "suppliers": {"cases": 2, "exact": 2, "accuracy": 1.0},
+    "territorial": {"cases": 2, "exact": 1, "accuracy": 0.5},
+    "trails": {"cases": 6, "exact": 6, "accuracy": 1.0},
+    "methodology": {"cases": 12, "exact": 3, "accuracy": 0.25},
+    "composite": {"cases": 4, "exact": 0, "accuracy": 0.0}
+  },
+  "governance": {
+    "router_modified_in_this_pr": false,
+    "holdout_used_to_tune_router_1_1_0": false,
+    "errors_may_be_used_for_future_tuning": true,
+    "after_future_tuning_this_holdout_becomes_regression_set": true,
+    "production_accuracy_claim_allowed": false,
+    "external_human_validation_claim_allowed": false
+  }
+}
