@@ -14,7 +14,6 @@ from .validation import (
     attach_validation_status,
 )
 
-
 EVIDENCE_ID_CANDIDATES: tuple[str, ...] = (
     "ID_SINAL",
     "ID_EPISODIO",
