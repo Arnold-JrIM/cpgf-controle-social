@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "status": "FROZEN_FROM_UNTOUCHED_INTERNAL_HOLDOUT",
+  "base": {
+    "pr30_merge_commit": "17dc3a3720e3258d4e0e6ae1a75a6915e73fb3b4",
+    "router_version": "1.0.0",
+    "development_benchmark_version": "1.0.0"
+  },
+  "dataset": {
+    "path": "data/benchmarks/assistant_router_holdout_v1_0_0.csv",
+    "cases": 40,
+    "cases_per_question_family": 8,
+    "ids": "BENCH-101..BENCH-140",
+    "covers_trails": ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09"],
+    "holdout_sha256": "429836fcee9c608478d63df3d69f64aebff4e1219431adf15ea3823b22ad5155",
+    "development_benchmark_sha256": "be1a0245f597f9b2456aacdc6485187d6fdb9c52230f0072519d6387148b5820",
+    "exact_question_overlap_with_development": 0,
+    "frozen_before_measurement_commit": "6416d498936992a0dd57d7a82ed136c39af7351e"
+  },
+  "protocol": {
+    "router_changed_in_this_evaluation_pr": false,
+    "minimum_accuracy_gate": false,
+    "errors_corrected_after_measurement_in_same_pr": false,
+    "purpose": "Medir o Router 1.0.0 em formulações não usadas no seu ajuste e preservar os erros como evidência diagnóstica.",
+    "limitation": "O holdout é interno ao mesmo projeto e não substitui validação externa humana nem estima acurácia de produção."
+  },
+  "result": {
+    "cases": 40,
+    "exact": 19,
+    "errors": 21,
+    "accuracy": 0.475,
+    "per_expected_route": {
+      "knowledge": {"cases": 8, "exact": 7, "accuracy": 0.875},
+      "overview": {"cases": 4, "exact": 1, "accuracy": 0.25},
+      "ugs": {"cases": 2, "exact": 0, "accuracy": 0.0},
+      "suppliers": {"cases": 2, "exact": 2, "accuracy": 1.0},
+      "territorial": {"cases": 2, "exact": 0, "accuracy": 0.0},
+      "trails": {"cases": 6, "exact": 6, "accuracy": 1.0},
+      "methodology": {"cases": 12, "exact": 2, "accuracy": 0.16666666666666666},
+      "composite": {"cases": 4, "exact": 1, "accuracy": 0.25}
+    },
+    "dominant_error_pattern": "Perguntas de metodologia e perguntas quantitativas com formulação não prevista tendem a ser capturadas por trails, knowledge ou unsupported; composite também depende excessivamente de gatilhos lexicais específicos."
+  },
+  "evidence": {
+    "measurement_commit": "a00c2975e80751c1f808cf12ab7d8d133755cb67",
+    "workflow_run_id": 31907563260,
+    "workflow_conclusion": "success",
+    "artifact_id": 9252766871,
+    "artifact_digest": "sha256:db1055e51a832cd9a7bf0e388f50db7030627a0d18641fc0439f7fd594e5f27d"
+  },
+  "future_use": {
+    "router_1_0_0_generalization_evidence": true,
+    "may_be_used_as_regression_set_after_router_1_0_0": true,
+    "may_be_claimed_as_unseen_holdout_after_tuning_on_its_errors": false,
+    "new_unseen_set_required_after_future_router_tuning": true
+  }
+}
