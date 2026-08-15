@@ -33,8 +33,8 @@ def main() -> None:
         type=Path,
         default=None,
         help=(
-            "Manifesto compacto congelado que valida o SHA-256 determinístico de "
-            "todo o observed_contract."
+            "Manifesto portátil congelado: exige hash exato das saídas determinísticas "
+            "e estrutura estável das saídas de eigendecomposição."
         ),
     )
     parser.add_argument(
@@ -74,8 +74,8 @@ def main() -> None:
     if "frozen_contract_validation" in report:
         validation = report["frozen_contract_validation"]
         print(
-            "Contrato congelado: "
-            f"digest={validation['actual_observed_contract_sha256']} "
+            "Contrato portátil congelado: "
+            f"digest={validation['actual_portable_contract_sha256']} "
             f"pass={validation['digest_pass']}"
         )
     print(f"Relatório: {output}")
