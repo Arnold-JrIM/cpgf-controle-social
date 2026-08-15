@@ -1,5 +1,11 @@
+import json
+
 import pandas as pd
 
+from cpgf.governance.governance_contract import (
+    canonical_mapping_sha256,
+    validate_governance_bootstrap_report,
+)
 from cpgf.governance.governance_regression import (
     compare_governance_contract,
     dataframe_signature,
@@ -50,3 +56,36 @@ def test_compare_governance_contract_reports_missing_and_changed_fields():
     assert not by_field["b"]["pass"]
     assert by_field["c"]["actual"] is None
     assert not by_field["c"]["pass"]
+
+
+def test_canonical_mapping_sha256_is_order_independent_for_mapping_keys():
+    first = canonical_mapping_sha256({"b": 2, "a": {"y": 1, "x": 0}})
+    second = canonical_mapping_sha256({"a": {"x": 0, "y": 1}, "b": 2})
+    changed = canonical_mapping_sha256({"a": {"x": 0, "y": 2}, "b": 2})
+
+    assert first == second
+    assert first != changed
+
+
+def test_validate_governance_bootstrap_report_requires_bootstrap_and_digest(tmp_path):
+    observed = {"rows": 10, "signatures": {"matrix": "abc"}}
+    expected_digest = canonical_mapping_sha256(observed)
+    contract = tmp_path / "contract.json"
+    contract.write_text(
+        json.dumps({"expected_observed_contract_sha256": expected_digest}),
+        encoding="utf-8",
+    )
+
+    passed = validate_governance_bootstrap_report(
+        {"status": "BOOTSTRAP_PASS", "observed_contract": observed},
+        contract,
+    )
+    failed = validate_governance_bootstrap_report(
+        {"status": "BOOTSTRAP_PASS", "observed_contract": {"rows": 11}},
+        contract,
+    )
+
+    assert passed["status"] == "PASS"
+    assert passed["digest_pass"]
+    assert failed["status"] == "FAIL"
+    assert not failed["digest_pass"]
