@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+from pathlib import Path
+
+from streamlit.testing.v1 import AppTest
+
 from cpgf.ai import ToolName, ToolRequest, execute_tool, prepare_assistant_state
 from cpgf.ai.guardrails import FreeSQLDisabledError, reject_free_sql
 from cpgf.dashboard.data import load_dashboard_data
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+ASSISTANT_PAGE = REPO_ROOT / "pages/07_Assistente_IA.py"
 
 
 def main() -> None:
@@ -50,10 +57,16 @@ def main() -> None:
     else:
         raise AssertionError("SQL livre deveria estar bloqueado.")
 
+    app = AppTest.from_file(str(ASSISTANT_PAGE), default_timeout=45).run(timeout=45)
+    if len(app.exception):
+        details = "; ".join(str(item.value) for item in app.exception)
+        raise RuntimeError(f"Falha na página Assistente IA: {details}")
+
     print("AI FOUNDATION SMOKE: PASS")
     print(f"Serving source: {context.bootstrap.status}")
     print(f"UGs 2025: {overview.summary['ugs']}")
     print(f"UFs territorial: {territorial.summary['ufs']}")
+    print("Assistant page: PASS")
 
 
 if __name__ == "__main__":
