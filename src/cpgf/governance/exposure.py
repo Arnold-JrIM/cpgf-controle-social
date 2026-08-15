@@ -5,7 +5,6 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-
 COMPLETE_YEAR_START = 2013
 COMPLETE_YEAR_END = 2025
 BASELINE_COMPLETE_SUPPLIER_YEAR_N = 522_053
