@@ -1,0 +1,52 @@
+{
+  "status": "FROZEN_FROM_SERVING_RELEASE_SMOKE_PASS",
+  "app_version": "0.3.0-dev",
+  "serving_version": "1.5.0",
+  "geo_version": "1.1.0",
+  "source_serving_contract": "data/manifests/serving_1_5_0_contract.json",
+  "source_distribution_contract": "data/manifests/serving_distribution_1_5_0.json",
+  "territorial_view": {
+    "temporal_references": [
+      "TRANSACAO",
+      "EXTRATO"
+    ],
+    "logical_objects": [
+      "geo_metric_catalog",
+      "geo_uf_ano_dashboard_long",
+      "dim_ug_geografica",
+      "matrix_ug_year"
+    ],
+    "map_type": "proportional_state_points",
+    "uf_plot_anchors": 27,
+    "anchor_role": "visual_only",
+    "uf_interpretation": "UF_UG representa a localização cadastral da Unidade Gestora e não necessariamente o local físico da transação.",
+    "ug_drilldown_role": "contextualizacao_da_matriz_ug_ano"
+  },
+  "validation": {
+    "functional_commit": "aa1eb6abc8d037cb36c5a68ca590be7dcbe0bec9",
+    "unit_workflow": {
+      "run_id": 31862734841,
+      "python_3_11": "PASS",
+      "python_3_12": "PASS",
+      "ruff": "PASS",
+      "pytest": "PASS"
+    },
+    "dashboard_smoke": {
+      "run_id": 31862734860,
+      "conclusion": "success",
+      "serving_bootstrap": "PASS",
+      "serving_version": "1.5.0",
+      "streamlit_scripts": 8,
+      "territorial_page": "PASS"
+    }
+  },
+  "safeguards": {
+    "recalculate_t01_t09": false,
+    "change_motor_governance": false,
+    "change_geo_methodology": false,
+    "change_serving_contract": false,
+    "read_raw_cpgf_during_navigation": false,
+    "infer_physical_transaction_location": false
+  },
+  "note": "O Dashboard 0.3.0-dev habilita a visualização estadual consumindo somente objetos materializados do Serving 1.5.0. As coordenadas das UFs são âncoras de renderização e não participam de cálculos, sinais, filtros ou rankings."
+}

@@ -29,6 +29,15 @@ A escolha por pontos proporcionais evita uma dependência externa de malha GeoJS
 
 O drill-down por UG é uma contextualização baseada na matriz `matrix_ug_year`. Ele não é apresentado como decomposição direta das métricas de extrato, pois essa granularidade não foi materializada no Serving 1.5.0.
 
+## Validação
+
+O commit funcional `aa1eb6abc8d037cb36c5a68ca590be7dcbe0bec9` foi validado em dois gates independentes:
+
+- `tests`, run `31862734841`: Ruff e pytest em Python 3.11 e 3.12, todos com PASS;
+- `dashboard-smoke-release`, run `31862734860`: bootstrap e validação da release publicada do Serving 1.5.0 seguidos da execução headless da home e das sete páginas Streamlit, incluindo a página territorial, com PASS.
+
+Após esse gate, o smoke remoto volta a ser exclusivamente manual por `workflow_dispatch`.
+
 ## Salvaguardas
 
 - nenhuma alteração em T01–T09;
