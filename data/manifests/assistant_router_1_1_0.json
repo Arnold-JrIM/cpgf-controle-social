@@ -1,0 +1,90 @@
+{
+  "version": "1.1.0",
+  "status": "FROZEN_FROM_KNOWN_REGRESSION_AND_CI",
+  "base": {
+    "pr31_merge_commit": "1e6c07db71d518ab9e910185d69f4c2182b553d0",
+    "previous_router_version": "1.0.0",
+    "router_holdout_version": "1.0.0"
+  },
+  "scope": {
+    "deterministic_routing": true,
+    "llm_enabled": false,
+    "automatic_tool_execution": false,
+    "free_sql_enabled": false,
+    "routing_intents_changed": false,
+    "evidence_layer_contract_changed": false,
+    "linguistic_generalization": true
+  },
+  "frozen_sets": {
+    "development_benchmark": {
+      "version": "1.0.0",
+      "sha256": "be1a0245f597f9b2456aacdc6485187d6fdb9c52230f0072519d6387148b5820",
+      "cases": 50,
+      "modified_in_pr32": false
+    },
+    "router_holdout_1_0_0": {
+      "sha256": "429836fcee9c608478d63df3d69f64aebff4e1219431adf15ea3823b22ad5155",
+      "cases": 40,
+      "modified_in_pr32": false,
+      "status_for_router_1_0_0": "UNSEEN_INTERNAL_HOLDOUT_AT_FIRST_MEASUREMENT",
+      "status_for_router_1_1_0": "KNOWN_REGRESSION_SET"
+    }
+  },
+  "historical_evidence": {
+    "router_1_0_0_development": {
+      "exact": 50,
+      "cases": 50,
+      "accuracy": 1.0,
+      "interpretation": "in_sample"
+    },
+    "router_1_0_0_first_holdout_measurement": {
+      "exact": 19,
+      "cases": 40,
+      "accuracy": 0.475,
+      "interpretation": "internal_unseen_at_time_of_measurement",
+      "run_id": 31907563260,
+      "artifact_id": 9252766871,
+      "artifact_digest": "sha256:db1055e51a832cd9a7bf0e388f50db7030627a0d18641fc0439f7fd594e5f27d"
+    }
+  },
+  "router_1_1_0_validation": {
+    "implementation_commit": "52a6d15bc3c24047316e54de2708b5a51018d7b8",
+    "development_benchmark": {
+      "exact": 50,
+      "cases": 50,
+      "accuracy": 1.0,
+      "interpretation": "development_regression"
+    },
+    "known_holdout_regression": {
+      "exact": 40,
+      "cases": 40,
+      "accuracy": 1.0,
+      "interpretation": "known_regression_not_out_of_sample",
+      "run_id": 31908350008,
+      "artifact_id": 9252969348,
+      "artifact_digest": "sha256:d4f35c72fe39e2dbab8b62b90b79d090efbffcfb01bbfcc8852de79d0890706c",
+      "evaluation_json_sha256": "cf4caa657e5be47384b5d52cbde8e4ff0232984f278ed456f1ad1252b3e7c48f"
+    },
+    "implementation_ci": {
+      "run_id": 31908350048,
+      "python_311": "success",
+      "python_312": "success",
+      "ruff": "success",
+      "pytest": "success"
+    }
+  },
+  "governance": {
+    "router_holdout_1_0_0_may_support_future_regression": true,
+    "router_holdout_1_0_0_may_support_router_1_1_generalization_claim": false,
+    "new_unseen_holdout_required": true,
+    "automatic_fraud_or_irregularity_conclusion": false,
+    "t08_t09_contextual_status_preserved": true
+  },
+  "deferred": {
+    "router_1_1_out_of_sample_evaluation": true,
+    "lexical_semantic_hybrid_real_corpus_evaluation": true,
+    "llm_rag_conversation": true,
+    "controlled_web_freshness_check": true
+  },
+  "interpretive_safeguard": "O resultado 40/40 do Router 1.1.0 foi obtido em conjunto cujos erros do Router 1.0.0 já eram conhecidos e puderam informar o ajuste. Ele demonstra regressão conhecida, não generalização, acurácia de produção ou validação externa."
+}
