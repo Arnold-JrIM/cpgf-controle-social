@@ -39,7 +39,7 @@ def test_persist_serving_tables_builds_parquet_manifest_and_duckdb(tmp_path):
         canonical_validation={"fixture": True},
     )
 
-    assert manifest["serving_version"] == "1.4.0"
+    assert manifest["serving_version"] == "1.5.0"
     assert len(manifest["tables"]) == 2
     assert (tmp_path / "serving_manifest.json").is_file()
     assert (tmp_path / "cpgf_serving.duckdb").is_file()

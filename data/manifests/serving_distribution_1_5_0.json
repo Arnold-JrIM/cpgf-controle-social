@@ -1,0 +1,40 @@
+{
+  "status": "FROZEN_FROM_RELEASE_PASS",
+  "serving_version": "1.5.0",
+  "source_contract": "data/manifests/serving_1_5_0_contract.json",
+  "release": {
+    "id": 370946376,
+    "tag": "serving-v1.5.0",
+    "tag_commit": "1425b59a97ce6b37b5c8d10b6ebcc294412c3757",
+    "published_at": "2026-08-15T03:31:24Z",
+    "archive": {
+      "asset_id": 515268439,
+      "name": "cpgf-serving-1.5.0.tar.gz",
+      "size_bytes": 13751617,
+      "sha256": "c472c299223c458618d1142816cd3cf68ece657c6cc563ce053455164765cbff"
+    },
+    "checksum": {
+      "asset_id": 515268441,
+      "name": "cpgf-serving-1.5.0.tar.gz.sha256",
+      "asset_digest": "sha256:015a44ed16bb02f8f95b1d49b984da3f33d977de1f5901732cfd394030e03d2e"
+    }
+  },
+  "validation_run": {
+    "workflow": "serving-publish-release",
+    "run_id": 31861802930,
+    "head_commit": "1425b59a97ce6b37b5c8d10b6ebcc294412c3757",
+    "build_canonical": "PASS",
+    "release_upload": "PASS",
+    "remote_bootstrap_smoke_test": "PASS",
+    "offline_reuse_smoke_test": "PASS",
+    "evidence_artifact_id": 9240867605,
+    "evidence_artifact_digest": "sha256:bd32e2f28da0c23bfb1193e593e7bee9f95e54f2c5d5ef3922a3e7218b677cf0"
+  },
+  "distribution_policy": {
+    "default_source": "github_release",
+    "checksum_required": true,
+    "internal_manifest_validation_required": true,
+    "duckdb_read_only": true,
+    "publish_workflow": "workflow_dispatch_only"
+  }
+}

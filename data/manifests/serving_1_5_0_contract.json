@@ -1,0 +1,68 @@
+{
+  "status": "FROZEN_FROM_CANONICAL_AND_RELEASE_PASS",
+  "serving_version": "1.5.0",
+  "source_serving_contract": "data/manifests/serving_1_4_0_contract.json",
+  "geo_version": "1.1.0",
+  "canonical_inputs": {
+    "cpgf": {
+      "file": "CPGF_201301_a_202607.csv",
+      "rows": 1876087,
+      "sha256": "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b"
+    },
+    "siafi": {
+      "file": "siafi_dados_ug_2025.csv",
+      "version": "2025",
+      "sha256": "ee2064fb5e0ce5e729365e1a1f2d80f92a55a659da8160cddd10db7f438c0634"
+    }
+  },
+  "expected_logical_tables": 73,
+  "geography_baseline": {
+    "dimension_rows": 49552,
+    "cpgf_distinct_ugs": 2153,
+    "direct_matches": 2148,
+    "manual_complements": 5,
+    "coverage_pct": 100.0,
+    "transaction_rows": 405,
+    "transaction_value_brl": 506719563.42,
+    "transaction_records": 1506714,
+    "extract_rows": 378,
+    "extract_value_brl": 976936749.90,
+    "extract_records": 1876065,
+    "observable_value_brl": 506719563.42,
+    "sigilous_value_brl": 470219284.18,
+    "observable_records": 1506714,
+    "sigilous_records": 369355,
+    "dashboard_long_rows": 6615,
+    "metric_count": 17
+  },
+  "canonical_build": {
+    "run_id": 31861481742,
+    "execution_head_sha": "e91ccb099122411cfb10ec10d0c27e7a71203cad",
+    "conclusion": "success",
+    "logical_tables": 73,
+    "bundle_validation": "PASS",
+    "artifact_id": 9240769851,
+    "artifact_name": "serving-manifest-1.5.0",
+    "artifact_digest": "sha256:5e3c242390bd5d288ee027c2fa4e4242698063c224ae85a4bf29f176bc26511c",
+    "artifact_size_bytes": 6898
+  },
+  "release_validation": {
+    "workflow": "serving-publish-release",
+    "run_id": 31861802930,
+    "execution_head_sha": "1425b59a97ce6b37b5c8d10b6ebcc294412c3757",
+    "conclusion": "success",
+    "release_tag": "serving-v1.5.0",
+    "release_id": 370946376,
+    "release_target_commit": "1425b59a97ce6b37b5c8d10b6ebcc294412c3757",
+    "archive_asset_id": 515268439,
+    "archive_size_bytes": 13751617,
+    "archive_sha256": "c472c299223c458618d1142816cd3cf68ece657c6cc563ce053455164765cbff",
+    "remote_bootstrap": "DOWNLOADED_VALID",
+    "remote_bundle_validation": "PASS",
+    "offline_reuse": "LOCAL_VALID",
+    "offline_bundle_validation": "PASS",
+    "evidence_artifact_id": 9240867605,
+    "evidence_artifact_digest": "sha256:bd32e2f28da0c23bfb1193e593e7bee9f95e54f2c5d5ef3922a3e7218b677cf0"
+  },
+  "note": "O Serving 1.5.0 porta para produção a Geo 1.1.0 já congelada. As validações canônica e de distribuição reproduziram 73 objetos lógicos sem alterar T01–T09 ou o Motor/Governança 1.3.2."
+}
