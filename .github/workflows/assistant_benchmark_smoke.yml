@@ -1,0 +1,56 @@
+name: assistant-benchmark-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/assistant-benchmark-v1.0.0
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Evaluate governed benchmark baseline
+        run: |
+          python scripts/evaluate_assistant_benchmark.py --output benchmark_routing.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path("benchmark_routing.json").read_text(encoding="utf-8"))
+          summary = payload["routing"]["summary"]
+          validation = payload["catalog_validation"]
+          assert validation["status"] == "PASS"
+          assert validation["cases"] == 50
+          assert validation["knowledge_cases"] == 29
+          assert validation["serving_cases"] == 17
+          assert validation["freshness_sensitive_cases"] == 6
+          assert summary["cases"] == 50
+          print("ASSISTANT BENCHMARK 1.0.0: PASS")
+          print(json.dumps(summary, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload benchmark baseline
+        uses: actions/upload-artifact@v4
+        with:
+          name: assistant-benchmark-routing-baseline
+          path: benchmark_routing.json
+          if-no-files-found: error
+          retention-days: 14
