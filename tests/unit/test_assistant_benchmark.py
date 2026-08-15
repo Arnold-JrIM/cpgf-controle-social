@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-from types import SimpleNamespace
-
 from cpgf import benchmark as assistant_benchmark
 
 
@@ -48,12 +44,17 @@ def test_router_baseline_is_measurable_without_changing_router():
     assert summary["actual_route_counts"]
 
 
+class FakeHit:
+    def __init__(self, document_id: str) -> None:
+        self.document_id = document_id
+
+
 class FakeRetriever:
     def search(self, query: str, *, limit: int = 5, **filters: object) -> list[object]:
         if "suprimento de fundos" in query.lower():
             return [
-                SimpleNamespace(document_id="lei-4320-1964"),
-                SimpleNamespace(document_id="decreto-93872-1986"),
+                FakeHit("lei-4320-1964"),
+                FakeHit("decreto-93872-1986"),
             ][:limit]
         return []
 
