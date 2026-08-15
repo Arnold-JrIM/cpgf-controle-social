@@ -1,0 +1,56 @@
+name: assistant-router-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/assistant-router-v1.0.0
+
+permissions:
+  contents: read
+
+jobs:
+  router:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Evaluate frozen benchmark with Router 1.0.0
+        run: |
+          python scripts/evaluate_assistant_benchmark.py --output assistant_router_v1_0_0.json
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          benchmark = Path("data/benchmarks/assistant_v1_0_0.csv")
+          payload = json.loads(Path("assistant_router_v1_0_0.json").read_text(encoding="utf-8"))
+          summary = payload["routing"]["summary"]
+          assert payload["benchmark_version"] == "1.0.0"
+          assert summary["cases"] == 50
+          assert summary["supported_target_cases"] == 50
+          assert summary["accuracy_all"] >= 0.90
+          print("ASSISTANT ROUTER 1.0.0: PASS")
+          print("benchmark_sha256:", hashlib.sha256(benchmark.read_bytes()).hexdigest())
+          print(json.dumps(summary, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload router evaluation
+        uses: actions/upload-artifact@v4
+        with:
+          name: assistant-router-v1.0.0-evaluation
+          path: assistant_router_v1_0_0.json
+          if-no-files-found: error
+          retention-days: 14
