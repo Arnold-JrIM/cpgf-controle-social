@@ -35,58 +35,59 @@ st.dataframe(tool_catalog(), width="stretch", hide_index=True)
 
 st.markdown(
     f"""
-    ### Camadas de evidência e avaliação preparadas
+    ### Camadas de evidência e conjuntos de avaliação
 
     - **Serving 1.5.0** — dados e sinais analíticos materializados, somente leitura;
     - **Knowledge {KNOWLEDGE_VERSION}** — corpus governado para conceitos, normas e literatura;
-    - **Router {ROUTER_VERSION}** — distingue a intenção da pergunta das camadas de evidência necessárias;
+    - **Router {ROUTER_VERSION}** — distingue intenção da pergunta e camadas de evidência necessárias;
     - **`knowledge`** — rota para perguntas conceituais e normativas;
-    - **`composite`** — rota reservada a perguntas que exigem combinar mais de uma camada, como dado analítico
-      e interpretação metodológica ou normativa;
+    - **`composite`** — rota para perguntas que exigem combinar camadas, sem autorizar conclusão categórica;
     - **Benchmark {BENCHMARK_VERSION}** — 50 perguntas usadas como referência de desenvolvimento;
-    - **Router Holdout {ROUTER_HOLDOUT_VERSION}** — 40 perguntas congeladas antes da primeira medição do
-      Router 1.0.0, sem repetição exata das perguntas do benchmark de desenvolvimento;
+    - **Router Holdout {ROUTER_HOLDOUT_VERSION}** — 40 perguntas originalmente congeladas antes da primeira
+      medição do Router 1.0.0;
     - **LLM** — ainda não chamado nesta versão.
 
-    ### Desenvolvimento × generalização observada
+    ### O que aprendemos com o Router 1.0.0
 
-    - a baseline anterior ao Router 1.0.0 era de 22/50 rotas exatas (**44%**);
-    - após o ajuste, o Router 1.0.0 direcionou corretamente 50/50 casos do benchmark de desenvolvimento
-      (**100% in-sample**);
-    - no holdout interno não usado naquele ajuste, o mesmo Router 1.0.0 acertou 19/40 rotas (**47,5%**);
-    - `trails` e `suppliers` tiveram 100% no holdout e `knowledge`, 87,5%; por outro lado,
-      `methodology` ficou em 16,7%, `overview` e `composite` em 25%, e `territorial`/`ugs` em 0%;
-    - a diferença revela fragilidade de generalização das regras atuais, sobretudo dependência de formas
-      lexicais específicas e da precedência entre classificadores;
-    - o holdout é interno ao projeto e não representa estimativa de acurácia de produção nem validação externa.
+    - antes do Router 1.0.0, a baseline era de 22/50 rotas exatas (**44%**);
+    - o Router 1.0.0 alcançou 50/50 no benchmark de desenvolvimento (**100% in-sample**);
+    - na primeira aplicação ao holdout então não visto, o Router 1.0.0 obteve 19/40 (**47,5%**);
+    - o resultado revelou dependência excessiva de formulações lexicais específicas, principalmente nas rotas
+      `methodology`, `overview`, `territorial`, `ugs` e `composite`.
+
+    ### Router {ROUTER_VERSION}: regressão conhecida, não nova generalização
+
+    - o Router 1.1.0 foi ajustado usando os padrões de erro observados após aquela primeira medição;
+    - por isso, o Router Holdout {ROUTER_HOLDOUT_VERSION} deixou de ser conjunto não visto para esta versão;
+    - no benchmark de desenvolvimento, o Router 1.1.0 preserva 50/50 rotas exatas;
+    - no conjunto de regressão conhecido de 40 perguntas, o Router 1.1.0 alcança 40/40;
+    - **esse 40/40 não estima generalização nem acurácia de produção**: apenas verifica que os padrões conhecidos
+      foram incorporados sem quebrar o contrato anterior;
+    - uma avaliação fora da amostra do Router 1.1.0 exige um **novo holdout congelado antes da medição**.
 
     ### Governança do roteamento e da evidência
 
-    - o Router 1.0.0 não foi alterado depois de observados os erros do holdout neste incremento;
-    - este holdout poderá servir como regressão de versões futuras, mas deixará de ser conjunto não visto se
-      seus erros forem usados para ajustar o roteador;
-    - uma versão futura ajustada com base nesses erros deverá ser avaliada em **novo conjunto não visto**;
-    - rota e fonte de evidência são contratos diferentes: uma explicação de T01–T09 pode permanecer
-      `methodology` e ainda exigir apoio do Knowledge;
-    - consultas quantitativas permanecem vinculadas ao Serving, sem SQL livre;
-    - perguntas conceituais/normativas usam Knowledge e não recomputam sinais analíticos;
-    - perguntas compostas não autorizam conclusões categóricas: sinais continuam sendo triagem, não confirmação
-      automática de irregularidade;
+    - as 50 perguntas do benchmark e as 40 perguntas do holdout 1.0.0 permanecem imutáveis;
+    - consultas quantitativas permanecem vinculadas ao Serving e não habilitam SQL livre;
+    - perguntas conceituais/normativas usam Knowledge sem recomputar sinais analíticos;
+    - explicações de T01–T09 podem combinar metodologia e Knowledge, mas os sinais continuam sendo triagem;
+    - divergência de Benford, proximidade de limite, concentração, repetição ou compra em fim de semana não
+      constituem, isoladamente, confirmação automática de fraude ou irregularidade;
     - nenhuma rota executa ferramenta ou chama LLM automaticamente nesta versão.
     """
 )
 
 st.info(
-    "Próxima etapa: evoluir o Router para uma versão posterior usando o holdout 1.0.0 apenas como diagnóstico "
-    "e regressão; a nova versão deverá ser validada em outro conjunto não visto. Em paralelo, permanece prevista "
-    "a avaliação lexical, semântica e híbrida no corpus local real."
+    "Próxima etapa: congelar um novo conjunto não visto e medir o Router 1.1.0 sem novos ajustes. "
+    "Só depois dessa medição o novo conjunto poderá ser usado para diagnóstico. A avaliação lexical, "
+    "semântica e híbrida do Knowledge permanece uma etapa independente."
 )
 
 st.markdown(
     """
     <div class="cpgf-callout">
     O modelo de linguagem será uma camada explicativa. Dados analíticos, documentos, índice vetorial,
-    roteamento, benchmark, holdout e proveniência permanecem em contratos independentes e versionados.
+    roteamento, benchmark, holdouts e proveniência permanecem em contratos independentes e versionados.
     </div>
     """,
     unsafe_allow_html=True,
