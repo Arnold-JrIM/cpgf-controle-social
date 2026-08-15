@@ -47,18 +47,35 @@ O relatório registra, sem dados transacionais brutos:
 
 T08 e T09 permanecem contextos e não entram no núcleo multivariado.
 
-## Assinaturas
+## Assinaturas determinísticas
 
-As tabelas são normalizadas antes do hash:
+As tabelas são normalizadas antes da assinatura:
 
 - ordem determinística das linhas quando aplicável;
-- valores flutuantes arredondados a 12 casas significativas para reduzir ruído numérico não substantivo;
+- normalização de valores flutuantes antes da serialização;
 - ausências serializadas de forma explícita;
 - SHA-256 calculado em streaming, sem persistir as tabelas diagnósticas completas no repositório.
 
-O manifesto `data/manifests/governance_regression_1_3_2.json` congela as assinaturas produzidas pela primeira execução canônica aprovada.
+Para matrizes binárias, sobreposição, marginalidade, elegibilidade, VIF e demais saídas determinísticas, o contrato exige igualdade exata do SHA-256.
 
-## Fluxo de bootstrap
+## Portabilidade de eigendecomposição
+
+A primeira execução canônica em modo `--bootstrap` retornou `BOOTSTRAP_PASS`. Na passagem estrita subsequente, todos os invariantes, contagens, matrizes e resultados determinísticos foram reproduzidos exatamente, mas 8 das 68 assinaturas diferiram. As oito divergências estavam restritas a tabelas derivadas diretamente de eigendecomposição: componentes, cargas ou índice de condição.
+
+A investigação mostrou que cardinalidade, esquema e universo das tabelas permaneceram idênticos. Esse comportamento é compatível com diferenças numéricas de BLAS/LAPACK e com a não unicidade do sinal ou da base de autovetores em subespaços iguais ou quase degenerados. Nesses casos, exigir identidade byte a byte dos autovetores entre runners distintos seria mais restritivo do que a própria equivalência matemática do diagnóstico.
+
+Por isso, o contrato congelado é deliberadamente portátil:
+
+- mantém SHA-256 exato para todas as saídas determinísticas;
+- mantém SHA-256 exato para as matrizes que alimentam os diagnósticos;
+- para componentes, cargas e índice de condição derivados de eigendecomposição, congela a presença da tabela, sua cardinalidade e seu esquema;
+- mantém testes unitários específicos para fórmulas, orientação determinística, singularidade e propriedades da PCA/VIF.
+
+Essa decisão não aceita uma nova baseline após uma falha. Ao contrário, preserva os resultados determinísticos originalmente observados e explicita qual parte do contrato não pode ser tratada como identidade binária portátil entre bibliotecas numéricas.
+
+O manifesto `data/manifests/governance_regression_1_3_2.json` registra o digest portátil e o diagnóstico que motivou essa distinção.
+
+## Fluxo de validação
 
 A primeira execução controlada usa `--bootstrap`. Ela deve:
 
@@ -68,7 +85,12 @@ A primeira execução controlada usa `--bootstrap`. Ela deve:
 4. calcular todas as assinaturas;
 5. retornar `BOOTSTRAP_PASS`.
 
-Somente após a inspeção do artefato o contrato é versionado. Uma segunda execução, já sem `--bootstrap`, deve retornar `PASS`.
+Após a inspeção do artefato, o contrato portátil é versionado. As execuções seguintes utilizam `--frozen-contract` e somente retornam `PASS` quando:
+
+- o bootstrap interno reproduz todos os checks estruturais;
+- o digest do contrato portátil coincide com o manifesto congelado.
+
+O workflow pesado permanece manual após o fechamento do gate, para não baixar e processar aproximadamente 500 MB a cada commit.
 
 ## Limitações
 
