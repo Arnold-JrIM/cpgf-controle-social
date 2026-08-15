@@ -55,6 +55,8 @@ Cada Parquet recebe metadados com:
 
 O manifesto também registra as versões de preparação, regras, motor e serving, além da proveniência do input e do resultado da validação canônica.
 
+O contrato de proveniência em `data/manifests/serving_1_4_0_contract.json` foi congelado a partir do primeiro build canônico aprovado. A execução `31857600533`, no commit `c9cceef5d645ce26ef833542c1e884b31f6f1a33`, concluiu com sucesso e gerou o artefato `serving-manifest-1.4.0` (ID `9239587655`, digest `sha256:7331a5c3252107e929cee452b016b443c76e1d2f250ea8ba7f4b429a96cf12f7`).
+
 ## DuckDB
 
 O catálogo DuckDB é autocontido. Para cada Parquet é criada:
@@ -101,6 +103,8 @@ python scripts/build_serving.py \
   --output-dir tmp/serving \
   --allow-noncanonical
 ```
+
+O workflow pesado `.github/workflows/serving_build_canonical.yml` permanece disponível apenas por `workflow_dispatch`, evitando recomputação do snapshot integral a cada `push` ou Pull Request.
 
 ## Limites desta etapa
 
