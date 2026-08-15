@@ -19,6 +19,8 @@ data/interim/
 data/processed/
 data/outputs/
 data/cache/
+data/knowledge/sources/
+data/knowledge/processed/
 *.duckdb
 *.db
 *.sqlite*
