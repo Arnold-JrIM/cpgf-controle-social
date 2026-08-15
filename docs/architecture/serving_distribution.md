@@ -12,6 +12,10 @@ O bundle oficial é publicado como GitHub Release versionada:
 - arquivo: `cpgf-serving-1.4.0.tar.gz`;
 - checksum: `cpgf-serving-1.4.0.tar.gz.sha256`.
 
+A publicação canônica inicial foi concluída com `PASS` no workflow `serving-publish-release`, run `31858520627`. A tag aponta para o merge do PR #20 na `main`, commit `b8066d72b87f5914cb8eb8cabc2cde6f0de990d8`. O arquivo publicado possui 12.221.316 bytes e SHA-256 `70f046a833ca76151a5d8298da395ffcae9a279c4dc25bd312e099de5014c3de`.
+
+A proveniência completa foi congelada em `data/manifests/serving_distribution_1_4_0.json`.
+
 A release é produzida por workflow manual a partir da `main`. O workflow baixa novamente o snapshot canônico, executa `scripts/build_serving.py`, valida o bundle, empacota o diretório íntegro e publica o arquivo acompanhado de seu SHA-256.
 
 A release não substitui o contrato congelado no repositório. Ela é apenas o meio persistente de transportar os resultados já materializados e validados.
@@ -76,6 +80,8 @@ CPGF_SERVING_OFFLINE=1 python scripts/bootstrap_serving.py
 O workflow `serving-publish-release` é deliberadamente manual depois da validação inicial. Ele deve ser executado quando uma nova versão do serving for congelada ou quando for necessário republicar exatamente a mesma versão materializada.
 
 A publicação usa a `main` como alvo da tag e substitui os assets de mesmo nome de forma explícita, mantendo a URL de consumo estável para a aplicação.
+
+A validação inicial incluiu dois smoke tests no próprio runner: download remoto da release recém-publicada com verificação de checksum e integridade, seguido de reutilização do bundle em modo offline. Ambos terminaram com `PASS`.
 
 ## Salvaguardas
 
