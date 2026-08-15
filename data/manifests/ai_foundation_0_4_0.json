@@ -1,5 +1,5 @@
 {
-  "status": "PENDING_VALIDATION",
+  "status": "FROZEN_FROM_REAL_SERVING_PASS",
   "app_version": "0.4.0-dev",
   "serving_version": "1.5.0",
   "scope": "secure_read_only_ai_foundation",
@@ -22,5 +22,35 @@
     "structured_arguments",
     "no_automatic_fraud_or_irregularity_conclusion",
     "no_credentials_in_agent_state"
-  ]
+  ],
+  "validation": {
+    "functional_commit": "d9b9eb9657fcb1f316bc29fc2546665c11a9e53b",
+    "tests_run_id": 31889983545,
+    "python_3_11": "PASS",
+    "python_3_12": "PASS",
+    "ruff": "PASS",
+    "pytest": "PASS",
+    "real_serving_smoke_run_id": 31889983585,
+    "serving_bootstrap": "DOWNLOADED_VALID_PASS",
+    "offline_serving_reuse": "LOCAL_VALID",
+    "overview_ugs_2025": 1185,
+    "territorial_ufs_2025": 27,
+    "trail_prevalence_rows": 9,
+    "free_sql_rejection": "PASS",
+    "llm_called": false,
+    "assistant_page": "PASS"
+  },
+  "validation_history": {
+    "initial_commit": "c917fc69a8f04e7935c518fe0faa97634f79930b",
+    "initial_smoke_run_id": 31889851722,
+    "initial_smoke": "PASS",
+    "initial_ci_run_id": 31889851714,
+    "initial_ci": "FAIL_VERSION_ASSERTION_ONLY",
+    "version_contract_fix_commit": "17f861e5f4f3bded59a0e535d8c49b68b1788204",
+    "post_fix_tests_run_id": 31889908092,
+    "post_fix_tests": "PASS",
+    "post_fix_smoke_run_id": 31889908087,
+    "post_fix_smoke": "PASS"
+  },
+  "workflow_policy": "workflow_dispatch_only"
 }

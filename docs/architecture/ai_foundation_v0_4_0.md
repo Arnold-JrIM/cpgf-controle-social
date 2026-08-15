@@ -63,6 +63,23 @@ A futura camada LLM poderá substituir ou complementar esse roteamento sem ampli
 - alteração/recalibração das trilhas;
 - confirmação automática de fraude ou irregularidade.
 
-## Gate
+## Gate de validação
 
-A validação ordinária usa Ruff + pytest em Python 3.11 e 3.12. Um smoke temporário de branch baixa a release pública do Serving 1.5.0 e executa as ferramentas contra o DuckDB real em modo read-only. Após o PASS, o workflow remoto deve voltar a `workflow_dispatch`.
+O commit funcional `d9b9eb9657fcb1f316bc29fc2546665c11a9e53b` foi validado por duas superfícies independentes.
+
+O workflow ordinário `tests`, run `31889983545`, concluiu com sucesso em Python 3.11 e 3.12, incluindo Ruff e 127 testes. O smoke `ai-foundation-smoke-release`, run `31889983585`, baixou e validou a release pública do Serving 1.5.0, reabriu o bundle em modo local/read-only e executou a fundação do agente contra o DuckDB real.
+
+No smoke real:
+
+- bootstrap remoto: `DOWNLOADED_VALID`, validação `PASS`;
+- reutilização local: `LOCAL_VALID`;
+- visão geral de 2025: 1.185 UGs;
+- prevalência: nove linhas T01–T09;
+- consulta territorial: 27 UFs;
+- SQL livre: rejeitado por definição;
+- `llm_called`: `false`;
+- página `07_Assistente_IA.py`: PASS em `AppTest`.
+
+A primeira execução de CI do commit inicial falhou exclusivamente porque o teste de versão ainda esperava `APP_VERSION = 0.3.0-dev`. A implementação e o primeiro smoke real já haviam passado. O contrato de versão foi atualizado para `0.4.0-dev`, e as execuções posteriores passaram integralmente. A ocorrência permanece documentada para preservar a trilha de validação.
+
+Após o gate funcional, o workflow remoto volta a ser somente manual (`workflow_dispatch`). O CI ordinário permanece automático.

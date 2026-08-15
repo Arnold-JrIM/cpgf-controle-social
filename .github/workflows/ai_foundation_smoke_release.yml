@@ -2,9 +2,6 @@ name: ai-foundation-smoke-release
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/ai-foundation-v0.4.0
 
 permissions:
   contents: read
