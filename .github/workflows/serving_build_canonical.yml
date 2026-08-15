@@ -2,9 +2,6 @@ name: serving-build-canonical
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/geography-serving-v1.5.0
 
 permissions:
   contents: read

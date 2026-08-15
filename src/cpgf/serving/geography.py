@@ -5,11 +5,10 @@ from pathlib import Path
 
 from cpgf.geography.aggregates import build_geographic_aggregates, validate_geographic_baseline
 from cpgf.geography.ug_dimension import (
-    GEO_VERSION,
     build_ug_geographic_dimension,
-    sha256_file as geo_sha256_file,
     validate_cpgf_geographic_coverage,
 )
+from cpgf.geography.ug_dimension import sha256_file as geo_sha256_file
 from cpgf.governance.governance_regression import _primary_outputs
 from cpgf.governance.matrices import build_diagnostic_matrices
 from cpgf.governance.regression import sha256_file
@@ -20,7 +19,13 @@ from cpgf.serving.materialize import (
     persist_serving_tables,
     validate_canonical_serving_inputs,
 )
-from cpgf.version import MOTOR_VERSION, PREPARATION_VERSION, RULES_VERSION, SERVING_VERSION
+from cpgf.version import (
+    GEO_VERSION,
+    MOTOR_VERSION,
+    PREPARATION_VERSION,
+    RULES_VERSION,
+    SERVING_VERSION,
+)
 
 
 def _complete(frame):

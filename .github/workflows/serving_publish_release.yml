@@ -2,6 +2,9 @@ name: serving-publish-release
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/geography-serving-v1.5.0
 
 permissions:
   contents: write

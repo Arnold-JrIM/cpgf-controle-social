@@ -1,5 +1,5 @@
 {
-  "status": "PENDING_CANONICAL_BUILD",
+  "status": "CANONICAL_BUILD_PASS_PENDING_RELEASE",
   "serving_version": "1.5.0",
   "source_serving_contract": "data/manifests/serving_1_4_0_contract.json",
   "geo_version": "1.1.0",
@@ -23,9 +23,28 @@
     "manual_complements": 5,
     "coverage_pct": 100.0,
     "transaction_rows": 405,
+    "transaction_value_brl": 506719563.42,
+    "transaction_records": 1506714,
     "extract_rows": 378,
+    "extract_value_brl": 976936749.90,
+    "extract_records": 1876065,
+    "observable_value_brl": 506719563.42,
+    "sigilous_value_brl": 470219284.18,
+    "observable_records": 1506714,
+    "sigilous_records": 369355,
     "dashboard_long_rows": 6615,
     "metric_count": 17
   },
-  "note": "O Serving 1.5.0 porta a Geo 1.1.0 congelada para produção. O contrato será congelado somente após a execução canônica sobre os dois snapshots validados."
+  "canonical_build": {
+    "run_id": 31861481742,
+    "execution_head_sha": "e91ccb099122411cfb10ec10d0c27e7a71203cad",
+    "conclusion": "success",
+    "logical_tables": 73,
+    "bundle_validation": "PASS",
+    "artifact_id": 9240769851,
+    "artifact_name": "serving-manifest-1.5.0",
+    "artifact_digest": "sha256:5e3c242390bd5d288ee027c2fa4e4242698063c224ae85a4bf29f176bc26511c",
+    "artifact_size_bytes": 6898
+  },
+  "note": "A execução canônica 31861481742 reproduziu a Geo 1.1.0 sobre os snapshots congelados e validou 73 objetos lógicos do Serving 1.5.0. O contrato será finalizado após a publicação e o smoke test da release versionada."
 }
