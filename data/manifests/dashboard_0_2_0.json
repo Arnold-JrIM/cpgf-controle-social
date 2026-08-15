@@ -1,0 +1,38 @@
+{
+  "status": "VALIDATED_AGAINST_SERVING_RELEASE",
+  "app_version": "0.2.0-dev",
+  "serving_version": "1.4.0",
+  "serving_release": {
+    "tag": "serving-v1.4.0",
+    "asset": "cpgf-serving-1.4.0.tar.gz",
+    "sha256": "70f046a833ca76151a5d8298da395ffcae9a279c4dc25bd312e099de5014c3de"
+  },
+  "validation": {
+    "unit_ci": {
+      "run_id": 31859768656,
+      "head_sha": "059e70ef55921a137b66818c859c5df6b5edd8b4",
+      "python_3_11": "PASS",
+      "python_3_12": "PASS",
+      "ruff": "PASS",
+      "pytest": "PASS"
+    },
+    "serving_release_smoke": {
+      "run_id": 31859768658,
+      "head_sha": "059e70ef55921a137b66818c859c5df6b5edd8b4",
+      "bootstrap": "PASS",
+      "streamlit_scripts": 8,
+      "result": "PASS"
+    }
+  },
+  "geography": {
+    "map_enabled": false,
+    "reason": "O Serving 1.4.0 ainda não materializa uma dimensão oficial UG para UF/municipio; o dashboard não infere localização a partir do código da UG."
+  },
+  "guardrails": [
+    "Consultas agregadas read-only sobre views autorizadas do Serving 1.4.0.",
+    "Nenhuma recomputação de T01-T09 durante a navegação.",
+    "Nenhum score de risco ou classificação automática de fraude.",
+    "T08 e T09 permanecem contexto no núcleo multivariado da Governança 1.3.2."
+  ],
+  "note": "O primeiro smoke run do harness falhou antes de executar a aplicação por resolução relativa de caminho no AppTest. O harness foi corrigido para caminhos absolutos e os dois smoke runs subsequentes sobre a release oficial passaram; o run final registrado acima também valida a API atual de largura do Streamlit."
+}
