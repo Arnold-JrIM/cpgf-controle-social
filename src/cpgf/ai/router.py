@@ -37,6 +37,7 @@ class RouteDecision(BaseModel):
 
 _TRAIL_RE = re.compile(r"\bt0[1-9]\b")
 _UG_RE = re.compile(r"\bugs?\b")
+_UG_CODE_RE = re.compile(r"\b\d{5,6}\b")
 
 
 def _normalize(text: str) -> str:
@@ -150,6 +151,7 @@ def _is_quantitative_request(text: str) -> bool:
         "quantos ",
         "quantifique",
         "mostre ",
+        "exiba ",
         "liste ",
         "apresente ",
         "quero ver ",
@@ -271,6 +273,16 @@ def _route_methodology(text: str) -> RouteDecision | None:
 def _route_data(text: str) -> RouteDecision | None:
     if not _is_quantitative_request(text):
         return None
+
+    if _mentions_ug(text) and _UG_CODE_RE.search(text) and _contains_any(
+        text,
+        ("quanto ", "valor", "montante", "gastou", "gasto"),
+    ):
+        return _decision(
+            Route.OVERVIEW,
+            "consulta quantitativa sobre valor de UG específica",
+            EvidenceLayer.SERVING,
+        )
 
     territorial_terms = (
         "qual uf",
