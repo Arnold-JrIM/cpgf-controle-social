@@ -6,7 +6,12 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from cpgf.knowledge import LexicalKnowledgeRetriever, build_knowledge_bundle, load_source_catalog, validate_knowledge_bundle
+from cpgf.knowledge import (
+    LexicalKnowledgeRetriever,
+    build_knowledge_bundle,
+    load_source_catalog,
+    validate_knowledge_bundle,
+)
 from cpgf.knowledge.models import DocumentSpec
 
 

@@ -7,7 +7,12 @@ from pathlib import Path
 import pandas as pd
 from streamlit.testing.v1 import AppTest
 
-from cpgf.knowledge import LexicalKnowledgeRetriever, build_knowledge_bundle, load_source_catalog, validate_knowledge_bundle
+from cpgf.knowledge import (
+    LexicalKnowledgeRetriever,
+    build_knowledge_bundle,
+    load_source_catalog,
+    validate_knowledge_bundle,
+)
 
 
 def _synthetic_catalog(root: Path) -> tuple[Path, Path]:
