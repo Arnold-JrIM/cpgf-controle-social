@@ -3,13 +3,13 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 from cpgf.benchmark import (
+    QuestionFamily,
     evaluate_answer_contract,
     evaluate_retrieval,
     evaluate_routing,
     load_benchmark,
     validate_benchmark_against_catalog,
 )
-from cpgf.benchmark.models import QuestionFamily
 
 
 BENCHMARK = "data/benchmarks/assistant_v1_0_0.csv"
