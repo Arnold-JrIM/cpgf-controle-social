@@ -70,7 +70,7 @@ def test_build_validate_and_default_retrieval(tmp_path: Path):
     catalog, sources = _catalog(tmp_path)
     output = tmp_path / "bundle"
     manifest = build_knowledge_bundle(catalog, sources, output, require_all_sources=True, require_text_sources=True)
-    assert manifest["knowledge_version"] == "1.1.0"
+    assert manifest["knowledge_version"] == "1.2.0"
     assert manifest["documents"] == 2
     assert manifest["documents_available"] == 2
     assert manifest["documents_retrieval_default"] == 1

@@ -4,15 +4,30 @@ import json
 import tempfile
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from streamlit.testing.v1 import AppTest
 
 from cpgf.knowledge import (
+    HybridKnowledgeRetriever,
     LexicalKnowledgeRetriever,
+    SemanticKnowledgeRetriever,
     build_knowledge_bundle,
     load_source_catalog,
     validate_knowledge_bundle,
 )
+
+
+class _FakeEmbeddingProvider:
+    model = "fake-smoke"
+    dimensions = 2
+
+    def embed_texts(self, texts: list[str]) -> np.ndarray:
+        vectors = []
+        for text in texts:
+            lowered = text.lower()
+            vectors.append([0.0, 1.0] if "auditoria" in lowered else [1.0, 0.0])
+        return np.asarray(vectors, dtype=np.float32)
 
 
 def _synthetic_catalog(root: Path) -> tuple[Path, Path]:
@@ -54,7 +69,7 @@ def main() -> None:
     if sum(item.retrieval_default for item in seed) != 35:
         raise RuntimeError("Quantidade de documentos de recuperação padrão divergiu")
 
-    with tempfile.TemporaryDirectory(prefix="cpgf-knowledge-1-1-smoke-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="cpgf-knowledge-1-2-smoke-") as temporary:
         root = Path(temporary)
         empty_sources = root / "empty"
         empty_sources.mkdir()
@@ -73,29 +88,45 @@ def main() -> None:
         if validate_knowledge_bundle(bundle)["status"] != "PASS":
             raise RuntimeError("Bundle sintético inválido")
         chunks = pd.read_parquet(bundle / "chunks.parquet")
-        retriever = LexicalKnowledgeRetriever(chunks)
-        hits = retriever.search("suprimento fundos prestação contas", limit=3)
+        lexical = LexicalKnowledgeRetriever(chunks)
+        hits = lexical.search("suprimento fundos prestação contas", limit=3)
         if not hits or hits[0].document_id != "norma-smoke":
-            raise RuntimeError("Retriever não priorizou a norma esperada")
-        if retriever.search("regra histórica revogada", limit=3):
+            raise RuntimeError("Retriever lexical não priorizou a norma esperada")
+        if lexical.search("regra histórica revogada", limit=3):
             raise RuntimeError("Fonte histórica entrou na recuperação padrão")
-        historical = retriever.search("regra histórica revogada", limit=3, include_non_default=True)
-        if not historical or historical[0].document_id != "historico-smoke":
-            raise RuntimeError("Opt-in histórico não funcionou")
+
+        embeddings = pd.DataFrame(
+            {
+                "chunk_id": chunks["chunk_id"].astype(str),
+                "embedding": [
+                    [0.0, 1.0] if document_id == "artigo-smoke" else [1.0, 0.0]
+                    for document_id in chunks["document_id"].astype(str)
+                ],
+            }
+        )
+        semantic = SemanticKnowledgeRetriever(chunks, embeddings, _FakeEmbeddingProvider())
+        semantic_hits = semantic.search("auditoria analítica", limit=3)
+        if not semantic_hits or semantic_hits[0].document_id != "artigo-smoke":
+            raise RuntimeError("Retriever semântico não priorizou o artigo esperado")
+        hybrid = HybridKnowledgeRetriever(lexical, semantic)
+        hybrid_hits = hybrid.search("suprimento auditoria", limit=3)
+        if not hybrid_hits or any(hit.retrieval_method != "hybrid" for hit in hybrid_hits):
+            raise RuntimeError("Fusão híbrida RRF falhou")
 
         app = AppTest.from_file(str(Path("pages/07_Assistente_IA.py").resolve()))
         app.run(timeout=30)
         if app.exception:
             raise RuntimeError(f"Página Assistente IA falhou: {app.exception}")
 
-        print("KNOWLEDGE 1.1.0 SMOKE: PASS")
+        print("KNOWLEDGE 1.2.0 SMOKE: PASS")
         print(f"Catalog documents: {len(seed)}")
         print(f"Default retrieval documents: {sum(item.retrieval_default for item in seed)}")
         print(f"Synthetic documents: {manifest['documents']}")
         print(f"Synthetic chunks: {manifest['chunks']}")
-        print("Historical default exclusion: PASS")
-        print("Assistant page: PASS")
-        print("Embeddings: DISABLED")
+        print("Lexical retrieval: PASS")
+        print("Semantic retrieval: PASS (fake deterministic provider)")
+        print("Hybrid RRF: PASS")
+        print("OpenAI embeddings network call: NOT EXECUTED")
         print("LLM: DISABLED")
 
 

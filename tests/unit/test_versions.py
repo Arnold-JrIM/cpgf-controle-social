@@ -18,4 +18,4 @@ def test_methodology_versions():
     assert MOTOR_VERSION == "1.3.2"
     assert SERVING_VERSION == "1.5.0"
     assert GEO_VERSION == "1.1.0"
-    assert KNOWLEDGE_VERSION == "1.1.0"
+    assert KNOWLEDGE_VERSION == "1.2.0"

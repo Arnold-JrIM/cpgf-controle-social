@@ -1,0 +1,59 @@
+{
+  "version": "1.2.0",
+  "status": "FROZEN_FROM_SYNTHETIC_SMOKE_AND_CI",
+  "base": {
+    "pr27_merge_commit": "78c451e1fb5a78582aeccdd1a8114248e2945f28",
+    "previous_knowledge_version": "1.1.0"
+  },
+  "scope": {
+    "lexical_baseline_preserved": true,
+    "semantic_retrieval": "cosine_similarity",
+    "hybrid_fusion": "reciprocal_rank_fusion",
+    "rrf_k": 60,
+    "external_embedding_provider": "opt_in",
+    "default_embedding_model": "text-embedding-3-small",
+    "default_embedding_dimensions": 768,
+    "real_vector_index_committed": false,
+    "llm_enabled": false
+  },
+  "governance": {
+    "retrieval_default_filter_preserved": true,
+    "scope_filter_preserved": true,
+    "temporal_filter_preserved": true,
+    "source_class_filter_preserved": true,
+    "document_id_filter_preserved": true,
+    "historical_requires_opt_in": true,
+    "semantic_index_bound_to_chunks_sha256": true,
+    "semantic_index_requires_complete_chunk_coverage": true,
+    "index_distribution": "local_not_git",
+    "external_processing_requires_explicit_execution": true,
+    "automatic_fraud_or_irregularity_conclusion": false
+  },
+  "validation": {
+    "retrieval_smoke": {
+      "run_id": 31903761892,
+      "head_sha": "13fb618a1b60333cee13e98382708226084ac846",
+      "conclusion": "success",
+      "lexical_retrieval": "PASS",
+      "semantic_retrieval": "PASS_WITH_DETERMINISTIC_FAKE_PROVIDER",
+      "hybrid_rrf": "PASS",
+      "assistant_page": "PASS",
+      "openai_network_call": false,
+      "llm_call": false
+    },
+    "implementation_ci": {
+      "run_id": 31903914867,
+      "head_sha": "7c79b746d24ec5e72c2ed7343ad10faa794c09ee",
+      "python_311": "success",
+      "python_312": "success",
+      "ruff": "success",
+      "pytest": "success"
+    }
+  },
+  "deferred": {
+    "real_corpus_embedding_generation": true,
+    "lexical_semantic_hybrid_quality_benchmark": true,
+    "llm_rag_conversation": true
+  },
+  "interpretive_safeguard": "O Knowledge 1.2.0 estrutura recuperação documental. A presença ou a posição de uma evidência no ranking não caracteriza fraude, irregularidade ou desconformidade e não substitui validação normativa e humana."
+}
