@@ -1,0 +1,54 @@
+name: router-holdout-v2-smoke
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  holdout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Measure Router 1.1.0 on frozen Holdout 2.0.0
+        run: |
+          python scripts/evaluate_router_holdout_v2.py --output router_holdout_v2_0_0.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path("router_holdout_v2_0_0.json").read_text(encoding="utf-8"))
+          summary = payload["routing"]["summary"]
+          assert payload["holdout_version"] == "2.0.0"
+          assert payload["router_version"] == "1.1.0"
+          assert payload["frozen_before_measurement_commit"] == "5d15ad8f002505b42e9f9d357f55b10c5b3fba62"
+          assert payload["holdout_sha256"] == "df48a03af598e86e84bac797f122404db8135c8b77caf19b7024ca52079a298b"
+          assert payload["question_overlap_exact_with_prior_sets"] == 0
+          assert summary["cases"] == 40
+          assert summary["supported_target_cases"] == 40
+          print("ROUTER HOLDOUT 2.0.0: MEASURED")
+          print(json.dumps(summary, ensure_ascii=False, indent=2))
+          print(json.dumps(payload["diagnostics"], ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload Holdout 2.0.0 evaluation
+        uses: actions/upload-artifact@v4
+        with:
+          name: router-holdout-v2.0.0-evaluation
+          path: router_holdout_v2_0_0.json
+          if-no-files-found: error
+          retention-days: 14

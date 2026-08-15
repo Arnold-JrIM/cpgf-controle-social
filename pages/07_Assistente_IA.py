@@ -5,6 +5,7 @@ from cpgf.dashboard.components import apply_page_style, page_header
 from cpgf.version import (
     BENCHMARK_VERSION,
     KNOWLEDGE_VERSION,
+    ROUTER_HOLDOUT_V2_VERSION,
     ROUTER_HOLDOUT_VERSION,
     ROUTER_VERSION,
 )
@@ -40,34 +41,31 @@ st.markdown(
     - **Serving 1.5.0** — dados e sinais analíticos materializados, somente leitura;
     - **Knowledge {KNOWLEDGE_VERSION}** — corpus governado para conceitos, normas e literatura;
     - **Router {ROUTER_VERSION}** — distingue intenção da pergunta e camadas de evidência necessárias;
-    - **`knowledge`** — rota para perguntas conceituais e normativas;
-    - **`composite`** — rota para perguntas que exigem combinar camadas, sem autorizar conclusão categórica;
-    - **Benchmark {BENCHMARK_VERSION}** — 50 perguntas usadas como referência de desenvolvimento;
-    - **Router Holdout {ROUTER_HOLDOUT_VERSION}** — 40 perguntas originalmente congeladas antes da primeira
-      medição do Router 1.0.0;
+    - **Benchmark {BENCHMARK_VERSION}** — 50 perguntas de desenvolvimento;
+    - **Router Holdout {ROUTER_HOLDOUT_VERSION}** — 40 perguntas usadas para a primeira avaliação do Router 1.0.0
+      e depois convertidas em regressão conhecida do Router 1.1.0;
+    - **Router Holdout {ROUTER_HOLDOUT_V2_VERSION}** — 40 novas perguntas congeladas antes da primeira medição
+      válida do Router 1.1.0;
     - **LLM** — ainda não chamado nesta versão.
 
-    ### O que aprendemos com o Router 1.0.0
+    ### Evidência de generalização do roteamento
 
-    - antes do Router 1.0.0, a baseline era de 22/50 rotas exatas (**44%**);
-    - o Router 1.0.0 alcançou 50/50 no benchmark de desenvolvimento (**100% in-sample**);
-    - na primeira aplicação ao holdout então não visto, o Router 1.0.0 obteve 19/40 (**47,5%**);
-    - o resultado revelou dependência excessiva de formulações lexicais específicas, principalmente nas rotas
-      `methodology`, `overview`, `territorial`, `ugs` e `composite`.
-
-    ### Router {ROUTER_VERSION}: regressão conhecida, não nova generalização
-
-    - o Router 1.1.0 foi ajustado usando os padrões de erro observados após aquela primeira medição;
-    - por isso, o Router Holdout {ROUTER_HOLDOUT_VERSION} deixou de ser conjunto não visto para esta versão;
-    - no benchmark de desenvolvimento, o Router 1.1.0 preserva 50/50 rotas exatas;
-    - no conjunto de regressão conhecido de 40 perguntas, o Router 1.1.0 alcança 40/40;
-    - **esse 40/40 não estima generalização nem acurácia de produção**: apenas verifica que os padrões conhecidos
-      foram incorporados sem quebrar o contrato anterior;
-    - uma avaliação fora da amostra do Router 1.1.0 exige um **novo holdout congelado antes da medição**.
+    - o Router 1.0.0 obteve 19/40 (**47,5%**) no Holdout 1.0.0 quando esse conjunto ainda não havia sido usado
+      para ajuste;
+    - o Router 1.1.0 preservou 50/50 no benchmark de desenvolvimento e 40/40 no antigo conjunto de regressão;
+    - no novo Holdout 2.0.0, não usado no ajuste do Router 1.1.0, foram observadas 23/40 rotas exatas
+      (**57,5%**);
+    - `knowledge`, `trails`, `ugs` e `suppliers` atingiram 100% neste conjunto; `territorial`, 50%;
+      `overview` e `methodology`, 25%; e `composite`, 0%;
+    - a diferença entre 47,5% e 57,5% é favorável, mas os dois holdouts contêm perguntas diferentes e não formam
+      uma comparação pareada nem estimativa formal de ganho de acurácia;
+    - os 17 erros do Holdout 2.0.0 permanecem intocados neste incremento.
 
     ### Governança do roteamento e da evidência
 
-    - as 50 perguntas do benchmark e as 40 perguntas do holdout 1.0.0 permanecem imutáveis;
+    - o Holdout 2.0.0 válido foi congelado antes da primeira execução que alcançou o roteamento;
+    - uma tentativa anterior falhou na validação do esquema antes de qualquer caso ser roteado e não é tratada
+      como medição;
     - consultas quantitativas permanecem vinculadas ao Serving e não habilitam SQL livre;
     - perguntas conceituais/normativas usam Knowledge sem recomputar sinais analíticos;
     - explicações de T01–T09 podem combinar metodologia e Knowledge, mas os sinais continuam sendo triagem;
@@ -78,9 +76,9 @@ st.markdown(
 )
 
 st.info(
-    "Próxima etapa: congelar um novo conjunto não visto e medir o Router 1.1.0 sem novos ajustes. "
-    "Só depois dessa medição o novo conjunto poderá ser usado para diagnóstico. A avaliação lexical, "
-    "semântica e híbrida do Knowledge permanece uma etapa independente."
+    "Próxima etapa de roteamento: usar os erros do Holdout 2.0.0 apenas em uma versão posterior; a partir desse "
+    "momento, ele passará a ser regressão conhecida e uma nova alegação de generalização exigirá outro conjunto. "
+    "Em paralelo, a avaliação lexical, semântica e híbrida do Knowledge permanece independente."
 )
 
 st.markdown(
