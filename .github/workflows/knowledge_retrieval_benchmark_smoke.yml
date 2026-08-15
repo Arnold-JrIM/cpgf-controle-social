@@ -2,9 +2,6 @@ name: knowledge-retrieval-benchmark-smoke
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/knowledge-retrieval-benchmark-v1.0.0
 
 permissions:
   contents: read
