@@ -2,9 +2,6 @@ name: router-holdout-v2-smoke
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/router-holdout-v2.0.0
 
 permissions:
   contents: read
