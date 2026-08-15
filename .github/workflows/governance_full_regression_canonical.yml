@@ -1,6 +1,9 @@
 name: governance-full-regression-canonical
 
 on:
+  push:
+    branches:
+      - test/governance-full-regression-v1.3.2
   workflow_dispatch:
 
 permissions:
@@ -44,13 +47,13 @@ jobs:
           PY
           find data/raw/governance_regression -type f -maxdepth 5 -printf '%p %s bytes\n'
 
-      - name: Execute Governance 1.3.2 bootstrap gate
+      - name: Execute frozen Governance 1.3.2 gate
         run: |
           CSV="$(find data/raw/governance_regression -type f -name 'CPGF_201301_a_202607.csv' | head -n 1)"
           test -n "$CSV"
           python scripts/run_governance_regression.py \
             --input "$CSV" \
-            --bootstrap \
+            --frozen-contract data/manifests/governance_regression_1_3_2.json \
             --output data/outputs/governance_regression_report.json
 
       - name: Print governance regression report
