@@ -36,6 +36,8 @@ class RouteDecision(BaseModel):
 
 
 _TRAIL_RE = re.compile(r"\bt0[1-9]\b")
+_UG_RE = re.compile(r"\bugs?\b")
+_UG_CODE_RE = re.compile(r"\b\d{5,6}\b")
 
 
 def _normalize(text: str) -> str:
@@ -49,6 +51,13 @@ def _contains_any(text: str, terms: tuple[str, ...]) -> bool:
 
 def _trail_tokens(text: str) -> set[str]:
     return set(_TRAIL_RE.findall(text))
+
+
+def _mentions_ug(text: str) -> bool:
+    return bool(_UG_RE.search(text)) or _contains_any(
+        text,
+        ("unidade gestora", "unidades gestoras"),
+    )
 
 
 def _decision(
@@ -65,24 +74,39 @@ def _is_categorical_challenge(text: str) -> bool:
         (
             "prova que",
             "prova fraude",
+            "prova ilegalidade",
+            "comprova ",
+            "comprovado",
+            "comprovada",
             "significa que houve fraude",
             "significa fraude",
             "e irregular",
+            "foi ilegal",
+            "basta para afirmar",
+            "suficiente para concluir",
+            "autoriza concluir",
+            "evidencia conclusiva",
+            "permite acusar",
             "fraudou",
             "fraudador",
             "fraudulento",
             "fraude?",
             "fraude ?",
+            "burlar a regra",
+            "burlar o limite",
         ),
     )
 
 
 def _route_composite(text: str) -> RouteDecision | None:
-    """Identifica perguntas que exigem combinar camadas sem inferir conclusão substantiva."""
+    """Combina camadas quando a pergunta pede dado/sinal e inferência categórica."""
     if not _is_categorical_challenge(text):
         return None
 
-    if "fornecedor" in text and _contains_any(text, ("mais sinais", "topo", "ranking")):
+    if "fornecedor" in text and _contains_any(
+        text,
+        ("mais sinais", "topo", "ranking", "mais aparece", "maior recorrencia"),
+    ):
         return _decision(
             Route.COMPOSITE,
             "ranking analítico combinado com pedido de interpretação categórica",
@@ -91,12 +115,18 @@ def _route_composite(text: str) -> RouteDecision | None:
         )
 
     normative_topics = (
+        "t01",
+        "t05",
+        "t08",
+        "t09",
         "fim de semana",
         "final de semana",
         "fracionamento",
         "lei de benford",
         "benford",
         "limite legal",
+        "perto do limite",
+        "proximidade",
         "fugir do limite",
         "evasao de limite",
     )
@@ -110,16 +140,67 @@ def _route_composite(text: str) -> RouteDecision | None:
     return None
 
 
+def _is_quantitative_request(text: str) -> bool:
+    quantitative_cues = (
+        "qual foi o valor",
+        "qual o valor",
+        "qual o montante",
+        "qual apresentou mais",
+        "quanto ",
+        "quantas ",
+        "quantos ",
+        "quantifique",
+        "mostre ",
+        "exiba ",
+        "liste ",
+        "apresente ",
+        "quero ver ",
+        "quero comparar ",
+        "compare ",
+        "como evoluiram",
+        "trajetoria anual",
+        "evolucao dos gastos",
+        "incidencia",
+        "prevalencia",
+        "ranking",
+        "maior recorrencia",
+        "maior frequencia",
+        "mais sinais",
+        "total desembolsado",
+        "valor total",
+        "montante de despesas",
+        "foi movimentado",
+        "maior valor",
+        "quantidade de alertas",
+        "quantidade de sinais",
+    )
+    return _contains_any(text, quantitative_cues)
+
+
 def _route_methodology(text: str) -> RouteDecision | None:
     trails = _trail_tokens(text)
-    explains_trail = bool(trails) and _contains_any(
-        text,
-        ("como funciona", "como e a trilha", "explique a trilha"),
+    explanation_cues = (
+        "como funciona",
+        "como e a trilha",
+        "explique a trilha",
+        "explique ",
+        "descreva ",
+        "qual regra",
+        "regra operacional",
+        "qual criterio",
+        "criterio aplicado",
+        "de que forma",
+        "qual comportamento",
+        "qual e o raciocinio",
+        "raciocinio da",
+        "por que ",
+        "logica usada",
     )
-    if explains_trail:
+    explains_trail = bool(trails) and _contains_any(text, explanation_cues)
+    if explains_trail and not _is_quantitative_request(text):
         return _decision(
             Route.METHODOLOGY,
-            "pedido de explicação do funcionamento de trilha",
+            "pedido de explicação do funcionamento ou critério de trilha",
             EvidenceLayer.METHODOLOGY,
             EvidenceLayer.KNOWLEDGE,
         )
@@ -131,28 +212,56 @@ def _route_methodology(text: str) -> RouteDecision | None:
             EvidenceLayer.METHODOLOGY,
         )
 
-    if "sobrepos" in text and _contains_any(text, ("trilha", "estatistic")):
+    overlap_cues = (
+        "sobrepos",
+        "quase os mesmos alertas",
+        "alertas muito parecidos",
+        "eliminar uma delas",
+        "excluir uma trilha",
+    )
+    if _contains_any(text, overlap_cues) and _contains_any(
+        text,
+        ("trilha", "alerta", "estatistic"),
+    ):
         return _decision(
             Route.METHODOLOGY,
             "interpretação metodológica de sobreposição entre trilhas",
             EvidenceLayer.METHODOLOGY,
         )
 
-    if _contains_any(text, ("comparar diretamente", "diretamente comparavel")):
+    comparability_cues = (
+        "comparar diretamente",
+        "diretamente comparavel",
+        "anos fechados",
+        "ano incompleto",
+        "ainda incompleto",
+        "periodo parcial",
+        "sem qualquer ressalva",
+    )
+    if _contains_any(text, comparability_cues) and _contains_any(
+        text,
+        ("2026", "periodo", "ano", "anos"),
+    ):
         return _decision(
             Route.METHODOLOGY,
             "pedido de comparabilidade metodológica entre períodos",
             EvidenceLayer.METHODOLOGY,
         )
 
-    if "t03" in trails and _contains_any(text, ("pagamento duplicado", "duplicidade")):
+    if "t03" in trails and _contains_any(
+        text,
+        ("pagamento duplicado", "duplicidade", "coincidencia exata"),
+    ):
         return _decision(
             Route.METHODOLOGY,
             "interpretação do alcance inferencial da T03",
             EvidenceLayer.METHODOLOGY,
         )
 
-    if "t06" in trails and _contains_any(text, ("favorecimento", "favorecido")):
+    if "t06" in trails and _contains_any(
+        text,
+        ("favorecimento", "favorecido", "acusar favorecimento"),
+    ):
         return _decision(
             Route.METHODOLOGY,
             "interpretação do alcance inferencial da T06",
@@ -161,37 +270,32 @@ def _route_methodology(text: str) -> RouteDecision | None:
     return None
 
 
-def _is_data_query(text: str) -> bool:
-    prefixes = (
-        "qual foi o valor",
-        "qual uf",
-        "quais ug",
-        "quais forneced",
-        "quais trilhas",
-        "quantas",
-        "quantos",
-        "quanto ",
-        "como evoluiram",
-        "compare a prevalencia",
-    )
-    return text.startswith(prefixes)
-
-
 def _route_data(text: str) -> RouteDecision | None:
-    if not _is_data_query(text):
+    if not _is_quantitative_request(text):
         return None
 
-    if _contains_any(text, ("qual foi o valor", "quantas operacoes", "quanto ", "como evoluiram")):
+    if _mentions_ug(text) and _UG_CODE_RE.search(text) and _contains_any(
+        text,
+        ("quanto ", "valor", "montante", "gastou", "gasto"),
+    ):
         return _decision(
             Route.OVERVIEW,
-            "consulta quantitativa de visão geral",
+            "consulta quantitativa sobre valor de UG específica",
             EvidenceLayer.SERVING,
         )
 
-    if _contains_any(
-        text,
-        ("qual uf", " por uf", "estado", "territorial", "sao paulo", "mapa", "regiao"),
-    ):
+    territorial_terms = (
+        "qual uf",
+        " por uf",
+        "estado",
+        "territorial",
+        "sao paulo",
+        "mapa",
+        "regiao",
+        "unidade da federacao",
+        "unidades da federacao",
+    )
+    if _contains_any(text, territorial_terms):
         return _decision(
             Route.TERRITORIAL,
             "consulta quantitativa territorial",
@@ -205,20 +309,27 @@ def _route_data(text: str) -> RouteDecision | None:
             EvidenceLayer.SERVING,
         )
 
-    if re.search(r"\bugs?\b", text) or "unidade gestora" in text:
+    if _mentions_ug(text):
         return _decision(
             Route.UGS,
             "consulta quantitativa por Unidade Gestora",
             EvidenceLayer.SERVING,
         )
 
-    if _trail_tokens(text) or _contains_any(text, ("trilha", "prevalencia", "sinais")):
+    if _trail_tokens(text) or _contains_any(
+        text,
+        ("trilha", "prevalencia", "incidencia", "sinais", "alertas"),
+    ):
         layers = (EvidenceLayer.SERVING,)
-        if "como devo interpretar" in text:
+        if _contains_any(text, ("como devo interpretar", "explique como ler")):
             layers = (EvidenceLayer.SERVING, EvidenceLayer.METHODOLOGY)
         return _decision(Route.TRAILS, "consulta quantitativa de trilhas/sinais", *layers)
 
-    return _decision(Route.OVERVIEW, "consulta quantitativa geral", EvidenceLayer.SERVING)
+    return _decision(
+        Route.OVERVIEW,
+        "consulta quantitativa de visão geral",
+        EvidenceLayer.SERVING,
+    )
 
 
 def _route_knowledge(text: str) -> RouteDecision | None:
@@ -226,10 +337,16 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "o que e ",
         "quem e ",
         "quem pode ",
+        "quem responde ",
+        "para que serve ",
+        "qual e o papel ",
         "em que situacoes",
+        "em quais hipoteses",
         "posso ",
         "e permitido ",
         "e possivel ",
+        "ha alguma vedacao",
+        "quando uma sequencia",
         "uma despesa ",
         "despesas repetidas",
         "um servidor ",
@@ -237,19 +354,24 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "os valores de limite",
         "o tcu ",
         "como funciona a prestacao",
+        "explique em termos simples",
+        "a retirada de dinheiro",
     )
     domain_terms = (
         "cpgf",
+        "cartao de pagamento do governo federal",
+        "cartao corporativo federal",
         "suprimento de fundos",
         "agente suprido",
         "ordenador de despesa",
         "prestacao de contas",
-        "unidade gestora",
         "saque",
+        "dinheiro em especie",
         "fracionamento",
         "material permanente",
         "cartilha",
         "fiscalizacao continua",
+        "parcelar uma aquisicao",
     )
     if text.startswith(conceptual_starts) or _contains_any(text, domain_terms):
         return _decision(
@@ -261,16 +383,30 @@ def _route_knowledge(text: str) -> RouteDecision | None:
 
 
 def _route_analytical_fallback(text: str) -> RouteDecision | None:
-    """Preserva comandos analíticos autorizados que não usam a forma interrogativa do benchmark."""
-    if _contains_any(text, ("mapa", "territorial", "estado", "regiao", " por uf")):
+    """Preserva comandos analíticos autorizados fora das formas quantitativas principais."""
+    if _contains_any(
+        text,
+        (
+            "mapa",
+            "territorial",
+            "estado",
+            "regiao",
+            " por uf",
+            "unidade da federacao",
+            "unidades da federacao",
+        ),
+    ):
         return _decision(Route.TERRITORIAL, "termos territoriais", EvidenceLayer.SERVING)
     if "fornecedor" in text or "favorecido" in text:
         return _decision(Route.SUPPLIERS, "termos de fornecedor", EvidenceLayer.SERVING)
-    if re.search(r"\bugs?\b", text):
+    if _mentions_ug(text):
         return _decision(Route.UGS, "termos de Unidade Gestora", EvidenceLayer.SERVING)
     if _trail_tokens(text) or _contains_any(text, ("trilha", "sinal", "alerta")):
         return _decision(Route.TRAILS, "termos de trilhas/sinais", EvidenceLayer.SERVING)
-    if _contains_any(text, ("gasto", "despesa", "valor", "operacao", "resumo", "visao geral")):
+    if _contains_any(
+        text,
+        ("gasto", "despesa", "valor", "operacao", "resumo", "visao geral", "montante"),
+    ):
         return _decision(Route.OVERVIEW, "termos de visão geral", EvidenceLayer.SERVING)
     return None
 
