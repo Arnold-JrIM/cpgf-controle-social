@@ -164,4 +164,4 @@ class SearchHit(BaseModel):
     temporal_status: TemporalStatus
     retrieval_default: bool
     source_url: str | None = None
-    retrieval_method: Literal["lexical"] = "lexical"
+    retrieval_method: Literal["lexical", "semantic", "hybrid"] = "lexical"
