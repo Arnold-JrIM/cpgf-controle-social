@@ -2,9 +2,6 @@ name: assistant-router-smoke
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/assistant-router-v1.0.0
 
 permissions:
   contents: read
@@ -39,6 +36,7 @@ jobs:
           payload = json.loads(Path("assistant_router_v1_0_0.json").read_text(encoding="utf-8"))
           summary = payload["routing"]["summary"]
           assert payload["benchmark_version"] == "1.0.0"
+          assert payload["router_version"] == "1.0.0"
           assert summary["cases"] == 50
           assert summary["supported_target_cases"] == 50
           assert summary["accuracy_all"] >= 0.90
