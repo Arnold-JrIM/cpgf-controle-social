@@ -13,9 +13,9 @@ from cpgf.knowledge import (
     load_source_catalog,
     validate_knowledge_bundle,
 )
+from cpgf.knowledge.loader import load_document
 from cpgf.knowledge.models import DocumentSpec
 from cpgf.knowledge.splitter import split_sections
-from cpgf.knowledge.loader import load_document
 
 
 def _catalog(tmp_path: Path) -> tuple[Path, Path]:
