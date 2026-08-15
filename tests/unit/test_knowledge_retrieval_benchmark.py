@@ -6,6 +6,7 @@ from pathlib import Path
 
 from cpgf.benchmark import (
     RetrievalCategory,
+    benchmark_sha256,
     evaluate_retrieval_benchmark,
     load_retrieval_benchmark,
     validate_retrieval_benchmark_against_catalog,
@@ -14,6 +15,7 @@ from cpgf.knowledge import load_source_catalog
 
 BENCHMARK = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 CATALOG = Path("data/knowledge/source_catalog.json")
+EXPECTED_SHA256 = "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777"
 
 
 @dataclass(frozen=True)
@@ -37,6 +39,7 @@ def test_retrieval_benchmark_is_governed_and_catalog_resolvable():
     suite = load_retrieval_benchmark(BENCHMARK)
     validation = validate_retrieval_benchmark_against_catalog(suite, CATALOG)
 
+    assert benchmark_sha256(BENCHMARK) == EXPECTED_SHA256
     assert len(suite.cases) == 30
     assert Counter(case.category for case in suite.cases) == Counter(
         {
