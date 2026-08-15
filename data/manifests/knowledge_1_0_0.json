@@ -1,5 +1,5 @@
 {
-  "status": "SCHEMA_AND_SEED_CATALOG_READY",
+  "status": "FROZEN_SCHEMA_PIPELINE_AND_SEED_FROM_PASS",
   "knowledge_version": "1.0.0",
   "app_version": "0.5.0-dev",
   "source_catalog": "data/knowledge/source_catalog.json",
@@ -12,7 +12,14 @@
     "embeddings": false,
     "llm": false
   },
-  "source_classes": ["normative", "institutional", "scientific", "academic", "project", "web"],
+  "source_classes": [
+    "normative",
+    "institutional",
+    "scientific",
+    "academic",
+    "project",
+    "web"
+  ],
   "authority_levels": [
     "primary_normative",
     "official_institutional",
@@ -22,7 +29,34 @@
     "project_controlled",
     "web_unclassified"
   ],
-  "distribution_policies": ["public_official", "open_license", "metadata_only", "project_owned"],
+  "distribution_policies": [
+    "public_official",
+    "open_license",
+    "metadata_only",
+    "project_owned"
+  ],
   "retrieval_baseline": "deterministic_lexical",
-  "note": "O PR #26 congela o contrato do corpus e seu pipeline reprodutível. O índice vetorial/embeddings e a chamada a LLM permanecem fora do escopo."
+  "validation": {
+    "functional_head_sha": "c1bda08276616ceefdb4357c520d5f5a55b11b15",
+    "tests_run_id": 31891558424,
+    "tests_python_3_11": "PASS",
+    "tests_python_3_12": "PASS",
+    "smoke_run_id": 31891558351,
+    "smoke_status": "PASS",
+    "seed_catalog_documents": 7,
+    "seed_build_without_sources": "PASS",
+    "seed_metadata_only_documents": 7,
+    "synthetic_documents": 2,
+    "synthetic_chunks": 2,
+    "lexical_top_hit": "norma-smoke",
+    "assistant_page_apptest": "PASS",
+    "embeddings_enabled": false,
+    "llm_enabled": false
+  },
+  "validation_history": {
+    "initial_run_id": 31891298274,
+    "initial_result": "FAIL_RUFF_IMPORT_ORDER_ONLY",
+    "fix_commit": "a19c2a10be4fa143dfc6b22759565c0887f901aa"
+  },
+  "note": "O Knowledge 1.0.0 congela o esquema, a taxonomia, o catálogo semente e o pipeline reprodutível. Os PDFs originais e artefatos processados permanecem fora do Git por padrão. Índice vetorial, embeddings, RAG semântico, busca web e chamada a LLM permanecem fora do escopo."
 }

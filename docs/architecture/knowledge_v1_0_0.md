@@ -72,6 +72,26 @@ O catálogo inicial registra sete fontes já utilizadas na pesquisa do projeto: 
 
 O vínculo de uma fonte a T01–T09 significa pertinência para recuperação e investigação metodológica; **não significa que o documento sustente cientificamente cada regra listada**. A maturidade do fundamento de cada trilha continua sendo avaliada separadamente.
 
+## Validação
+
+O commit funcional `c1bda08276616ceefdb4357c520d5f5a55b11b15` foi validado em duas frentes.
+
+O workflow `tests`, execução `31891558424`, concluiu com sucesso em Python 3.11 e Python 3.12, incluindo Ruff e pytest.
+
+O workflow `knowledge-smoke`, execução `31891558351`, também concluiu com sucesso. O smoke comprovou que:
+
+- o catálogo semente possui sete documentos;
+- o build funciona mesmo sem os PDFs locais, registrando os sete como metadata-only e produzindo bundle válido;
+- um corpus sintético com duas fontes gera dois chunks válidos;
+- a recuperação lexical prioriza a fonte normativa esperada para consulta sobre suprimento de fundos e prestação de contas;
+- a citação preserva a classificação `primary_normative`;
+- a página `07_Assistente_IA.py` executa via `AppTest` sem exceção;
+- embeddings e LLM permanecem desabilitados.
+
+A primeira execução da branch (`31891298274`) falhou somente no Ruff pela ordenação de três imports no arquivo de testes. O commit `a19c2a10be4fa143dfc6b22759565c0887f901aa` corrigiu o estilo; as execuções posteriores passaram. Essa ocorrência é mantida no manifesto como trilha de validação.
+
+Após o PASS, o workflow `knowledge-smoke` retorna a `workflow_dispatch` para evitar execução automática desnecessária.
+
 ## Fora do escopo
 
 - embeddings;

@@ -2,9 +2,6 @@ name: knowledge-smoke
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/knowledge-rag-v1.0.0
 
 permissions:
   contents: read
