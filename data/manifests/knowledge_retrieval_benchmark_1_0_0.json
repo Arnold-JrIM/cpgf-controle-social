@@ -1,0 +1,57 @@
+{
+  "retrieval_benchmark_version": "1.0.0",
+  "app_version": "0.11.0-dev",
+  "knowledge_version": "1.2.0",
+  "base_main_sha": "09cc90b5788f5f910bbdd776725abfbf1f5d5135",
+  "benchmark": {
+    "path": "data/benchmarks/knowledge_retrieval_v1_0_0.csv",
+    "sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+    "frozen_before_first_real_measurement_commit": "8e5b49db673c863fe7b9a0c889c2a79457068dec",
+    "cases": 30,
+    "gold_documents": 24,
+    "referenced_documents": 25,
+    "freshness_sensitive_cases": 3,
+    "category_counts": {
+      "normative": 15,
+      "cross_source": 8,
+      "methodology": 6,
+      "control_external": 1
+    }
+  },
+  "measurement_state": "NOT_MEASURED_ON_REAL_CORPUS",
+  "metrics_contract": {
+    "level": "document",
+    "k_default": 5,
+    "collapse_duplicate_chunk_hits_by_document": true,
+    "metrics": [
+      "hit_rate_at_k",
+      "mean_document_recall_at_k",
+      "mrr",
+      "map_at_k"
+    ],
+    "modes": [
+      "governed",
+      "unfiltered"
+    ]
+  },
+  "retrieval_methods_contract": {
+    "lexical": "available_without_external_provider",
+    "semantic": "requires_valid_local_index_and_explicit_external_embeddings_opt_in_for_current OpenAI provider",
+    "hybrid": "RRF over lexical and semantic; same semantic opt-in requirement"
+  },
+  "governance": {
+    "first_real_corpus_measurement_performed": false,
+    "benchmark_frozen_before_measurement": true,
+    "pdfs_committed_to_git": false,
+    "processed_chunks_committed_to_git": false,
+    "semantic_index_committed_to_git": false,
+    "llm_called": false,
+    "sql_executed": false,
+    "external_embeddings_default": false,
+    "gold_documents_require_retrieval_default": true,
+    "gold_documents_require_local_ingestion_contract": true,
+    "metadata_only_without_local_content_may_be_supporting_but_not_gold": true
+  },
+  "trail_scope_note": "O benchmark documental referencia T02, T03, T04, T05, T07, T08 e T09 quando há base documental direta no corpus. A ausência de T01 e T06 como trilhas esperadas neste benchmark não elimina, enfraquece nem invalida essas regras; apenas evita fabricar fundamento documental que o corpus congelado ainda não oferece de forma suficientemente direta.",
+  "interpretation": "Este artefato mede recuperação documental, não roteamento, qualidade da resposta do futuro LLM, validade das trilhas, fraude ou irregularidade. A primeira medição lexical/semântica/híbrida sobre chunks.parquet real deve ocorrer somente depois deste benchmark estar congelado."
+}
