@@ -27,6 +27,9 @@ A interface adota linguagem institucional moderna:
 6. **Metodologia** — versões, cobertura temporal e cadeia de processamento;
 7. **Assistente IA** — página preparatória, sem integração do LLM nesta etapa.
 
+A home funciona como porta de entrada e apresenta indicadores sintéticos e a evolução anual
+do valor observado.
+
 ## Consultas
 
 As consultas agregadas são SQL fixo definido em `cpgf.dashboard.data`. Entradas do usuário
@@ -51,6 +54,22 @@ serving. O dashboard não tenta inferir território a partir do código da UG.
 Por isso, a página territorial apresenta cobertura por Unidade Gestora e informa a limitação.
 Um mapa por UF/município deverá ser habilitado somente após uma dimensão oficial curada ser
 materializada e validada.
+
+## Validação contra a release oficial
+
+Além dos testes unitários, o dashboard possui `scripts/smoke_dashboard.py`, baseado no
+`AppTest` do Streamlit. O workflow baixa a release pública `serving-v1.4.0`, valida o bundle,
+ativa o modo offline e executa a home e as sete páginas.
+
+A confirmação final foi realizada no run `31859768658`, sobre o commit
+`059e70ef55921a137b66818c859c5df6b5edd8b4`. O bootstrap da release passou e os oito scripts
+Streamlit foram executados sem exceções. O CI do mesmo commit também passou em Python 3.11
+e 3.12, com Ruff e pytest, no run `31859768656`.
+
+O primeiro run do harness não chegou a executar a aplicação porque o `AppTest` resolveu um
+caminho relativo a partir de `scripts/`. A correção foi restrita ao harness; as execuções
+posteriores validaram a aplicação sobre a release real. O workflow de smoke fica manual após
+a confirmação inicial, evitando downloads remotos a cada push.
 
 ## Salvaguardas
 
