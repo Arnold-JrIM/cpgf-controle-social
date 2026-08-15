@@ -67,7 +67,7 @@ def evaluate_retrieval(
 
     for case in eligible:
         hits = retriever.search(case.question, limit=k)
-        retrieved = [str(getattr(hit, "document_id")) for hit in hits]
+        retrieved = [str(hit.document_id) for hit in hits]
         gold = set(case.gold_document_ids)
         relevant_positions = [
             index for index, document_id in enumerate(retrieved, start=1) if document_id in gold
