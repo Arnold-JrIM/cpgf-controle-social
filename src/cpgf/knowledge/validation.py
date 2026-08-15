@@ -29,13 +29,32 @@ def validate_knowledge_bundle(bundle_dir: Path) -> dict[str, object]:
     orphan_chunks = []
     if not chunks.empty:
         orphan_chunks = sorted(set(chunks["document_id"].astype(str)) - document_ids)
+    duplicate_documents = bool(documents["document_id"].duplicated().any()) if not documents.empty else False
     duplicate_chunks = bool(chunks["chunk_id"].duplicated().any()) if not chunks.empty else False
-    status = "PASS" if not orphan_chunks and not duplicate_chunks else "FAIL"
+    default_no_text = []
+    if not documents.empty:
+        mask = documents["retrieval_default"].astype(bool) & (
+            documents["ingestion_status"].astype(str) == "AVAILABLE_NO_TEXT"
+        )
+        default_no_text = sorted(documents.loc[mask, "document_id"].astype(str).tolist())
+    source_contract_mismatches = manifest.get("source_contract_mismatches", [])
+    status = (
+        "PASS"
+        if not orphan_chunks
+        and not duplicate_documents
+        and not duplicate_chunks
+        and not default_no_text
+        and not source_contract_mismatches
+        else "FAIL"
+    )
     return {
         "status": status,
         "artifact_checks": checks,
         "documents": int(len(documents)),
         "chunks": int(len(chunks)),
         "orphan_chunks": orphan_chunks,
+        "duplicate_documents": duplicate_documents,
         "duplicate_chunks": duplicate_chunks,
+        "default_no_text": default_no_text,
+        "source_contract_mismatches": source_contract_mismatches,
     }

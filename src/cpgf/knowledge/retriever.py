@@ -7,7 +7,7 @@ from collections import Counter
 
 import pandas as pd
 
-from .models import AuthorityLevel, SearchHit, SourceClass
+from .models import AuthorityLevel, CorpusScope, SearchHit, SourceClass, TemporalStatus
 
 _TOKEN = re.compile(r"[a-z0-9]{2,}")
 
@@ -30,6 +30,9 @@ class LexicalKnowledgeRetriever:
             "citation",
             "source_class",
             "authority_level",
+            "scope",
+            "temporal_status",
+            "retrieval_default",
             "source_url",
         }
         missing = required - set(chunks.columns)
@@ -52,6 +55,10 @@ class LexicalKnowledgeRetriever:
         *,
         limit: int = 5,
         source_classes: set[str] | None = None,
+        scopes: set[str] | None = None,
+        temporal_statuses: set[str] | None = None,
+        document_ids: set[str] | None = None,
+        include_non_default: bool = False,
     ) -> list[SearchHit]:
         if not query.strip():
             raise ValueError("Consulta vazia")
@@ -61,7 +68,15 @@ class LexicalKnowledgeRetriever:
         scored: list[tuple[float, int]] = []
         for index, tokens in enumerate(self._tokens):
             row = self._chunks.iloc[index]
+            if not include_non_default and not bool(row["retrieval_default"]):
+                continue
             if source_classes and str(row["source_class"]) not in source_classes:
+                continue
+            if scopes and str(row["scope"]) not in scopes:
+                continue
+            if temporal_statuses and str(row["temporal_status"]) not in temporal_statuses:
+                continue
+            if document_ids and str(row["document_id"]) not in document_ids:
                 continue
             score = 0.0
             for token, query_tf in query_tokens.items():
@@ -84,6 +99,9 @@ class LexicalKnowledgeRetriever:
                     citation=str(row["citation"]),
                     source_class=SourceClass(str(row["source_class"])),
                     authority_level=AuthorityLevel(str(row["authority_level"])),
+                    scope=CorpusScope(str(row["scope"])),
+                    temporal_status=TemporalStatus(str(row["temporal_status"])),
+                    retrieval_default=bool(row["retrieval_default"]),
                     source_url=None if pd.isna(row["source_url"]) else str(row["source_url"]),
                 )
             )

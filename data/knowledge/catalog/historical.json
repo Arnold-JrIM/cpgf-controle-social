@@ -1,0 +1,25 @@
+{
+  "documents": [
+    {
+      "document_id": "lei-8666-1993",
+      "title": "Lei nº 8.666, de 21 de junho de 1993",
+      "source_class": "normative",
+      "authority_level": "primary_normative",
+      "distribution_policy": "public_official",
+      "expected_path": "Normas Oficiais/Lei 8.666-1993.pdf",
+      "expected_sha256": "aa0bacb9c660eff2134ee59fed9dcde82cc288a6b465130dcf7b47935c1d5e8e",
+      "expected_bytes": 1539022,
+      "expected_pages": 50,
+      "authors": ["Brasil"],
+      "authority": "Presidência da República",
+      "year": 1993,
+      "publisher": "Presidência da República",
+      "citation": "BRASIL. Lei nº 8.666, de 21 de junho de 1993.",
+      "scope": "historical",
+      "temporal_status": "historical",
+      "retrieval_default": false,
+      "related_trails": ["T03", "T04", "T05", "T09"],
+      "notes": "Norma revogada, mantida apenas para interpretação histórica de períodos em que esteve vigente."
+    }
+  ]
+}
