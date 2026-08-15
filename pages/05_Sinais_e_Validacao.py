@@ -37,7 +37,7 @@ fig = px.bar(
 )
 fig.update_traces(marker_color=ORANGE)
 fig.update_xaxes(tickformat=".0%")
-st.plotly_chart(style_plotly(fig, height=390, legend=False), use_container_width=True)
+st.plotly_chart(style_plotly(fig, height=390, legend=False), width="stretch")
 
 left, right = st.columns(2)
 with left:
@@ -45,14 +45,14 @@ with left:
     ugs = top_ugs(context, filters, limit=15).copy()
     if not ugs.empty:
         ugs["VALOR_TOTAL"] = ugs["VALOR_TOTAL"].map(format_currency)
-        st.dataframe(ugs, use_container_width=True, hide_index=True)
+        st.dataframe(ugs, width="stretch", hide_index=True)
 
 with right:
     st.subheader("Fornecedores com maior recorrência")
     suppliers = top_suppliers(context, filters, limit=15).copy()
     if not suppliers.empty:
         suppliers["VALOR_COMPRAS"] = suppliers["VALOR_COMPRAS"].map(format_currency)
-        st.dataframe(suppliers, use_container_width=True, hide_index=True)
+        st.dataframe(suppliers, width="stretch", hide_index=True)
 
 st.markdown(
     """

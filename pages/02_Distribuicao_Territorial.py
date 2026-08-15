@@ -44,7 +44,7 @@ with left:
         title="Recorrência de sinais por Unidade Gestora",
     )
     fig.update_traces(marker_color=ORANGE)
-    st.plotly_chart(style_plotly(fig), use_container_width=True)
+    st.plotly_chart(style_plotly(fig), width="stretch")
 
 with right:
     exposure = ug_exposure_distribution(context, filters)
@@ -57,10 +57,10 @@ with right:
         title="Distribuição por decil de exposição anual",
     )
     fig.update_traces(marker_color=BLUE)
-    st.plotly_chart(style_plotly(fig), use_container_width=True)
+    st.plotly_chart(style_plotly(fig), width="stretch")
 
 st.subheader("Detalhamento das UGs priorizadas pela recorrência")
 table = ranking.copy()
 if not table.empty:
     table["VALOR_TOTAL"] = table["VALOR_TOTAL"].map(format_currency)
-    st.dataframe(table, use_container_width=True, hide_index=True)
+    st.dataframe(table, width="stretch", hide_index=True)

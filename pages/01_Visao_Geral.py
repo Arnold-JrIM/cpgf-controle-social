@@ -53,7 +53,7 @@ with left:
         title="Evolução anual da materialidade",
     )
     fig.update_traces(line_color=ORANGE, fillcolor="rgba(230,126,34,0.18)")
-    st.plotly_chart(style_plotly(fig), use_container_width=True)
+    st.plotly_chart(style_plotly(fig), width="stretch")
 
 with right:
     trails = trail_prevalence(context, filters)
@@ -68,7 +68,7 @@ with right:
         title="Incidência por trilha",
     )
     fig.update_traces(marker_color=ORANGE)
-    st.plotly_chart(style_plotly(fig), use_container_width=True)
+    st.plotly_chart(style_plotly(fig), width="stretch")
 
 st.subheader("Unidades gestoras com maior recorrência de sinais")
 ranking = top_ugs(context, filters, limit=15).copy()
@@ -85,6 +85,6 @@ if not ranking.empty:
                 "SOMA_TRILHAS_ATIVAS": "Soma de trilhas ativas",
             }
         ),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )

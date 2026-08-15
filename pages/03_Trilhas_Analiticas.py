@@ -46,7 +46,7 @@ with left:
         title="Incidência dos sinais por trilha",
     )
     fig.update_traces(marker_color=ORANGE)
-    st.plotly_chart(style_plotly(fig), use_container_width=True)
+    st.plotly_chart(style_plotly(fig), width="stretch")
 
 with right:
     distribution = ug_signal_distribution(context, filters)
@@ -58,7 +58,7 @@ with right:
         title="Quantidade de trilhas simultaneamente ativas",
     )
     fig.update_traces(marker_color=ORANGE)
-    st.plotly_chart(style_plotly(fig), use_container_width=True)
+    st.plotly_chart(style_plotly(fig), width="stretch")
 
 st.subheader("Dicionário das trilhas")
 for code, label in TRAIL_LABELS.items():
@@ -79,8 +79,8 @@ st.caption(
 suppliers = top_suppliers(context, filters, limit=20).copy()
 if not suppliers.empty:
     suppliers["VALOR_COMPRAS"] = suppliers["VALOR_COMPRAS"].map(format_currency)
-    st.dataframe(suppliers, use_container_width=True, hide_index=True)
+    st.dataframe(suppliers, width="stretch", hide_index=True)
 
 st.subheader("Exposição dos fornecedores")
 exposure = supplier_exposure_distribution(context, filters)
-st.dataframe(exposure, use_container_width=True, hide_index=True)
+st.dataframe(exposure, width="stretch", hide_index=True)

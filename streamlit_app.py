@@ -62,7 +62,7 @@ fig = px.line(
 )
 fig.update_traces(line_color=ORANGE, marker_color=ORANGE)
 style_plotly(fig, height=360, legend=False)
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 st.markdown(
     """

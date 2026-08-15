@@ -47,7 +47,7 @@ with left:
         )
     )
     fig.update_layout(title="Sobreposição entre trilhas — Jaccard")
-    st.plotly_chart(style_plotly(fig, height=430, legend=False), use_container_width=True)
+    st.plotly_chart(style_plotly(fig, height=430, legend=False), width="stretch")
 
 with right:
     plot = marginal.sort_values("CONTRIBUICAO_MARGINAL_PCT")
@@ -65,7 +65,7 @@ with right:
     )
     fig.update_traces(marker_color=BLUE)
     fig.update_xaxes(tickformat=".0%")
-    st.plotly_chart(style_plotly(fig, height=430, legend=False), use_container_width=True)
+    st.plotly_chart(style_plotly(fig, height=430, legend=False), width="stretch")
 
 st.markdown(
     """
@@ -78,16 +78,16 @@ st.markdown(
 
 with st.expander("VIF e elegibilidade estatística"):
     vif = diagnostic_table(context, "multicollinearity_ug_trails_vif")
-    st.dataframe(vif, use_container_width=True, hide_index=True)
+    st.dataframe(vif, width="stretch", hide_index=True)
 
 with st.expander("Índices de condição"):
     condition = diagnostic_table(context, "multicollinearity_ug_trails_condition")
-    st.dataframe(condition, use_container_width=True, hide_index=True)
+    st.dataframe(condition, width="stretch", hide_index=True)
 
 with st.expander("PCA — componentes e cargas"):
     components = diagnostic_table(context, "pca_ug_trails_components")
     loadings = diagnostic_table(context, "pca_ug_trails_loadings")
     st.markdown("**Componentes**")
-    st.dataframe(components, use_container_width=True, hide_index=True)
+    st.dataframe(components, width="stretch", hide_index=True)
     st.markdown("**Cargas**")
-    st.dataframe(loadings, use_container_width=True, hide_index=True)
+    st.dataframe(loadings, width="stretch", hide_index=True)
