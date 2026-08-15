@@ -48,6 +48,14 @@ from .matrices import (
     build_supplier_year_flag_matrix,
     build_ug_year_flag_matrix,
 )
+from .multicollinearity import (
+    CONDITION_COLUMNS,
+    VIF_COLUMNS,
+    condition_indices,
+    multicollinearity_by_group,
+    multicollinearity_diagnostics,
+    variance_inflation_factors,
+)
 from .overlap import (
     add_global_pair_eligibility,
     pairwise_binary_metrics,
@@ -55,6 +63,12 @@ from .overlap import (
     pairwise_by_supplier_exposure,
     pairwise_by_year,
     square_metric_matrix,
+)
+from .pca import (
+    PCA_COMPONENT_COLUMNS,
+    PCA_LOADING_COLUMNS,
+    pca_by_group,
+    principal_component_diagnostics,
 )
 from .validation import (
     AUTOMATIC_CONFIRMED,
@@ -71,14 +85,18 @@ __all__ = [
     "BASELINE_COMPLETE_UG_YEAR_N",
     "COMPLETE_YEAR_END",
     "COMPLETE_YEAR_START",
+    "CONDITION_COLUMNS",
     "CONTEXT_TRAILS",
     "DEFAULT_VALIDATION_STATUS",
     "MIN_NEGATIVES_STATISTICAL",
     "MIN_POSITIVES_STATISTICAL",
+    "PCA_COMPONENT_COLUMNS",
+    "PCA_LOADING_COLUMNS",
     "SUPPLIER_CORE_TRAILS",
     "SUPPLIER_EXPOSURE_BANDS",
     "UG_CORE_TRAILS",
     "VALIDATION_STATUSES",
+    "VIF_COLUMNS",
     "EvidenceFamily",
     "EvidenceRole",
     "EvidenceType",
@@ -95,6 +113,7 @@ __all__ = [
     "build_ug_year_flag_matrix",
     "build_ug_year_universe",
     "complete_period_mask",
+    "condition_indices",
     "consolidate_evidence",
     "contributes_to_core_convergence",
     "evaluate_flag_eligibility",
@@ -108,13 +127,18 @@ __all__ = [
     "marginal_by_annual_decile",
     "marginal_by_supplier_exposure",
     "marginal_contribution",
+    "multicollinearity_by_group",
+    "multicollinearity_diagnostics",
     "normalize_validation_status",
     "pairwise_binary_metrics",
     "pairwise_by_annual_decile",
     "pairwise_by_supplier_exposure",
     "pairwise_by_year",
+    "pca_by_group",
     "period_status_series",
+    "principal_component_diagnostics",
     "primary_unit_for_trail",
     "square_metric_matrix",
     "tag_evidence",
+    "variance_inflation_factors",
 ]
