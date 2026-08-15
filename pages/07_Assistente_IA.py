@@ -5,6 +5,7 @@ from cpgf.dashboard.components import apply_page_style, page_header
 from cpgf.version import (
     BENCHMARK_VERSION,
     KNOWLEDGE_VERSION,
+    RETRIEVAL_BENCHMARK_VERSION,
     ROUTER_HOLDOUT_V2_VERSION,
     ROUTER_HOLDOUT_VERSION,
     ROUTER_VERSION,
@@ -46,6 +47,8 @@ st.markdown(
       e depois convertidas em regressão conhecida do Router 1.1.0;
     - **Router Holdout {ROUTER_HOLDOUT_V2_VERSION}** — 40 novas perguntas congeladas antes da primeira medição
       válida do Router 1.1.0;
+    - **Retrieval Benchmark {RETRIEVAL_BENCHMARK_VERSION}** — 30 perguntas documentais congeladas antes da primeira
+      medição lexical, semântica ou híbrida sobre o corpus real;
     - **LLM** — ainda não chamado nesta versão.
 
     ### Evidência de generalização do roteamento
@@ -61,24 +64,32 @@ st.markdown(
       uma comparação pareada nem estimativa formal de ganho de acurácia;
     - os 17 erros do Holdout 2.0.0 permanecem intocados neste incremento.
 
+    ### Benchmark documental do Knowledge
+
+    - o Retrieval Benchmark {RETRIEVAL_BENCHMARK_VERSION} contém 30 casos e 24 documentos-gabarito distintos;
+    - a avaliação é feita em nível de documento, contraindo múltiplos chunks do mesmo documento;
+    - as métricas contratadas são Hit Rate@k, Recall documental@k, MRR e MAP@k;
+    - serão comparados os modos governado e sem filtros esperados, separando o efeito da governança do algoritmo;
+    - **nenhuma pontuação lexical, semântica ou híbrida foi produzida ainda sobre o corpus real**;
+    - fontes sem conteúdo local ingerido podem ser referências de apoio, mas não documento-gabarito recuperável.
+
     ### Governança do roteamento e da evidência
 
-    - o Holdout 2.0.0 válido foi congelado antes da primeira execução que alcançou o roteamento;
-    - uma tentativa anterior falhou na validação do esquema antes de qualquer caso ser roteado e não é tratada
-      como medição;
     - consultas quantitativas permanecem vinculadas ao Serving e não habilitam SQL livre;
     - perguntas conceituais/normativas usam Knowledge sem recomputar sinais analíticos;
     - explicações de T01–T09 podem combinar metodologia e Knowledge, mas os sinais continuam sendo triagem;
     - divergência de Benford, proximidade de limite, concentração, repetição ou compra em fim de semana não
       constituem, isoladamente, confirmação automática de fraude ou irregularidade;
+    - T01 e T06 não foram artificialmente associados a documentos no benchmark de recuperação apenas para obter
+      cobertura numérica das nove trilhas;
     - nenhuma rota executa ferramenta ou chama LLM automaticamente nesta versão.
     """
 )
 
 st.info(
-    "Próxima etapa de roteamento: usar os erros do Holdout 2.0.0 apenas em uma versão posterior; a partir desse "
-    "momento, ele passará a ser regressão conhecida e uma nova alegação de generalização exigirá outro conjunto. "
-    "Em paralelo, a avaliação lexical, semântica e híbrida do Knowledge permanece independente."
+    "Próxima etapa do Knowledge: executar a primeira baseline lexical sobre o corpus real já governado e, "
+    "em seguida, comparar recuperação semântica e híbrida pelo mesmo benchmark congelado. Embeddings externos "
+    "continuam desabilitados por padrão e exigem consentimento explícito na execução local."
 )
 
 st.markdown(
