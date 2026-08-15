@@ -33,13 +33,13 @@ def test_benchmark_gold_documents_exist_in_knowledge_catalog():
     assert validation["freshness_sensitive_cases"] == 6
 
 
-def test_router_baseline_is_measurable_without_changing_router():
+def test_router_evaluation_remains_measurable_as_routes_evolve():
     suite = assistant_benchmark.load_benchmark(BENCHMARK)
     result = assistant_benchmark.evaluate_routing(suite)
     summary = result["summary"]
     assert summary["cases"] == 50
     assert 0.0 <= summary["accuracy_all"] <= 1.0
-    assert summary["supported_target_cases"] < 50
+    assert summary["supported_target_cases"] == 50
     assert summary["actual_route_counts"]
 
 
