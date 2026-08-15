@@ -36,9 +36,7 @@ def _routing_diagnostics(result: dict[str, object]) -> dict[str, object]:
             "exact": exact,
             "accuracy": exact / len(subset) if subset else 0.0,
         }
-        confusion[expected] = dict(
-            Counter(str(row["actual_route"]) for row in subset)
-        )
+        confusion[expected] = dict(Counter(str(row["actual_route"]) for row in subset))
 
     errors = [
         {
@@ -57,9 +55,22 @@ def _routing_diagnostics(result: dict[str, object]) -> dict[str, object]:
     }
 
 
+def _interpretation() -> str:
+    if ROUTER_VERSION == "1.0.0":
+        return (
+            "O holdout é interno ao projeto e não foi usado para ajustar o Router 1.0.0. "
+            "A métrica mede generalização para estas formulações, não acurácia de produção."
+        )
+    return (
+        "Os erros observados neste holdout foram disponibilizados após a medição do Router 1.0.0 e podem "
+        "ter informado versões posteriores. Para o Router atual, o conjunto deve ser interpretado como "
+        "regressão conhecida, não como evidência fora da amostra."
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Avalia o Router 1.0.0 em holdout interno não usado no seu ajuste."
+        description="Avalia o Router atual no holdout interno congelado após o Router 1.0.0."
     )
     parser.add_argument(
         "--holdout",
@@ -98,10 +109,7 @@ def main() -> None:
         "question_overlap_exact": 0,
         "routing": routing,
         "diagnostics": _routing_diagnostics(routing),
-        "interpretation": (
-            "O holdout é interno ao projeto e não foi usado para ajustar o Router 1.0.0. "
-            "A métrica mede generalização para estas formulações, não acurácia de produção."
-        ),
+        "interpretation": _interpretation(),
     }
 
     text = json.dumps(payload, ensure_ascii=False, indent=2)
