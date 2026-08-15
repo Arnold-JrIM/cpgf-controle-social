@@ -8,6 +8,20 @@ from .evidence import (
     governance_for_trail,
     primary_unit_for_trail,
 )
+from .exposure import (
+    BASELINE_COMPLETE_SUPPLIER_YEAR_N,
+    BASELINE_COMPLETE_UG_YEAR_N,
+    COMPLETE_YEAR_END,
+    COMPLETE_YEAR_START,
+    SUPPLIER_EXPOSURE_BANDS,
+    SupplierExposureBand,
+    add_supplier_exposure_bands,
+    add_ug_annual_exposure_deciles,
+    build_supplier_year_universe,
+    build_ug_year_universe,
+    complete_period_mask,
+    period_status_series,
+)
 from .families import (
     EvidenceFamily,
     family_catalog,
@@ -26,13 +40,24 @@ from .validation import (
 
 __all__ = [
     "AUTOMATIC_CONFIRMED",
+    "BASELINE_COMPLETE_SUPPLIER_YEAR_N",
+    "BASELINE_COMPLETE_UG_YEAR_N",
+    "COMPLETE_YEAR_END",
+    "COMPLETE_YEAR_START",
     "DEFAULT_VALIDATION_STATUS",
+    "SUPPLIER_EXPOSURE_BANDS",
     "VALIDATION_STATUSES",
     "EvidenceFamily",
     "EvidenceRole",
     "EvidenceType",
+    "SupplierExposureBand",
     "ValidationStatus",
+    "add_supplier_exposure_bands",
+    "add_ug_annual_exposure_deciles",
     "attach_validation_status",
+    "build_supplier_year_universe",
+    "build_ug_year_universe",
+    "complete_period_mask",
     "consolidate_evidence",
     "contributes_to_core_convergence",
     "evidence_role_for_trail",
@@ -43,6 +68,7 @@ __all__ = [
     "family_name_for_trail",
     "governance_for_trail",
     "normalize_validation_status",
+    "period_status_series",
     "primary_unit_for_trail",
     "tag_evidence",
 ]
