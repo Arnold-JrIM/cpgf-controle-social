@@ -2,6 +2,9 @@ name: router-holdout-smoke
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/assistant-router-v1.1.0
 
 permissions:
   contents: read
@@ -24,30 +27,31 @@ jobs:
       - name: Install project
         run: python -m pip install -e ".[dev]"
 
-      - name: Evaluate Router 1.0.0 on untouched holdout
+      - name: Evaluate Router 1.1.0 on known regression set
         run: |
-          python scripts/evaluate_router_holdout.py --output router_holdout_v1_0_0.json
+          python scripts/evaluate_router_holdout.py --output router_regression_v1_1_0.json
           python - <<'PY'
           import json
           from pathlib import Path
 
-          payload = json.loads(Path("router_holdout_v1_0_0.json").read_text(encoding="utf-8"))
+          payload = json.loads(Path("router_regression_v1_1_0.json").read_text(encoding="utf-8"))
           summary = payload["routing"]["summary"]
           assert payload["holdout_version"] == "1.0.0"
-          assert payload["router_version"] == "1.0.0"
+          assert payload["router_version"] == "1.1.0"
           assert payload["question_overlap_exact"] == 0
           assert summary["cases"] == 40
           assert summary["supported_target_cases"] == 40
-          print("ROUTER HOLDOUT 1.0.0: MEASURED")
+          assert summary["accuracy_all"] >= 0.90
+          print("ROUTER 1.1.0 REGRESSION: PASS")
           print("holdout_sha256:", payload["holdout_sha256"])
           print(json.dumps(summary, ensure_ascii=False, indent=2))
           print(json.dumps(payload["diagnostics"], ensure_ascii=False, indent=2))
           PY
 
-      - name: Upload holdout evaluation
+      - name: Upload router regression evaluation
         uses: actions/upload-artifact@v4
         with:
-          name: router-holdout-v1.0.0-evaluation
-          path: router_holdout_v1_0_0.json
+          name: assistant-router-v1.1.0-regression
+          path: router_regression_v1_1_0.json
           if-no-files-found: error
           retention-days: 14
