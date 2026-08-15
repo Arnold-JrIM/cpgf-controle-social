@@ -1,5 +1,5 @@
 {
-  "status": "PENDING_CANONICAL_BUILD",
+  "status": "FROZEN_FROM_CANONICAL_PASS",
   "serving_version": "1.4.0",
   "source_contract": "data/manifests/governance_regression_1_3_2.json",
   "canonical_input": {
@@ -14,6 +14,14 @@
     "serving": "1.4.0"
   },
   "expected_logical_tables": 68,
-  "canonical_build": null,
-  "note": "O contrato será fechado após o primeiro build canônico aprovado da camada de serving 1.4.0. Nenhum Parquet ou banco DuckDB é versionado no Git; a evidência persistida é o manifesto do bundle e a proveniência da execução GitHub Actions."
+  "canonical_build": {
+    "run_id": 31857600533,
+    "execution_head_sha": "c9cceef5d645ce26ef833542c1e884b31f6f1a33",
+    "conclusion": "success",
+    "artifact_id": 9239587655,
+    "artifact_name": "serving-manifest-1.4.0",
+    "artifact_digest": "sha256:7331a5c3252107e929cee452b016b443c76e1d2f250ea8ba7f4b429a96cf12f7",
+    "artifact_size_bytes": 5538
+  },
+  "note": "A execução canônica 31857600533 confirmou a materialização e a validação integral do Serving 1.4.0 sobre o snapshot congelado do CPGF. Nenhum Parquet ou banco DuckDB é versionado no Git; a evidência persistida no repositório é este contrato de proveniência, enquanto o manifesto do bundle permanece registrado como artefato da execução GitHub Actions."
 }
