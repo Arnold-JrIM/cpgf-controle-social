@@ -7,7 +7,11 @@ from pathlib import Path
 import pandas as pd
 
 from cpgf.knowledge import OpenAIEmbeddingProvider
-from cpgf.knowledge.indexing import build_semantic_index, persist_semantic_index
+from cpgf.knowledge.indexing import (
+    build_semantic_index,
+    persist_semantic_index,
+    validate_semantic_index,
+)
 
 
 def main() -> None:
@@ -27,9 +31,10 @@ def main() -> None:
     provider = OpenAIEmbeddingProvider(model=args.model, dimensions=args.dimensions)
     index = build_semantic_index(chunks, provider, batch_size=args.batch_size)
     manifest = persist_semantic_index(chunks_path, index, output_dir, provider)
+    validation = validate_semantic_index(chunks_path, output_dir)
 
     print("KNOWLEDGE SEMANTIC INDEX: PASS")
-    print(json.dumps(manifest, ensure_ascii=False, indent=2))
+    print(json.dumps({"manifest": manifest, "validation": validation}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
