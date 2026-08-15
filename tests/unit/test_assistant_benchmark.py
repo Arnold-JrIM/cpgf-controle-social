@@ -1,6 +1,5 @@
 import cpgf.benchmark as assistant_benchmark
 
-
 BENCHMARK = "data/benchmarks/assistant_v1_0_0.csv"
 CATALOG = "data/knowledge/source_catalog.json"
 
