@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -10,6 +11,9 @@ from cpgf.knowledge import (
     LexicalKnowledgeRetriever,
     OpenAIEmbeddingProvider,
     SemanticKnowledgeRetriever,
+    build_semantic_index,
+    persist_semantic_index,
+    validate_semantic_index,
 )
 
 
@@ -116,6 +120,22 @@ def test_semantic_index_must_cover_all_chunks():
         assert "não cobre todos os chunks" in str(exc)
     else:
         raise AssertionError("Índice parcial deveria ser rejeitado")
+
+
+def test_build_persist_and_validate_semantic_index(tmp_path: Path):
+    chunks = _chunks()
+    chunks_path = tmp_path / "chunks.parquet"
+    chunks.to_parquet(chunks_path, index=False)
+    provider = FakeEmbeddingProvider()
+    index = build_semantic_index(chunks, provider, batch_size=2)
+    manifest = persist_semantic_index(chunks_path, index, tmp_path, provider)
+    validation = validate_semantic_index(chunks_path, tmp_path)
+
+    assert manifest["knowledge_version"] == "1.2.0"
+    assert manifest["chunks"] == 3
+    assert manifest["dimensions"] == 2
+    assert validation["status"] == "PASS"
+    assert validation["chunks"] == 3
 
 
 def test_openai_embedding_provider_uses_explicit_float_encoding():
