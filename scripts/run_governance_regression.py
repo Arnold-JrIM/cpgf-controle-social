@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from cpgf.governance.governance_contract import validate_governance_bootstrap_report
 from cpgf.governance.governance_regression import (
     run_governance_regression,
     write_governance_regression_report,
@@ -25,9 +26,15 @@ def main() -> None:
         "--contract",
         type=Path,
         default=None,
+        help="Contrato detalhado legado, quando aplicável.",
+    )
+    parser.add_argument(
+        "--frozen-contract",
+        type=Path,
+        default=None,
         help=(
-            "Manifesto congelado. O padrão é "
-            "data/manifests/governance_regression_1_3_2.json."
+            "Manifesto compacto congelado que valida o SHA-256 determinístico de "
+            "todo o observed_contract."
         ),
     )
     parser.add_argument(
@@ -37,11 +44,23 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    report = run_governance_regression(
-        args.input,
-        contract_path=args.contract,
-        bootstrap=args.bootstrap,
-    )
+    if args.bootstrap and args.frozen_contract is not None:
+        parser.error("--bootstrap e --frozen-contract são modos mutuamente exclusivos.")
+
+    if args.frozen_contract is not None:
+        report = run_governance_regression(args.input, bootstrap=True)
+        validation = validate_governance_bootstrap_report(report, args.frozen_contract)
+        report["frozen_contract_validation"] = validation
+        report["status"] = validation["status"]
+        report["bootstrap"] = False
+        report["mode"] = "FROZEN_CONTRACT"
+    else:
+        report = run_governance_regression(
+            args.input,
+            contract_path=args.contract,
+            bootstrap=args.bootstrap,
+        )
+
     output = write_governance_regression_report(report, args.output)
 
     print(f"Status: {report['status']}")
@@ -52,6 +71,13 @@ def main() -> None:
         f"fornecedor-ano={report['observed_contract']['supplier_year_rows_complete']} "
         f"UG-ano={report['observed_contract']['ug_year_rows_complete']}"
     )
+    if "frozen_contract_validation" in report:
+        validation = report["frozen_contract_validation"]
+        print(
+            "Contrato congelado: "
+            f"digest={validation['actual_observed_contract_sha256']} "
+            f"pass={validation['digest_pass']}"
+        )
     print(f"Relatório: {output}")
 
     if report["status"] == "FAIL":
