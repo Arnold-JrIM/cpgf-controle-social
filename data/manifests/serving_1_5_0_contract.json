@@ -1,0 +1,31 @@
+{
+  "status": "PENDING_CANONICAL_BUILD",
+  "serving_version": "1.5.0",
+  "source_serving_contract": "data/manifests/serving_1_4_0_contract.json",
+  "geo_version": "1.1.0",
+  "canonical_inputs": {
+    "cpgf": {
+      "file": "CPGF_201301_a_202607.csv",
+      "rows": 1876087,
+      "sha256": "300789f9bd866f313df4ca5ee5dfca7234050ef2452443b61b1e58425ca0997b"
+    },
+    "siafi": {
+      "file": "siafi_dados_ug_2025.csv",
+      "version": "2025",
+      "sha256": "ee2064fb5e0ce5e729365e1a1f2d80f92a55a659da8160cddd10db7f438c0634"
+    }
+  },
+  "expected_logical_tables": 73,
+  "geography_baseline": {
+    "dimension_rows": 49552,
+    "cpgf_distinct_ugs": 2153,
+    "direct_matches": 2148,
+    "manual_complements": 5,
+    "coverage_pct": 100.0,
+    "transaction_rows": 405,
+    "extract_rows": 378,
+    "dashboard_long_rows": 6615,
+    "metric_count": 17
+  },
+  "note": "O Serving 1.5.0 porta a Geo 1.1.0 congelada para produção. O contrato será congelado somente após a execução canônica sobre os dois snapshots validados."
+}
