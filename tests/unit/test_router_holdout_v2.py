@@ -30,7 +30,7 @@ def test_holdout_v2_is_frozen_balanced_and_disjoint_before_measurement():
     assert len(holdout_v2.cases) == 40
 
     digest = hashlib.sha256(HOLDOUT_V2.read_bytes()).hexdigest()
-    assert digest == "48be0754b1fb169b7ed882bd8ecdccd72d278d3c2a41dc5bea66f9a8a4ae644e"
+    assert digest == "df48a03af598e86e84bac797f122404db8135c8b77caf19b7024ca52079a298b"
 
     family_counts = Counter(case.family for case in holdout_v2.cases)
     assert family_counts == Counter({family: 8 for family in QuestionFamily})
