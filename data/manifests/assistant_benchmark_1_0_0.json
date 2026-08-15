@@ -1,0 +1,82 @@
+{
+  "benchmark_version": "1.0.0",
+  "status": "FROZEN_FROM_DETERMINISTIC_SMOKE",
+  "base_main_commit": "47314ce887b7908538b85a58e926ddecb62f01dd",
+  "benchmark_file": {
+    "path": "data/benchmarks/assistant_v1_0_0.csv",
+    "git_blob_sha": "c6a55468f0947457c99f419814147846b770bd4c"
+  },
+  "scope": {
+    "cases": 50,
+    "families": {
+      "conceptual_normative": 16,
+      "serving_query": 8,
+      "trail_query": 8,
+      "motor_rule": 9,
+      "safety_interpretation": 9
+    },
+    "knowledge_cases": 29,
+    "serving_cases": 17,
+    "freshness_sensitive_cases": 6,
+    "gold_documents": 12,
+    "covered_trails": [
+      "T01",
+      "T02",
+      "T03",
+      "T04",
+      "T05",
+      "T06",
+      "T07",
+      "T08",
+      "T09"
+    ]
+  },
+  "routing_baseline": {
+    "exact": 22,
+    "accuracy_all": 0.44,
+    "supported_target_cases": 29,
+    "exact_supported": 22,
+    "accuracy_supported_targets": 0.7586206896551724,
+    "expected_route_counts": {
+      "knowledge": 16,
+      "overview": 4,
+      "ugs": 2,
+      "suppliers": 2,
+      "territorial": 2,
+      "trails": 6,
+      "methodology": 13,
+      "composite": 5
+    },
+    "actual_route_counts": {
+      "unsupported": 14,
+      "overview": 8,
+      "methodology": 10,
+      "ugs": 1,
+      "suppliers": 4,
+      "territorial": 2,
+      "trails": 11
+    }
+  },
+  "smoke_evidence": {
+    "validated_commit": "83f5715ee654072cb32828c5acb3ed4bf555b319",
+    "workflow_run_id": 31905939264,
+    "conclusion": "success",
+    "artifact_id": 9252338092,
+    "artifact_sha256": "e3bf4fbf02b76e0b48dae7af5a6e5c26e0e7872c5d332bb487755a289a4bc2f3"
+  },
+  "ci_evidence_before_freeze": {
+    "validated_commit": "47c24fc9c3950a5febb579e431a138264f7ff341",
+    "workflow_run_id": 31906047207,
+    "python_3_11": "success",
+    "python_3_12": "success"
+  },
+  "governance": {
+    "router_changed_in_this_benchmark": false,
+    "llm_called": false,
+    "free_sql_enabled": false,
+    "knowledge_and_composite_are_future_target_routes": true,
+    "benchmark_must_not_be_modified_to_improve_scores": true,
+    "automatic_answer_scoring_is_not_a_substitute_for_human_validation": true,
+    "signals_must_not_be_presented_as_confirmed_irregularities": true
+  }
+}
