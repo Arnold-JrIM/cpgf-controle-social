@@ -2,9 +2,6 @@ name: knowledge-smoke
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/knowledge-corpus-v1.1.0
 
 permissions:
   contents: read
