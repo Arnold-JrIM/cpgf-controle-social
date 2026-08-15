@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 
 import pandas as pd
+from streamlit.testing.v1 import AppTest
 
 from cpgf.knowledge import (
     LexicalKnowledgeRetriever,
@@ -23,7 +24,7 @@ def _write_synthetic_catalog(root: Path) -> tuple[Path, Path]:
         encoding="utf-8",
     )
     (sources / "artigo.txt").write_text(
-        "Auditoria pública orientada por dados utiliza análise para identificar padrões e anomalias, "
+        "Auditoria pública orientada por dados pode usar análise para identificar padrões e anomalias, "
         "preservando julgamento profissional.",
         encoding="utf-8",
     )
@@ -104,6 +105,11 @@ def main() -> None:
         if not hits or hits[0].document_id != "norma-smoke":
             raise RuntimeError("Retriever lexical não priorizou a fonte normativa esperada")
 
+        app = AppTest.from_file(str(Path("pages/07_Assistente_IA.py").resolve()))
+        app.run(timeout=30)
+        if app.exception:
+            raise RuntimeError(f"Página Assistente IA falhou no AppTest: {app.exception}")
+
         print("KNOWLEDGE SMOKE: PASS")
         print(f"Seed catalog documents: {seed_manifest['documents']}")
         print(f"Seed metadata-only: {seed_manifest['documents_metadata_only']}")
@@ -111,6 +117,7 @@ def main() -> None:
         print(f"Synthetic chunks: {manifest['chunks']}")
         print(f"Top hit: {hits[0].document_id}")
         print(f"Citation: {format_knowledge_citation(hits[0])}")
+        print("Assistant page: PASS")
         print("Embeddings: DISABLED")
         print("LLM: DISABLED")
 
