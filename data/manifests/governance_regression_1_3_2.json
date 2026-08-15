@@ -1,11 +1,21 @@
 {
-  "status": "FROZEN_FROM_BOOTSTRAP_PASS",
-  "expected_observed_contract_sha256": "253e6ed8e736f3041d563f2a4718dc2fd5110905eb123e86a7bea637bfce34d1",
+  "status": "FROZEN_PORTABLE_CONTRACT",
+  "expected_portable_contract_sha256": "79a400cb506d7b0f868045146e059d664db77b3319785ad819f2dea742110a24",
   "bootstrap": {
     "run_id": 31855415203,
     "execution_head_sha": "18f36d75d7a03eeeece8dcbe5057bc68813c10cf",
     "artifact_id": 9238901944,
     "artifact_digest": "sha256:6ecf22403f2f94a1001537be3567a91fda8899466f74ea3cae4d328513617707"
+  },
+  "portability_diagnostic": {
+    "strict_run_id": 31855749734,
+    "strict_artifact_id": 9239025138,
+    "strict_artifact_digest": "sha256:eda6f6047a59ffce53c10c62839a64d672cfb8242948af27edaf7307a9895d72",
+    "result": "EXPECTED_FULL_DIGEST_DIVERGENCE_IN_EIGENDECOMPOSITION_ONLY",
+    "differing_signature_hashes": 8,
+    "deterministic_signatures_unchanged": true,
+    "matrix_signatures_unchanged": true,
+    "positive_counts_unchanged": true
   },
   "canonical_input": {
     "file": "CPGF_201301_a_202607.csv",
@@ -51,5 +61,10 @@
     "ug_year": "635789c70e41a0ac44b45856d2188f4ce528477c1bf043890b89827da27ba0ca"
   },
   "diagnostic_signature_count": 68,
-  "note": "O digest esperado cobre integralmente observed_contract, incluindo contagens, duas matrizes e 68 assinaturas de sobreposição, marginalidade, VIF, índice de condição e PCA. Não contém dados transacionais brutos."
+  "portable_contract_policy": {
+    "exact_sha256": "matrizes, sobreposição, marginalidade, elegibilidade, VIF e demais saídas determinísticas",
+    "shape_and_schema": "componentes, cargas e índice de condição derivados diretamente de eigendecomposição",
+    "reason": "autovetores e bases de subespaços quase degenerados podem variar numericamente entre implementações BLAS/LAPACK sem alterar a estrutura estatística substantiva"
+  },
+  "note": "O digest portátil cobre integralmente os campos estruturais e congela por SHA-256 todas as saídas determinísticas. Para eigendecomposição, congela cardinalidade e esquema; a matemática permanece coberta por testes unitários específicos. Não contém dados transacionais brutos."
 }
