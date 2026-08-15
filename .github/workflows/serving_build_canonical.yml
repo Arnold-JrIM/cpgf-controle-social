@@ -1,0 +1,69 @@
+name: serving-build-canonical
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-serving:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: python -m pip install -e .
+
+      - name: Show runner resources
+        run: |
+          free -h
+          df -h .
+
+      - name: Download canonical Kaggle snapshot
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from cpgf.ingestion.kaggle import download_snapshot
+
+          resolved = download_snapshot(
+              Path("data/raw/serving_build"),
+              path="CPGF_201301_a_202607.csv",
+              force_download=True,
+          )
+          print(f"Kaggle resolved path: {resolved}")
+          PY
+          find data/raw/serving_build -type f -maxdepth 5 -printf '%p %s bytes\n'
+
+      - name: Build and validate serving 1.4.0
+        run: |
+          CSV="$(find data/raw/serving_build -type f -name 'CPGF_201301_a_202607.csv' | head -n 1)"
+          test -n "$CSV"
+          python scripts/build_serving.py \
+            --input "$CSV" \
+            --output-dir data/processed/serving
+
+      - name: Show bundle inventory
+        if: always()
+        run: |
+          if [ -d data/processed/serving ]; then
+            du -sh data/processed/serving
+            find data/processed/serving -maxdepth 2 -type f -printf '%p %s bytes\n' | sort
+          fi
+
+      - name: Upload serving manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serving-manifest-1.4.0
+          path: data/processed/serving/serving_manifest.json
+          if-no-files-found: warn
