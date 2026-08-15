@@ -1,0 +1,38 @@
+name: dashboard-smoke-release
+
+on:
+  push:
+    branches:
+      - feature/streamlit-dashboard-v0.2.0
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CPGF_SERVING_BUNDLE_DIR: tmp/dashboard-smoke
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Bootstrap published Serving 1.4.0
+        run: python scripts/bootstrap_serving.py --force-download
+
+      - name: Execute headless Streamlit smoke test
+        env:
+          CPGF_SERVING_OFFLINE: "1"
+        run: python scripts/smoke_dashboard.py
