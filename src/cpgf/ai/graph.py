@@ -12,6 +12,7 @@ def prepare_assistant_state(question: str) -> AssistantState:
         question=str(question).strip(),
         route=decision.route,
         route_reason=decision.reason,
+        evidence_layers=decision.evidence_layers,
         notices=[ANALYTICAL_DISCLAIMER],
         llm_called=False,
     )
