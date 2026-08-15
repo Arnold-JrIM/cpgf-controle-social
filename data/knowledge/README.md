@@ -1,6 +1,6 @@
-# Knowledge 1.1.0 — corpus local governado
+# Knowledge 1.2.0 — corpus local governado e recuperação híbrida
 
-O Git versiona **catálogo, contratos, manifestos e código**, não o acervo original de PDFs.
+O Git versiona **catálogo, contratos, manifestos e código**, não o acervo original de PDFs nem os artefatos vetoriais gerados localmente.
 
 ## Preparação local
 
@@ -19,7 +19,7 @@ Os caminhos e, quando congelados, SHA-256, tamanho e número de páginas esperad
 
 O diretório `sources/` permanece ignorado pelo Git.
 
-## Build
+## Build documental
 
 Não converta PDFs manualmente para JSON, TXT ou Parquet. Execute:
 
@@ -41,6 +41,26 @@ python scripts/build_knowledge.py --require-all-sources --require-text-sources
 
 `--require-all-sources` exige as fontes que possuem caminho local previsto. Fontes deliberadamente metadata-only, como uma referência atual ainda não materializada, não são consideradas ausentes. `--require-text-sources` exige texto extraível apenas das fontes habilitadas para recuperação padrão.
 
+## Índice semântico local
+
+O Knowledge 1.2.0 mantém a recuperação lexical como baseline e acrescenta recuperação semântica e híbrida. O índice vetorial é um artefato local opcional e não é criado durante o build documental comum.
+
+Com `OPENAI_API_KEY` configurada no ambiente, a construção explícita do índice pode ser feita por:
+
+```bash
+python scripts/build_semantic_index.py \
+  --bundle-dir data/knowledge/processed
+```
+
+O padrão do provider é `text-embedding-3-small`, com 768 dimensões. A CLI gera e valida:
+
+- `data/knowledge/processed/embeddings.parquet`;
+- `data/knowledge/processed/embeddings_manifest.json`.
+
+O manifesto do índice liga os embeddings ao SHA-256 exato de `chunks.parquet`. Um índice construído para outro corpus, com cobertura incompleta, dimensionalidade divergente ou hash alterado é rejeitado por `validate_semantic_index()`.
+
+Nenhuma chamada externa de embeddings ocorre no CI comum ou no smoke padrão. A geração do índice real é **opt-in** e pressupõe decisão explícita do responsável pelo projeto sobre o uso de provedor externo.
+
 ## Governança de recuperação
 
 Cada documento possui:
@@ -52,10 +72,23 @@ Cada documento possui:
 - `related_trails`: pertinência metodológica ou contextual, sem afirmar fundamento direto;
 - `distribution_policy`: política de distribuição independente do fato de o documento ter sido obtido legalmente.
 
-Fontes históricas, materiais específicos da MB, obras integrais de descoberta e outros conteúdos com `retrieval_default=false` somente entram mediante opt-in explícito.
+Os mesmos filtros governam a recuperação lexical e semântica. Fontes históricas, materiais específicos da MB, obras integrais de descoberta e outros conteúdos com `retrieval_default=false` somente entram mediante opt-in explícito.
+
+A recuperação híbrida usa Reciprocal Rank Fusion (RRF) para combinar os rankings lexical e semântico sem somar diretamente scores de escalas distintas.
 
 ## Política de distribuição
 
 `public_official` identifica fonte oficial pública; `open_license` registra licença aberta; `metadata_only` significa que o projeto não presume autorização para redistribuir o PDF ou seus chunks; `project_owned` identifica material produzido/controlado pelo projeto.
 
-Uma futura distribuição pública do Knowledge deverá respeitar essas políticas por documento. Embeddings, índice vetorial, busca web, upload de arquivos pelo usuário e chamada a LLM permanecem fora do Knowledge 1.1.0.
+Uma futura distribuição pública do Knowledge deverá respeitar essas políticas por documento. Os PDFs, chunks e embeddings permanecem fora do Git. A política de distribuição também não é tratada como autorização automática para processamento por terceiros.
+
+## Estado da IA
+
+No Knowledge 1.2.0:
+
+- recuperação lexical: implementada e baseline;
+- recuperação semântica: implementada, dependente de índice local;
+- recuperação híbrida RRF: implementada;
+- construção de índice com provider OpenAI: disponível apenas por execução explícita;
+- avaliação comparativa no corpus real: próxima etapa;
+- LLM/RAG conversacional: ainda desabilitado.
