@@ -125,8 +125,8 @@ def square_metric_matrix(
         columns=list(flags),
     )
     for row in pairs.itertuples(index=False):
-        a = getattr(row, "REGRA_A")
-        b = getattr(row, "REGRA_B")
+        a = row.REGRA_A
+        b = row.REGRA_B
         value = getattr(row, metric)
         result.loc[a, b] = value
         result.loc[b, a] = value
