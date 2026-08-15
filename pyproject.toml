@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "duckdb", "pandas", "numpy", "pyarrow", "pyyaml", "requests", "httpx",
-  "pydantic>=2", "streamlit", "folium", "streamlit-folium", "plotly",
+  "pydantic>=2", "pypdf", "streamlit", "folium", "streamlit-folium", "plotly",
   "kagglehub", "openai", "langchain", "langchain-openai", "langgraph"
 ]
 

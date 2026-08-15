@@ -1,0 +1,28 @@
+{
+  "status": "SCHEMA_AND_SEED_CATALOG_READY",
+  "knowledge_version": "1.0.0",
+  "app_version": "0.5.0-dev",
+  "source_catalog": "data/knowledge/source_catalog.json",
+  "seed_documents": 7,
+  "storage_contract": {
+    "original_sources": "local_only_by_default",
+    "documents": "parquet",
+    "chunks": "parquet",
+    "manifest": "json",
+    "embeddings": false,
+    "llm": false
+  },
+  "source_classes": ["normative", "institutional", "scientific", "academic", "project", "web"],
+  "authority_levels": [
+    "primary_normative",
+    "official_institutional",
+    "scientific_peer_reviewed",
+    "scientific_conference",
+    "academic_thesis",
+    "project_controlled",
+    "web_unclassified"
+  ],
+  "distribution_policies": ["public_official", "open_license", "metadata_only", "project_owned"],
+  "retrieval_baseline": "deterministic_lexical",
+  "note": "O PR #26 congela o contrato do corpus e seu pipeline reprodutível. O índice vetorial/embeddings e a chamada a LLM permanecem fora do escopo."
+}
