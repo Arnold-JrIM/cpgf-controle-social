@@ -33,6 +33,13 @@ def normalize_text(text: str) -> str:
     return "\n".join(output).strip()
 
 
+def document_page_count(path: Path) -> int:
+    path = Path(path)
+    if path.suffix.lower() == ".pdf":
+        return len(PdfReader(str(path)).pages)
+    return 1
+
+
 def load_document(path: Path, document_id: str) -> list[LoadedSection]:
     path = Path(path)
     suffix = path.suffix.lower()
@@ -47,4 +54,4 @@ def load_document(path: Path, document_id: str) -> list[LoadedSection]:
     if suffix in {".md", ".txt"}:
         text = normalize_text(path.read_text(encoding="utf-8"))
         return [LoadedSection(document_id=document_id, text=text)] if text else []
-    raise ValueError(f"Formato documental não suportado no Knowledge 1.0.0: {suffix}")
+    raise ValueError(f"Formato documental não suportado no Knowledge 1.1.0: {suffix}")

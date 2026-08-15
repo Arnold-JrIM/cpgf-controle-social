@@ -1,0 +1,88 @@
+{
+  "status": "FROZEN_FROM_TESTS_AND_SMOKE_PASS",
+  "knowledge_version": "1.1.0",
+  "app_version": "0.6.0-dev",
+  "base_main_sha": "6f978fabe5c76dcf2f0099869fecf25d621f647b",
+  "functional_validation_sha": "cafac9bdfc390a02b564379601715b23b5c9301f",
+  "source_catalog": "data/knowledge/source_catalog.json",
+  "catalog_documents": 45,
+  "default_retrieval_documents": 35,
+  "catalog_scopes": [
+    "cpgf_core",
+    "control_external",
+    "methodology",
+    "historical",
+    "institutional_mb",
+    "discovery"
+  ],
+  "governance_contract": {
+    "original_sources": "local_only_by_default",
+    "processed_documents": "parquet",
+    "processed_chunks": "parquet",
+    "manifest": "json",
+    "source_identity": ["expected_path", "expected_sha256", "expected_bytes", "expected_pages"],
+    "trail_relationships": ["supports_trails", "related_trails"],
+    "temporal_status": ["current", "historical", "contextual"],
+    "retrieval_default_is_explicit": true,
+    "historical_default_exclusion": true,
+    "institutional_mb_default_exclusion": true,
+    "discovery_default_exclusion": true,
+    "embeddings": false,
+    "llm": false
+  },
+  "validated_replacement_sources": {
+    "carmo-inconformidade-cpgf-2018": {
+      "sha256": "b3fcabff092e9ffc8e0afe0607f9fc9c14c63a8f3de49d9701dcbe0bc84983ce",
+      "bytes": 443420,
+      "pages": 16,
+      "text_ingestion": true,
+      "distribution_policy": "metadata_only"
+    },
+    "sgm-301-rev9": {
+      "sha256": "bce8b55e8d35efd79006ce1fc5d5a0b0b80f54522545245ab7ffda0161cb41d5",
+      "bytes": 464651,
+      "pages": 33,
+      "text_ingestion": true,
+      "retrieval_default": false,
+      "scope": "institutional_mb"
+    },
+    "siafi-macrofuncao-021121-2026": {
+      "sha256": "e55b2aeb86f020e36d5e3904f0030db3248c3fde724dbe11bcc59f66d0fb9e28",
+      "bytes": 11333432,
+      "pages": 16,
+      "text_ingestion": false,
+      "retrieval_default": false,
+      "reason": "sem camada textual extraível de forma confiável pelo pipeline pypdf; OCR silencioso não é aplicado"
+    }
+  },
+  "tests": {
+    "run_id": 31903080178,
+    "head_sha": "cafac9bdfc390a02b564379601715b23b5c9301f",
+    "python_3_11": "PASS",
+    "python_3_12": "PASS",
+    "ruff": "PASS",
+    "pytest": "PASS"
+  },
+  "smoke": {
+    "run_id": 31903080205,
+    "job_id": 95056713416,
+    "head_sha": "cafac9bdfc390a02b564379601715b23b5c9301f",
+    "status": "PASS",
+    "catalog_documents": 45,
+    "default_retrieval_documents": 35,
+    "synthetic_documents": 3,
+    "synthetic_chunks": 3,
+    "historical_default_exclusion": "PASS",
+    "assistant_page": "PASS",
+    "embeddings": "DISABLED",
+    "llm": "DISABLED"
+  },
+  "validation_history": {
+    "initial_tests_run_id": 31901730589,
+    "initial_result": "FAIL_RUFF_IMPORT_ORDER_ONLY",
+    "style_fix_commit": "267c58aecd42ae8dc12115d97262610b4a5f2375",
+    "temporary_smoke_trigger_commit": "cafac9bdfc390a02b564379601715b23b5c9301f",
+    "manual_only_workflow_restore_commit": "7a8194417595bb4894a267a369549c1f75994eab"
+  },
+  "scope_note": "Knowledge 1.1.0 governa o corpus documental real e congela a baseline lexical. PDFs originais e artefatos processados permanecem fora do Git por padrão. Embeddings, recuperação híbrida e chamada a LLM permanecem fora do escopo deste incremento."
+}

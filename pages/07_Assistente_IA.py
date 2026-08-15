@@ -8,20 +8,20 @@ st.set_page_config(page_title="Assistente IA · CPGF", page_icon="🤖", layout=
 apply_page_style()
 page_header(
     "Assistente IA — evidências antes da conversa",
-    "A superfície read-only do agente e o contrato do corpus documental já estão estruturados. "
+    "A superfície read-only do agente e o corpus documental governado já estão estruturados. "
     "Embeddings, RAG semântico e conversa com LLM serão habilitados em etapas posteriores.",
 )
 
 left, right = st.columns(2)
 with left:
     st.success(
-        "Fundação 0.4.0 concluída: contratos estruturados, ferramentas registradas, "
+        "Fundação do agente concluída: contratos estruturados, ferramentas registradas, "
         "roteamento determinístico e guardrails sem chamada a modelo de linguagem."
     )
 with right:
     st.success(
-        f"Knowledge {KNOWLEDGE_VERSION}: catálogo curado, proveniência, chunking e "
-        "recuperação lexical baseline disponíveis sem embeddings."
+        f"Knowledge {KNOWLEDGE_VERSION}: 45 referências catalogadas, 35 elegíveis para recuperação padrão, "
+        "com escopo, temporalidade, autoridade e proveniência explícitos."
     )
 
 st.subheader("Ferramentas autorizadas sobre o Serving")
@@ -32,24 +32,28 @@ st.markdown(
     ### Camadas de evidência preparadas
 
     - **Serving 1.5.0** — dados e sinais analíticos materializados, somente leitura;
-    - **Knowledge 1.0.0** — catálogo documental com natureza, autoridade, política de distribuição,
-      hashes e trechos rastreáveis quando a fonte local estiver disponível;
-    - **RAG semântico** — ainda não ativo; o retriever lexical serve como baseline determinística;
+    - **Knowledge 1.1.0** — corpus governado em seis escopos: núcleo CPGF, controle externo,
+      metodologia, histórico, institucional MB e descoberta;
+    - **recuperação lexical** — baseline determinística, por padrão exclui fontes históricas,
+      institucionais específicas e materiais apenas de descoberta;
+    - **RAG semântico** — ainda não ativo;
     - **LLM** — ainda não chamado nesta versão.
 
-    ### Fronteiras preservadas
+    ### Governança documental
 
-    - SQL livre não integra o catálogo do agente;
-    - nenhuma recomputação, alteração ou recalibração de T01–T09;
-    - documentos científicos não são presumidos redistribuíveis por terem sido obtidos pelo projeto;
-    - distinção explícita entre **sinal analítico** e **irregularidade confirmada**;
-    - estado do agente não armazena credenciais.
+    - PDFs originais permanecem fora do Git; o catálogo registra caminho esperado, hash, tamanho e páginas;
+    - `supports_trails` distingue fundamento direto de `related_trails`, que representa pertinência contextual;
+    - fontes históricas exigem opt-in e não orientam automaticamente respostas sobre vigência atual;
+    - decisões do TCU formam uma classe própria de evidência de controle externo;
+    - a Macrofunção SIAFI 02.11.21 está catalogada e validada por arquivo, mas fica fora da recuperação padrão
+      enquanto a cópia local não oferecer texto extraível de forma confiável;
+    - documentos científicos não são presumidos redistribuíveis apenas por terem sido obtidos legalmente.
     """
 )
 
 st.info(
-    "Próxima etapa: recuperação semântica/híbrida sobre o Knowledge 1.0.0, preservando "
-    "citações e a classificação de autoridade das fontes. A conversa com LLM permanece separada."
+    "Próxima etapa: comparar a baseline lexical do Knowledge 1.1.0 com recuperação semântica/híbrida, "
+    "preservando citações, escopo, temporalidade e autoridade. A conversa com LLM permanece separada."
 )
 
 st.markdown(

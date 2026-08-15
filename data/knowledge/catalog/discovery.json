@@ -1,0 +1,63 @@
+{
+  "documents": [
+    {
+      "document_id": "nigrini-benfords-law-applications-2012",
+      "title": "Benford's Law: Applications for Forensic Accounting, Auditing, and Fraud Detection",
+      "source_class": "scientific",
+      "authority_level": "scholarly_book",
+      "distribution_policy": "metadata_only",
+      "expected_path": "Mark Nigrini - Benford's Law Applications.pdf",
+      "expected_sha256": "1ea688bb81e265cdefde3fa3ef50b240a4dc1f0757e8b53c9fe7a3c001226252",
+      "expected_bytes": 12442403,
+      "expected_pages": 352,
+      "authors": ["Mark J. Nigrini"],
+      "year": 2012,
+      "publisher": "Wiley",
+      "citation": "NIGRINI, Mark J. Benford's Law: Applications for Forensic Accounting, Auditing, and Fraud Detection. Wiley, 2012.",
+      "scope": "discovery",
+      "temporal_status": "contextual",
+      "retrieval_default": false,
+      "ingest_content": false,
+      "related_trails": ["T08"],
+      "notes": "Obra de referência mantida no catálogo, sem ingestão integral na baseline."
+    },
+    {
+      "document_id": "nigrini-forensic-analytics-methods",
+      "title": "Forensic Analytics: Methods and Techniques for Forensic Accounting Investigations",
+      "source_class": "scientific",
+      "authority_level": "scholarly_book",
+      "distribution_policy": "metadata_only",
+      "expected_path": "Mark Nigrini - Forensic Analytics Methods.pdf",
+      "expected_sha256": "5f6f107bdf47573f13485044f76fb7d1fef0efb62fbe4a78ed50442de4028fd7",
+      "expected_bytes": 38395702,
+      "expected_pages": 370,
+      "authors": ["Mark J. Nigrini"],
+      "year": 2011,
+      "publisher": "Wiley",
+      "citation": "NIGRINI, Mark J. Forensic Analytics: Methods and Techniques for Forensic Accounting Investigations. Wiley, 2011.",
+      "scope": "discovery",
+      "temporal_status": "contextual",
+      "retrieval_default": false,
+      "ingest_content": false,
+      "related_trails": ["T08"],
+      "notes": "Obra de referência mantida no catálogo, sem ingestão integral na baseline."
+    },
+    {
+      "document_id": "referencias-cpgf-projeto",
+      "title": "Referências — CPGF",
+      "source_class": "project",
+      "authority_level": "project_controlled",
+      "distribution_policy": "project_owned",
+      "expected_path": "Referencias - CPGF.pdf",
+      "expected_sha256": "674ed79ce5f4621ac9fc0c36eb9205a789e962a0eb99287a23ef0e99aae7af55",
+      "expected_bytes": 238935,
+      "expected_pages": 6,
+      "citation": "PROJETO CPGF CONTROLE SOCIAL. Referências — CPGF. Documento de descoberta e organização do corpus.",
+      "scope": "discovery",
+      "temporal_status": "contextual",
+      "retrieval_default": false,
+      "ingest_content": false,
+      "notes": "Catálogo de descoberta. Não deve ser usado como evidência final em respostas do assistente."
+    }
+  ]
+}
