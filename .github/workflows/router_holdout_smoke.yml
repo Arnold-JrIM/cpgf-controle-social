@@ -2,9 +2,6 @@ name: router-holdout-smoke
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/assistant-router-v1.1.0
 
 permissions:
   contents: read
