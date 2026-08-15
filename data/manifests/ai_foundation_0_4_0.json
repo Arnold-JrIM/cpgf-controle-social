@@ -1,0 +1,26 @@
+{
+  "status": "PENDING_VALIDATION",
+  "app_version": "0.4.0-dev",
+  "serving_version": "1.5.0",
+  "scope": "secure_read_only_ai_foundation",
+  "llm_enabled": false,
+  "rag_enabled": false,
+  "free_sql_enabled": false,
+  "registered_tools": [
+    "overview",
+    "trail_prevalence",
+    "top_ugs",
+    "top_suppliers",
+    "territorial_metric",
+    "territorial_ug_context",
+    "methodology"
+  ],
+  "invariants": [
+    "no_recomputation_of_T01_T09",
+    "no_arbitrary_sql",
+    "serving_views_only",
+    "structured_arguments",
+    "no_automatic_fraud_or_irregularity_conclusion",
+    "no_credentials_in_agent_state"
+  ]
+}

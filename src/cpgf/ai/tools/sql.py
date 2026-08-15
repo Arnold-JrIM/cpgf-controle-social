@@ -1,1 +1,3 @@
-"""Placeholder: cpgf.ai.tools.sql — implementação posterior."""
+from cpgf.ai.guardrails.sql import FreeSQLDisabledError, reject_free_sql
+
+__all__ = ["FreeSQLDisabledError", "reject_free_sql"]
