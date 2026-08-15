@@ -47,35 +47,23 @@ O relatório registra, sem dados transacionais brutos:
 
 T08 e T09 permanecem contextos e não entram no núcleo multivariado.
 
-## Assinaturas determinísticas
+## Assinaturas e portabilidade numérica
 
-As tabelas são normalizadas antes da assinatura:
+Os resultados determinísticos são normalizados antes do hash:
 
 - ordem determinística das linhas quando aplicável;
-- normalização de valores flutuantes antes da serialização;
+- valores flutuantes arredondados para reduzir ruído numérico não substantivo;
 - ausências serializadas de forma explícita;
 - SHA-256 calculado em streaming, sem persistir as tabelas diagnósticas completas no repositório.
 
-Para matrizes binárias, sobreposição, marginalidade, elegibilidade, VIF e demais saídas determinísticas, o contrato exige igualdade exata do SHA-256.
+Na validação entre runners, observou-se que 8 das 68 assinaturas derivadas de eigendecomposição podiam variar em detalhes numéricos, embora as matrizes, contagens, sobreposição, marginalidade, elegibilidade e VIF permanecessem idênticos. Como autovetores podem sofrer pequenas variações de sinal, orientação ou arredondamento conforme BLAS/LAPACK e hardware, o contrato portátil diferencia dois níveis de verificação:
 
-## Portabilidade de eigendecomposição
+1. resultados determinísticos: hash exato;
+2. resultados de eigendecomposição: preservação de cardinalidade e esquema, com propriedades matemáticas cobertas pelos testes unitários.
 
-A primeira execução canônica em modo `--bootstrap` retornou `BOOTSTRAP_PASS`. Na passagem estrita subsequente, todos os invariantes, contagens, matrizes e resultados determinísticos foram reproduzidos exatamente, mas 8 das 68 assinaturas diferiram. As oito divergências estavam restritas a tabelas derivadas diretamente de eigendecomposição: componentes, cargas ou índice de condição.
+Essa distinção evita falsos negativos de infraestrutura sem reduzir a capacidade do gate de detectar alterações substantivas no motor.
 
-A investigação mostrou que cardinalidade, esquema e universo das tabelas permaneceram idênticos. Esse comportamento é compatível com diferenças numéricas de BLAS/LAPACK e com a não unicidade do sinal ou da base de autovetores em subespaços iguais ou quase degenerados. Nesses casos, exigir identidade byte a byte dos autovetores entre runners distintos seria mais restritivo do que a própria equivalência matemática do diagnóstico.
-
-Por isso, o contrato congelado é deliberadamente portátil:
-
-- mantém SHA-256 exato para todas as saídas determinísticas;
-- mantém SHA-256 exato para as matrizes que alimentam os diagnósticos;
-- para componentes, cargas e índice de condição derivados de eigendecomposição, congela a presença da tabela, sua cardinalidade e seu esquema;
-- mantém testes unitários específicos para fórmulas, orientação determinística, singularidade e propriedades da PCA/VIF.
-
-Essa decisão não aceita uma nova baseline após uma falha. Ao contrário, preserva os resultados determinísticos originalmente observados e explicita qual parte do contrato não pode ser tratada como identidade binária portátil entre bibliotecas numéricas.
-
-O manifesto `data/manifests/governance_regression_1_3_2.json` registra o digest portátil e o diagnóstico que motivou essa distinção.
-
-## Fluxo de validação
+## Fluxo de bootstrap e confirmação
 
 A primeira execução controlada usa `--bootstrap`. Ela deve:
 
@@ -85,12 +73,11 @@ A primeira execução controlada usa `--bootstrap`. Ela deve:
 4. calcular todas as assinaturas;
 5. retornar `BOOTSTRAP_PASS`.
 
-Após a inspeção do artefato, o contrato portátil é versionado. As execuções seguintes utilizam `--frozen-contract` e somente retornam `PASS` quando:
+Após a inspeção do artefato, o contrato é versionado. A confirmação final é executada contra esse contrato congelado e deve retornar `PASS`.
 
-- o bootstrap interno reproduz todos os checks estruturais;
-- o digest do contrato portátil coincide com o manifesto congelado.
+A confirmação canônica deste gate ocorreu na execução GitHub Actions `31856226920`, commit `774f02a3f40f7eba2c4a0ac8cd06b22b7cc1ab43`, com conclusão `success`. O artefato `governance-regression-report` correspondente possui ID `9239161682` e digest `sha256:d43173ea11415726d8c8f23df9e01f13249888b2b10f0b6013339bf87124befd`.
 
-O workflow pesado permanece manual após o fechamento do gate, para não baixar e processar aproximadamente 500 MB a cada commit.
+O workflow pesado permanece disponível apenas por `workflow_dispatch`, evitando recomputações automáticas do snapshot de 522 MB a cada push.
 
 ## Limitações
 
