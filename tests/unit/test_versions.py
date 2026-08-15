@@ -1,5 +1,6 @@
 from cpgf.version import (
     APP_VERSION,
+    BENCHMARK_VERSION,
     GEO_VERSION,
     KNOWLEDGE_VERSION,
     MOTOR_VERSION,
@@ -19,3 +20,4 @@ def test_methodology_versions():
     assert SERVING_VERSION == "1.5.0"
     assert GEO_VERSION == "1.1.0"
     assert KNOWLEDGE_VERSION == "1.2.0"
+    assert BENCHMARK_VERSION == "1.0.0"
