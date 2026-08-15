@@ -10,6 +10,7 @@ from cpgf.benchmark import (
     load_retrieval_benchmark,
     validate_retrieval_benchmark_against_catalog,
 )
+from cpgf.knowledge import load_source_catalog
 
 BENCHMARK = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 CATALOG = Path("data/knowledge/source_catalog.json")
@@ -50,6 +51,17 @@ def test_retrieval_benchmark_is_governed_and_catalog_resolvable():
     assert validation["freshness_sensitive_cases"] == 3
     assert all(case.gold_document_ids for case in suite.cases)
     assert all(case.expected_scopes for case in suite.cases)
+
+
+def test_every_gold_document_has_local_ingestion_contract():
+    suite = load_retrieval_benchmark(BENCHMARK)
+    catalog = {item.document_id: item for item in load_source_catalog(CATALOG)}
+    gold = {document_id for case in suite.cases for document_id in case.gold_document_ids}
+
+    assert gold
+    assert all(catalog[document_id].retrieval_default for document_id in gold)
+    assert all(catalog[document_id].ingest_content for document_id in gold)
+    assert all(catalog[document_id].source_relative_path for document_id in gold)
 
 
 def test_retrieval_evaluation_collapses_duplicate_chunks_to_documents():
