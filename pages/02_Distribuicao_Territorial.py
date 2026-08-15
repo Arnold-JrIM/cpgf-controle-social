@@ -17,16 +17,17 @@ st.set_page_config(page_title="Distribuição Territorial · CPGF", page_icon="�
 apply_page_style()
 page_header(
     "Distribuição territorial — cobertura por UG",
-    "Nesta versão, a distribuição é apresentada por Unidade Gestora. O mapa por UF/município "
-    "será ativado somente quando a dimensão geográfica oficial estiver materializada no serving.",
+    "O Serving 1.5.0 já incorpora a dimensão Geo 1.1.0 (UG → UF). "
+    "Nesta etapa, a página mantém a exploração por Unidade Gestora; o mapa estadual será "
+    "habilitado na camada visual seguinte, consumindo os agregados territoriais já validados.",
 )
 
 context = require_dashboard_context()
 filters = sidebar_filters(context, key_prefix="territory")
 
 st.info(
-    "O Serving 1.4.0 não contém uma dimensão oficial UG → UF/município. "
-    "Para preservar rastreabilidade, a aplicação não infere localização a partir do código da UG."
+    "A UF disponível no Serving 1.5.0 representa a localização cadastral da Unidade Gestora, "
+    "e não necessariamente o local físico em que a compra, saque ou operação ocorreu."
 )
 
 ranking = top_ugs(context, filters, limit=25)

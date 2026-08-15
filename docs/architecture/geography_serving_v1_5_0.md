@@ -37,7 +37,7 @@ O Serving passa de 68 para 73 objetos lógicos, mantendo intactos os 68 objetos 
 4. `geo_uf_ano_dashboard_long`;
 5. `geo_metric_catalog`.
 
-O fato CPGF enriquecido de 1,87 milhão de registros não é duplicado no bundle. O dashboard deverá consumir os agregados leves e a dimensão curada, conforme o contrato metodológico.
+O fato CPGF enriquecido de 1,87 milhão de registros não é duplicado no bundle. O dashboard deve consumir os agregados leves e a dimensão curada.
 
 ## Baseline territorial
 
@@ -54,6 +54,14 @@ No snapshot congelado, o gate canônico exige:
 
 Observabilidade e sigilo não são forçados a formar classes mutuamente exclusivas.
 
+## Validação de produção
+
+A execução canônica `31861481742`, sobre os dois arquivos congelados do Kaggle, concluiu com `success`, materializou 73 tabelas lógicas e retornou `Validação do bundle: PASS`.
+
+A distribuição foi confirmada pela execução `31861802930`. A release `serving-v1.5.0` foi criada no commit `1425b59a97ce6b37b5c8d10b6ebcc294412c3757`; o arquivo `cpgf-serving-1.5.0.tar.gz` possui SHA-256 `c472c299223c458618d1142816cd3cf68ece657c6cc563ce053455164765cbff`. O smoke test baixou novamente a release e confirmou `DOWNLOADED_VALID / PASS`, seguido de reutilização offline `LOCAL_VALID / PASS`.
+
+Após a confirmação, os workflows pesados de build e publicação permanecem somente manuais (`workflow_dispatch`).
+
 ## Salvaguardas
 
 A incorporação geográfica:
@@ -65,4 +73,4 @@ A incorporação geográfica:
 - não interpreta `UF_UG` como local físico da transação;
 - não lê o fato bruto durante a navegação do dashboard.
 
-A habilitação visual do mapa fica para a etapa seguinte, após a distribuição e o contrato do Serving 1.5.0 estarem congelados.
+A habilitação visual do mapa fica para a etapa seguinte, consumindo exclusivamente os agregados do Serving 1.5.0.
