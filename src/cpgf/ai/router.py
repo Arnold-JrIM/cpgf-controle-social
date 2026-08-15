@@ -68,7 +68,6 @@ def _is_categorical_challenge(text: str) -> bool:
             "significa que houve fraude",
             "significa fraude",
             "e irregular",
-            "é irregular",
             "fraudou",
             "fraude?",
             "fraude ?",
@@ -78,8 +77,7 @@ def _is_categorical_challenge(text: str) -> bool:
 
 def _route_composite(text: str) -> RouteDecision | None:
     """Identifica perguntas que exigem combinar camadas sem inferir conclusão substantiva."""
-    categorical = _is_categorical_challenge(text)
-    if not categorical:
+    if not _is_categorical_challenge(text):
         return None
 
     if "fornecedor" in text and _contains_any(text, ("mais sinais", "topo", "ranking")):
@@ -114,7 +112,7 @@ def _route_methodology(text: str) -> RouteDecision | None:
     trails = _trail_tokens(text)
     explains_trail = bool(trails) and _contains_any(
         text,
-        ("como funciona", "como e a trilha", "como é a trilha", "explique a trilha"),
+        ("como funciona", "como e a trilha", "explique a trilha"),
     )
     if explains_trail:
         return _decision(
@@ -124,7 +122,7 @@ def _route_methodology(text: str) -> RouteDecision | None:
             EvidenceLayer.KNOWLEDGE,
         )
 
-    if _contains_any(text, ("metodologia", "metodo", "método")):
+    if _contains_any(text, ("metodologia", "metodo")):
         return _decision(
             Route.METHODOLOGY,
             "pedido metodológico explícito",
@@ -138,7 +136,7 @@ def _route_methodology(text: str) -> RouteDecision | None:
             EvidenceLayer.METHODOLOGY,
         )
 
-    if _contains_any(text, ("comparar diretamente", "diretamente comparavel", "diretamente comparável")):
+    if _contains_any(text, ("comparar diretamente", "diretamente comparavel")):
         return _decision(
             Route.METHODOLOGY,
             "pedido de comparabilidade metodológica entre períodos",
@@ -190,15 +188,7 @@ def _route_data(text: str) -> RouteDecision | None:
 
     if _contains_any(
         text,
-        (
-            "qual uf",
-            " por uf",
-            "estado",
-            "territorial",
-            "sao paulo",
-            "mapa",
-            "regiao",
-        ),
+        ("qual uf", " por uf", "estado", "territorial", "sao paulo", "mapa", "regiao"),
     ):
         return _decision(
             Route.TERRITORIAL,
@@ -237,9 +227,7 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "em que situacoes",
         "posso ",
         "e permitido ",
-        "é permitido ",
         "e possivel ",
-        "é possível ",
         "uma despesa ",
         "despesas repetidas",
         "um servidor ",
@@ -254,6 +242,7 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "agente suprido",
         "ordenador de despesa",
         "prestacao de contas",
+        "unidade gestora",
         "saque",
         "fracionamento",
         "material permanente",
@@ -269,26 +258,36 @@ def _route_knowledge(text: str) -> RouteDecision | None:
     return None
 
 
+def _route_analytical_fallback(text: str) -> RouteDecision | None:
+    """Preserva comandos analíticos autorizados que não usam a forma interrogativa do benchmark."""
+    if _contains_any(text, ("mapa", "territorial", "estado", "regiao", " por uf")):
+        return _decision(Route.TERRITORIAL, "termos territoriais", EvidenceLayer.SERVING)
+    if "fornecedor" in text or "favorecido" in text:
+        return _decision(Route.SUPPLIERS, "termos de fornecedor", EvidenceLayer.SERVING)
+    if re.search(r"\bugs?\b", text):
+        return _decision(Route.UGS, "termos de Unidade Gestora", EvidenceLayer.SERVING)
+    if _trail_tokens(text) or _contains_any(text, ("trilha", "sinal", "alerta")):
+        return _decision(Route.TRAILS, "termos de trilhas/sinais", EvidenceLayer.SERVING)
+    if _contains_any(text, ("gasto", "despesa", "valor", "operacao", "resumo", "visao geral")):
+        return _decision(Route.OVERVIEW, "termos de visão geral", EvidenceLayer.SERVING)
+    return None
+
+
 def route_question(question: str) -> RouteDecision:
     """Roteamento determinístico por intenção, sem LLM e sem execução automática de ferramentas."""
     validated = validate_question(question)
     text = _normalize(validated)
 
-    composite = _route_composite(text)
-    if composite is not None:
-        return composite
-
-    methodology = _route_methodology(text)
-    if methodology is not None:
-        return methodology
-
-    data = _route_data(text)
-    if data is not None:
-        return data
-
-    knowledge = _route_knowledge(text)
-    if knowledge is not None:
-        return knowledge
+    for classifier in (
+        _route_composite,
+        _route_methodology,
+        _route_data,
+        _route_knowledge,
+        _route_analytical_fallback,
+    ):
+        decision = classifier(text)
+        if decision is not None:
+            return decision
 
     return _decision(
         Route.UNSUPPORTED,
