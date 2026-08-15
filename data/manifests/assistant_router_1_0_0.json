@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "status": "FROZEN_FROM_BENCHMARK_SMOKE_AND_CI",
+  "base": {
+    "pr29_merge_commit": "96d814120558b681e84109dd0cf6e9fcc52aa016",
+    "benchmark_version": "1.0.0",
+    "knowledge_version": "1.2.0",
+    "serving_version": "1.5.0"
+  },
+  "scope": {
+    "app_version": "0.7.0-dev",
+    "deterministic_router": true,
+    "routes": [
+      "overview",
+      "trails",
+      "territorial",
+      "suppliers",
+      "ugs",
+      "methodology",
+      "knowledge",
+      "composite",
+      "unsupported"
+    ],
+    "evidence_layers": [
+      "serving",
+      "knowledge",
+      "methodology"
+    ],
+    "route_separated_from_evidence_plan": true,
+    "automatic_tool_execution": false,
+    "llm_enabled": false
+  },
+  "benchmark": {
+    "path": "data/benchmarks/assistant_v1_0_0.csv",
+    "sha256": "be1a0245f597f9b2456aacdc6485187d6fdb9c52230f0072519d6387148b5820",
+    "cases": 50,
+    "benchmark_modified_in_router_pr": false,
+    "baseline_before_router_1_0_0": {
+      "exact": 22,
+      "accuracy_all": 0.44,
+      "supported_target_cases": 29,
+      "exact_supported": 22,
+      "accuracy_supported_targets": 0.7586206896551724
+    },
+    "router_1_0_0_result": {
+      "exact": 50,
+      "accuracy_all": 1.0,
+      "supported_target_cases": 50,
+      "exact_supported": 50,
+      "accuracy_supported_targets": 1.0,
+      "interpretation": "IN_SAMPLE_DEVELOPMENT_GATE_NOT_PRODUCTION_ACCURACY"
+    }
+  },
+  "validation": {
+    "router_smoke": {
+      "run_id": 31906776202,
+      "head_sha": "d6f67255607ef803216cb58ce901ea79a3168c42",
+      "conclusion": "success",
+      "artifact_id": 9252564762,
+      "artifact_zip_sha256": "ab1a79e9d12c2324b2a53dac546d693af0a21f8f3128cc5c587bb2a274a35972",
+      "benchmark_exact": "50/50",
+      "llm_call": false,
+      "tool_execution": false
+    },
+    "implementation_ci": {
+      "run_id": 31906776216,
+      "head_sha": "d6f67255607ef803216cb58ce901ea79a3168c42",
+      "python_311": "success",
+      "python_312": "success",
+      "ruff": "success",
+      "pytest": "success"
+    },
+    "additional_generalization_checks": {
+      "unseen_paraphrase_unit_cases": 8,
+      "out_of_domain_unsupported_case": true,
+      "external_holdout": "DEFERRED"
+    }
+  },
+  "governance": {
+    "benchmark_frozen": true,
+    "benchmark_must_not_be_edited_to_raise_router_score": true,
+    "signals_are_triage_not_confirmed_irregularities": true,
+    "composite_route_does_not_authorize_categorical_conclusions": true,
+    "free_sql": false,
+    "automatic_validation_status_change": false
+  },
+  "deferred": {
+    "external_holdout_routing_evaluation": true,
+    "real_corpus_retrieval_comparison": true,
+    "controlled_web_freshness_check": true,
+    "llm_conversation": true
+  },
+  "interpretive_safeguard": "O resultado de 100% no Benchmark 1.0.0 é in-sample e demonstra aderência ao conjunto de referência usado no desenvolvimento. Não representa acurácia esperada em produção, não prova generalização para perguntas novas e não altera o caráter de triagem dos sinais T01–T09."
+}
