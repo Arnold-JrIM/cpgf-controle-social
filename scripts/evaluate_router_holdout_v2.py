@@ -10,8 +10,8 @@ from pathlib import Path
 from cpgf.benchmark import evaluate_routing, load_benchmark
 from cpgf.version import BENCHMARK_VERSION, ROUTER_HOLDOUT_V2_VERSION, ROUTER_VERSION
 
-FROZEN_BEFORE_MEASUREMENT_COMMIT = "3a40b0d55e2b9be44bef84a9b5780e3a3f8a0648"
-EXPECTED_HOLDOUT_SHA256 = "48be0754b1fb169b7ed882bd8ecdccd72d278d3c2a41dc5bea66f9a8a4ae644e"
+FROZEN_BEFORE_MEASUREMENT_COMMIT = "5d15ad8f002505b42e9f9d357f55b10c5b3fba62"
+EXPECTED_HOLDOUT_SHA256 = "df48a03af598e86e84bac797f122404db8135c8b77caf19b7024ca52079a298b"
 
 
 def _normalize(text: str) -> str:
@@ -60,7 +60,7 @@ def _routing_diagnostics(result: dict[str, object]) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Primeira avaliação do Router 1.1.0 no Router Holdout 2.0.0 congelado."
+        description="Primeira avaliação válida do Router 1.1.0 no Router Holdout 2.0.0 congelado."
     )
     parser.add_argument(
         "--holdout",
@@ -113,9 +113,11 @@ def main() -> None:
         "routing": routing,
         "diagnostics": _routing_diagnostics(routing),
         "interpretation": (
-            "O Router Holdout 2.0.0 foi congelado antes da primeira execução do Router 1.1.0 e não foi "
-            "usado no ajuste dessa versão. A métrica é uma avaliação interna fora dos conjuntos de ajuste, "
-            "não uma estimativa de acurácia de produção ou validação humana externa."
+            "O Router Holdout 2.0.0 válido foi congelado antes da primeira execução que alcançou "
+            "evaluate_routing() para o Router 1.1.0 e não foi usado no ajuste dessa versão. A tentativa "
+            "anterior falhou na validação do esquema antes de qualquer roteamento. A métrica é uma avaliação "
+            "interna fora dos conjuntos de ajuste, não uma estimativa de acurácia de produção ou validação "
+            "humana externa."
         ),
     }
 
