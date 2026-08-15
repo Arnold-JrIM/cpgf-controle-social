@@ -6,7 +6,7 @@ from collections import Counter
 from pathlib import Path
 
 from cpgf.benchmark import QuestionFamily, evaluate_routing, load_benchmark
-from cpgf.version import ROUTER_HOLDOUT_VERSION, ROUTER_VERSION
+from cpgf.version import ROUTER_HOLDOUT_VERSION
 
 DEVELOPMENT = Path("data/benchmarks/assistant_v1_0_0.csv")
 HOLDOUT = Path("data/benchmarks/assistant_router_holdout_v1_0_0.csv")
@@ -23,7 +23,6 @@ def test_holdout_contract_is_balanced_disjoint_and_covers_all_trails():
     development = load_benchmark(DEVELOPMENT)
     holdout = load_benchmark(HOLDOUT)
 
-    assert ROUTER_VERSION == "1.0.0"
     assert ROUTER_HOLDOUT_VERSION == "1.0.0"
     assert len(holdout.cases) == 40
 
@@ -47,7 +46,7 @@ def test_development_benchmark_remains_frozen():
     assert digest == "be1a0245f597f9b2456aacdc6485187d6fdb9c52230f0072519d6387148b5820"
 
 
-def test_router_is_measured_on_holdout_without_accuracy_gate():
+def test_router_is_measured_on_holdout_without_historical_accuracy_gate():
     holdout = load_benchmark(HOLDOUT)
     result = evaluate_routing(holdout)
     summary = result["summary"]
