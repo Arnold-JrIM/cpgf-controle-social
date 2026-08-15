@@ -4,6 +4,7 @@ import pandas as pd
 
 from cpgf.governance.governance_contract import (
     canonical_mapping_sha256,
+    portable_governance_contract,
     validate_governance_bootstrap_report,
 )
 from cpgf.governance.governance_regression import (
@@ -67,12 +68,55 @@ def test_canonical_mapping_sha256_is_order_independent_for_mapping_keys():
     assert first != changed
 
 
-def test_validate_governance_bootstrap_report_requires_bootstrap_and_digest(tmp_path):
-    observed = {"rows": 10, "signatures": {"matrix": "abc"}}
-    expected_digest = canonical_mapping_sha256(observed)
+def _portable_fixture() -> dict[str, object]:
+    return {
+        "rows": 10,
+        "signatures": {
+            "matrix_ug_year": {
+                "rows": 10,
+                "columns": ["UG", "T01"],
+                "sha256": "matrix-exact",
+            },
+            "pca_ug_trails_loadings": {
+                "rows": 12,
+                "columns": ["REGRA", "COMPONENTE", "CARGA"],
+                "sha256": "eigen-run-a",
+            },
+            "multicollinearity_ug_trails_condition": {
+                "rows": 3,
+                "columns": ["COMPONENTE", "AUTOVALOR", "INDICE_CONDICAO"],
+                "sha256": "condition-run-a",
+            },
+        },
+    }
+
+
+def test_portable_contract_ignores_only_eigendecomposition_value_hashes():
+    observed = _portable_fixture()
+    base = canonical_mapping_sha256(portable_governance_contract(observed))
+
+    changed_eigen_hashes = _portable_fixture()
+    changed_eigen_hashes["signatures"]["pca_ug_trails_loadings"]["sha256"] = "eigen-run-b"
+    changed_eigen_hashes["signatures"]["multicollinearity_ug_trails_condition"][
+        "sha256"
+    ] = "condition-run-b"
+    assert canonical_mapping_sha256(portable_governance_contract(changed_eigen_hashes)) == base
+
+    changed_shape = _portable_fixture()
+    changed_shape["signatures"]["pca_ug_trails_loadings"]["rows"] = 13
+    assert canonical_mapping_sha256(portable_governance_contract(changed_shape)) != base
+
+    changed_deterministic_hash = _portable_fixture()
+    changed_deterministic_hash["signatures"]["matrix_ug_year"]["sha256"] = "changed"
+    assert canonical_mapping_sha256(portable_governance_contract(changed_deterministic_hash)) != base
+
+
+def test_validate_governance_bootstrap_report_requires_bootstrap_and_portable_digest(tmp_path):
+    observed = _portable_fixture()
+    expected_digest = canonical_mapping_sha256(portable_governance_contract(observed))
     contract = tmp_path / "contract.json"
     contract.write_text(
-        json.dumps({"expected_observed_contract_sha256": expected_digest}),
+        json.dumps({"expected_portable_contract_sha256": expected_digest}),
         encoding="utf-8",
     )
 
@@ -80,12 +124,23 @@ def test_validate_governance_bootstrap_report_requires_bootstrap_and_digest(tmp_
         {"status": "BOOTSTRAP_PASS", "observed_contract": observed},
         contract,
     )
+
+    changed_eigen_only = _portable_fixture()
+    changed_eigen_only["signatures"]["pca_ug_trails_loadings"]["sha256"] = "other-run"
+    still_passed = validate_governance_bootstrap_report(
+        {"status": "BOOTSTRAP_PASS", "observed_contract": changed_eigen_only},
+        contract,
+    )
+
+    changed_matrix = _portable_fixture()
+    changed_matrix["signatures"]["matrix_ug_year"]["sha256"] = "other-matrix"
     failed = validate_governance_bootstrap_report(
-        {"status": "BOOTSTRAP_PASS", "observed_contract": {"rows": 11}},
+        {"status": "BOOTSTRAP_PASS", "observed_contract": changed_matrix},
         contract,
     )
 
     assert passed["status"] == "PASS"
     assert passed["digest_pass"]
+    assert still_passed["status"] == "PASS"
     assert failed["status"] == "FAIL"
     assert not failed["digest_pass"]
