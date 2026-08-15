@@ -14,6 +14,7 @@ from cpgf.serving.distribution import (
 )
 from cpgf.serving.duckdb import open_catalog
 from cpgf.serving.repository import ServingRepository
+from cpgf.version import SERVING_VERSION
 
 TRAIL_LABELS: dict[str, str] = {
     "T01": "Despesa realizada em final de semana",
@@ -89,7 +90,7 @@ def serving_health(
     views = context.repository.list_views()
     return {
         "status": "READY",
-        "message": "Serving 1.4.0 íntegro e disponível para consulta read-only.",
+        "message": f"Serving {SERVING_VERSION} íntegro e disponível para consulta read-only.",
         "tables": len(views),
         "source": context.bootstrap.status,
         "catalog": str(context.bootstrap.catalog_path),
