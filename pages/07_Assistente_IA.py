@@ -8,8 +8,8 @@ st.set_page_config(page_title="Assistente IA · CPGF", page_icon="🤖", layout=
 apply_page_style()
 page_header(
     "Assistente IA — evidências antes da conversa",
-    "A superfície read-only do agente e o corpus documental governado já estão estruturados. "
-    "Embeddings, RAG semântico e conversa com LLM serão habilitados em etapas posteriores.",
+    "A superfície read-only do agente, o corpus documental governado e os mecanismos de recuperação "
+    "lexical, semântica e híbrida estão estruturados. A conversa com LLM permanece desabilitada.",
 )
 
 left, right = st.columns(2)
@@ -32,35 +32,38 @@ st.markdown(
     ### Camadas de evidência preparadas
 
     - **Serving 1.5.0** — dados e sinais analíticos materializados, somente leitura;
-    - **Knowledge 1.1.0** — corpus governado em seis escopos: núcleo CPGF, controle externo,
+    - **Knowledge 1.2.0** — corpus governado em seis escopos: núcleo CPGF, controle externo,
       metodologia, histórico, institucional MB e descoberta;
-    - **recuperação lexical** — baseline determinística, por padrão exclui fontes históricas,
-      institucionais específicas e materiais apenas de descoberta;
-    - **RAG semântico** — ainda não ativo;
+    - **recuperação lexical** — baseline determinística preservada;
+    - **recuperação semântica** — implementada por similaridade cosseno sobre índice vetorial local;
+    - **recuperação híbrida** — fusão por Reciprocal Rank Fusion (RRF), evitando comparar diretamente
+      escalas de score lexical e vetorial;
     - **LLM** — ainda não chamado nesta versão.
 
-    ### Governança documental
+    ### Governança documental e do índice
 
     - PDFs originais permanecem fora do Git; o catálogo registra caminho esperado, hash, tamanho e páginas;
     - `supports_trails` distingue fundamento direto de `related_trails`, que representa pertinência contextual;
+    - filtros de escopo, temporalidade e `retrieval_default` continuam valendo também para a busca semântica;
     - fontes históricas exigem opt-in e não orientam automaticamente respostas sobre vigência atual;
-    - decisões do TCU formam uma classe própria de evidência de controle externo;
-    - a Macrofunção SIAFI 02.11.21 está catalogada e validada por arquivo, mas fica fora da recuperação padrão
-      enquanto a cópia local não oferecer texto extraível de forma confiável;
+    - o índice vetorial é artefato local reproduzível e não é versionado no Git;
+    - a construção real do índice exige credencial explícita do provedor de embeddings e não ocorre no CI padrão;
+    - a Macrofunção SIAFI 02.11.21 permanece fora da recuperação enquanto a cópia local não oferecer texto
+      extraível de forma confiável;
     - documentos científicos não são presumidos redistribuíveis apenas por terem sido obtidos legalmente.
     """
 )
 
 st.info(
-    "Próxima etapa: comparar a baseline lexical do Knowledge 1.1.0 com recuperação semântica/híbrida, "
-    "preservando citações, escopo, temporalidade e autoridade. A conversa com LLM permanece separada."
+    "Próxima etapa: executar e avaliar o índice semântico sobre o corpus local real, comparando lexical, "
+    "semântico e híbrido em um conjunto de consultas de referência. A conversa com LLM continua separada."
 )
 
 st.markdown(
     """
     <div class="cpgf-callout">
-    O modelo de linguagem será uma camada explicativa. Dados analíticos, documentos e proveniência
-    permanecem em contratos independentes e versionados.
+    O modelo de linguagem será uma camada explicativa. Dados analíticos, documentos, índice vetorial e
+    proveniência permanecem em contratos independentes e versionados.
     </div>
     """,
     unsafe_allow_html=True,
