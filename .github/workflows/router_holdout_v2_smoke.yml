@@ -2,9 +2,6 @@ name: router-holdout-v2-smoke
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/router-holdout-v2.0.0
 
 permissions:
   contents: read
@@ -27,7 +24,7 @@ jobs:
       - name: Install project
         run: python -m pip install -e ".[dev]"
 
-      - name: Measure Router 1.1.0 on untouched Holdout 2.0.0
+      - name: Measure Router 1.1.0 on frozen Holdout 2.0.0
         run: |
           python scripts/evaluate_router_holdout_v2.py --output router_holdout_v2_0_0.json
           python - <<'PY'
@@ -48,10 +45,10 @@ jobs:
           print(json.dumps(payload["diagnostics"], ensure_ascii=False, indent=2))
           PY
 
-      - name: Upload first valid Holdout 2.0.0 evaluation
+      - name: Upload Holdout 2.0.0 evaluation
         uses: actions/upload-artifact@v4
         with:
-          name: router-holdout-v2.0.0-first-valid-evaluation
+          name: router-holdout-v2.0.0-evaluation
           path: router_holdout_v2_0_0.json
           if-no-files-found: error
           retention-days: 14
