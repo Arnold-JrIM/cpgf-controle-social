@@ -69,6 +69,8 @@ def _is_categorical_challenge(text: str) -> bool:
             "significa fraude",
             "e irregular",
             "fraudou",
+            "fraudador",
+            "fraudulento",
             "fraude?",
             "fraude ?",
         ),
