@@ -2,6 +2,9 @@ name: dashboard-smoke-release
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/streamlit-territorial-map-v0.3.0
 
 permissions:
   contents: read
