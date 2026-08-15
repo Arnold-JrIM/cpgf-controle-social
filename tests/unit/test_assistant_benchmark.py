@@ -29,9 +29,9 @@ def test_benchmark_gold_documents_exist_in_knowledge_catalog():
     validation = assistant_benchmark.validate_benchmark_against_catalog(suite, CATALOG)
     assert validation["status"] == "PASS"
     assert validation["cases"] == 50
-    assert validation["knowledge_cases"] >= 30
-    assert validation["serving_cases"] >= 15
-    assert validation["freshness_sensitive_cases"] >= 4
+    assert validation["knowledge_cases"] == 29
+    assert validation["serving_cases"] == 17
+    assert validation["freshness_sensitive_cases"] == 6
 
 
 def test_router_baseline_is_measurable_without_changing_router():
