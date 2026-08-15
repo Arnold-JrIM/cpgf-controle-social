@@ -1,6 +1,9 @@
 name: governance-full-regression-canonical
 
 on:
+  push:
+    branches:
+      - test/governance-full-regression-v1.3.2
   workflow_dispatch:
 
 permissions:
