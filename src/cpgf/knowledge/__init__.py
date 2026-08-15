@@ -2,7 +2,7 @@ from .build import build_knowledge_bundle
 from .catalog import load_source_catalog
 from .citations import format_knowledge_citation
 from .embeddings import EmbeddingProvider, OpenAIEmbeddingProvider, normalize_embeddings
-from .indexing import build_semantic_index, persist_semantic_index
+from .indexing import build_semantic_index, persist_semantic_index, validate_semantic_index
 from .models import (
     AuthorityLevel,
     CorpusScope,
@@ -39,4 +39,5 @@ __all__ = [
     "normalize_embeddings",
     "persist_semantic_index",
     "validate_knowledge_bundle",
+    "validate_semantic_index",
 ]
