@@ -1,0 +1,98 @@
+name: serving-publish-release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-serving:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SERVING_VERSION: "1.4.0"
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: python -m pip install -e .
+
+      - name: Download canonical Kaggle snapshot
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from cpgf.ingestion.kaggle import download_snapshot
+
+          resolved = download_snapshot(
+              Path("data/raw/serving_release"),
+              path="CPGF_201301_a_202607.csv",
+              force_download=True,
+          )
+          print(f"Kaggle resolved path: {resolved}")
+          PY
+
+      - name: Build and validate canonical serving
+        run: |
+          CSV="$(find data/raw/serving_release -type f -name 'CPGF_201301_a_202607.csv' | head -n 1)"
+          test -n "$CSV"
+          python scripts/build_serving.py \
+            --input "$CSV" \
+            --output-dir data/processed/serving
+
+      - name: Package release assets
+        run: |
+          mkdir -p dist
+          ASSET="cpgf-serving-${SERVING_VERSION}.tar.gz"
+          tar -C data/processed/serving -czf "dist/${ASSET}" .
+          (
+            cd dist
+            sha256sum "${ASSET}" > "${ASSET}.sha256"
+          )
+          ls -lh dist
+          cat "dist/${ASSET}.sha256"
+
+      - name: Create or update GitHub Release
+        run: |
+          TAG="serving-v${SERVING_VERSION}"
+          ASSET="cpgf-serving-${SERVING_VERSION}.tar.gz"
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target main \
+              --title "Serving ${SERVING_VERSION}" \
+              --notes "Bundle materializado e validado do CPGF Serving ${SERVING_VERSION}. Os arquivos binários permanecem fora do Git e são distribuídos com checksum SHA-256."
+          fi
+          gh release upload "$TAG" \
+            "dist/${ASSET}" \
+            "dist/${ASSET}.sha256" \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber
+
+      - name: Smoke test published release
+        run: |
+          rm -rf tmp/release-smoke
+          CPGF_SERVING_BUNDLE_DIR=tmp/release-smoke \
+            python scripts/bootstrap_serving.py --force-download
+          CPGF_SERVING_OFFLINE=1 \
+          CPGF_SERVING_BUNDLE_DIR=tmp/release-smoke \
+            python scripts/bootstrap_serving.py
+
+      - name: Upload release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serving-release-evidence-1.4.0
+          path: |
+            dist/cpgf-serving-1.4.0.tar.gz.sha256
+            data/processed/serving/serving_manifest.json
+          if-no-files-found: warn
