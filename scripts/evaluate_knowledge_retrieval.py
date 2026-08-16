@@ -6,9 +6,11 @@ from pathlib import Path
 
 import pandas as pd
 
+from cpgf.ai import PlannedKnowledgeRetriever, plan_knowledge_retrieval
 from cpgf.benchmark import (
     benchmark_sha256,
     evaluate_retrieval_benchmark,
+    evaluate_retrieval_planner,
     load_retrieval_benchmark,
     validate_retrieval_benchmark_against_catalog,
     validate_retrieval_corpus_coverage,
@@ -26,6 +28,7 @@ from cpgf.version import (
     KNOWLEDGE_VERSION,
     RETRIEVAL_BENCHMARK_VERSION,
     RETRIEVAL_EVALUATION_VERSION,
+    RETRIEVAL_PLANNER_VERSION,
 )
 
 
@@ -118,6 +121,7 @@ def main() -> None:
         args.benchmark,
         args.chunks,
     )
+    planner_evaluation = evaluate_retrieval_planner(suite, plan_knowledge_retrieval)
 
     retrievers: dict[str, object] = {}
     lexical = LexicalKnowledgeRetriever(chunks)
@@ -144,9 +148,13 @@ def main() -> None:
     results: dict[str, object] = {}
     for method in args.methods:
         retriever = retrievers[method]
+        planned_retriever = PlannedKnowledgeRetriever(retriever)
         results[method] = {
             "governed": evaluate_retrieval_benchmark(
                 suite, retriever, k=args.k, governed=True
+            ),
+            "runtime_governed": evaluate_retrieval_benchmark(
+                suite, planned_retriever, k=args.k, governed=False
             ),
             "unfiltered": evaluate_retrieval_benchmark(
                 suite, retriever, k=args.k, governed=False
@@ -155,6 +163,7 @@ def main() -> None:
 
     payload = {
         "retrieval_evaluation_version": RETRIEVAL_EVALUATION_VERSION,
+        "retrieval_planner_version": RETRIEVAL_PLANNER_VERSION,
         "retrieval_benchmark_version": RETRIEVAL_BENCHMARK_VERSION,
         "knowledge_version": KNOWLEDGE_VERSION,
         "benchmark_sha256": benchmark_sha256(args.benchmark),
@@ -164,6 +173,7 @@ def main() -> None:
         "methods": list(args.methods),
         "catalog_validation": catalog_validation,
         "corpus_validation": corpus_validation,
+        "planner_evaluation": planner_evaluation,
         "results": results,
         "provider_telemetry": None
         if provider is None
@@ -180,6 +190,8 @@ def main() -> None:
             "external_embeddings_allowed": bool(args.allow_external_embeddings),
             "semantic_queries_leave_local_environment_only_when_explicitly_allowed": True,
             "benchmark_and_chunks_locked_to_lexical_baseline": True,
+            "runtime_planner_uses_benchmark_oracle": False,
+            "oracle_governed_retained_as_comparison_upper_bound": True,
         },
     }
     text = json.dumps(payload, ensure_ascii=False, indent=2)
