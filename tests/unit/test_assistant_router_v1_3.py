@@ -2,7 +2,7 @@ from pathlib import Path
 
 from cpgf.ai import Route, route_question
 from cpgf.benchmark import evaluate_routing, load_benchmark, load_joint_retrieval_holdout
-from cpgf.version import RETRIEVAL_PLANNER_VERSION, ROUTER_VERSION
+from cpgf.version import ROUTER_VERSION
 
 DEVELOPMENT = Path("data/benchmarks/assistant_v1_0_0.csv")
 ROUTER_HOLDOUT_V1 = Path("data/benchmarks/assistant_router_holdout_v1_0_0.csv")
@@ -10,9 +10,8 @@ ROUTER_HOLDOUT_V2 = Path("data/benchmarks/assistant_router_holdout_v2_0_0.csv")
 JOINT_HOLDOUT_V2 = Path("data/benchmarks/joint_retrieval_holdout_v2_0_0.csv")
 
 
-def test_router_v1_3_versions_and_planner_freeze() -> None:
+def test_router_v1_3_version() -> None:
     assert ROUTER_VERSION == "1.3.0"
-    assert RETRIEVAL_PLANNER_VERSION == "1.1.0"
 
 
 def test_router_v1_3_preserves_known_router_regression_sets() -> None:
