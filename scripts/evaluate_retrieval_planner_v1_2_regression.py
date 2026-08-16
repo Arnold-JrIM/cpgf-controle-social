@@ -18,6 +18,7 @@ DEVELOPMENT = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 KNOWN_HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
 JOINT_HOLDOUT = Path("data/benchmarks/joint_retrieval_holdout_v2_0_0.csv")
 ROUTER_MANIFEST = Path("data/manifests/assistant_router_1_3_0.json")
+PLANNER_MANIFEST = Path("data/manifests/retrieval_planner_1_2_0.json")
 
 
 def _evaluate_retrieval(path: Path) -> dict[str, object]:
@@ -91,20 +92,22 @@ def _evaluate_joint() -> dict[str, object]:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Avalia o Planner 1.2.0 em conjuntos conhecidos, preservando o Router 1.3 "
-            "como contexto histórico de seu tuning e permitindo Router corrente posterior."
+            "Preserva a evidência do Planner 1.2.0 e verifica compatibilidade dos seus "
+            "conjuntos conhecidos com o Planner operacional corrente."
         )
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
     router_manifest = json.loads(ROUTER_MANIFEST.read_text(encoding="utf-8"))
+    planner_manifest = json.loads(PLANNER_MANIFEST.read_text(encoding="utf-8"))
     payload = {
-        "artifact": "retrieval_planner_1_2_regression",
+        "artifact": "retrieval_planner_1_2_historical_regression",
         "status": "KNOWN_REGRESSION_ONLY",
         "router_version_held_fixed": router_manifest["router_version"],
         "current_router_version": ROUTER_VERSION,
-        "planner_version": RETRIEVAL_PLANNER_VERSION,
+        "historical_planner_version": planner_manifest["planner_version"],
+        "current_planner_version": RETRIEVAL_PLANNER_VERSION,
         "development": _evaluate_retrieval(DEVELOPMENT),
         "known_holdout": _evaluate_retrieval(KNOWN_HOLDOUT),
         "joint_holdout_v2_known_regression": _evaluate_joint(),
@@ -122,11 +125,14 @@ def main() -> None:
             ]["remaining_filter_error_ids"],
         },
         "governance": {
+            "historical_planner_1_2_manifest_preserved": True,
+            "known_sets_recomputed_with_current_planner": True,
             "all_evaluation_sets_known_before_planner_1_2_tuning": True,
             "joint_holdout_v2_is_known_regression": True,
             "router_modified_during_planner_1_2_tuning": False,
             "historical_router_1_3_context_preserved": True,
             "current_router_may_advance": True,
+            "current_planner_may_advance": True,
             "case_id_specific_rules_added": False,
             "new_generalization_claim": False,
             "llm_called": False,
