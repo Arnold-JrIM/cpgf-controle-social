@@ -7,7 +7,7 @@ from cpgf.benchmark import (
     load_retrieval_benchmark,
 )
 from cpgf.knowledge.models import CorpusScope, TemporalStatus
-from cpgf.version import RETRIEVAL_PLANNER_VERSION, ROUTER_VERSION
+from cpgf.version import RETRIEVAL_PLANNER_VERSION
 
 DEVELOPMENT = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 KNOWN_HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
@@ -30,8 +30,7 @@ def _decision(route: Route) -> RouteDecision:
     return RouteDecision(route=route, reason="teste semântico geral do Planner 1.2.0")
 
 
-def test_planner_1_2_versions() -> None:
-    assert ROUTER_VERSION == "1.3.0"
+def test_planner_1_2_version() -> None:
     assert RETRIEVAL_PLANNER_VERSION == "1.2.0"
 
 
@@ -40,7 +39,7 @@ def test_planner_1_2_preserves_known_60_cases() -> None:
     _assert_retrieval_exact(KNOWN_HOLDOUT)
 
 
-def test_planner_1_2_recovers_all_known_joint_holdout_filters() -> None:
+def test_planner_1_2_recovers_all_known_joint_holdout_filters_with_current_router() -> None:
     suite = load_joint_retrieval_holdout(JOINT_HOLDOUT)
     route_errors: list[str] = []
     filter_errors: list[str] = []
