@@ -62,7 +62,7 @@ jobs:
           governance = payload["governance"]
           assert governance["router_called"] is False
           assert governance["retrieval_planner_called"] is False
-          assert governance["measurement_performed"] is False
+          assert governance["measurement_performed_by_this_preflight"] is False
           assert governance["llm_called"] is False
           assert governance["sql_executed"] is False
           assert governance["external_embeddings_called"] is False
