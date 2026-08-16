@@ -157,7 +157,7 @@ def _has_normative_cross_source_cues(text: str) -> bool:
 
 
 def _has_control_social_cross_source_cues(text: str) -> bool:
-    return _contains_any(
+    social_cue = _contains_any(
         text,
         (
             "controle social",
@@ -171,6 +171,17 @@ def _has_control_social_cross_source_cues(text: str) -> bool:
             "transparencia governamental",
         ),
     )
+    cpgf_cue = _contains_any(
+        text,
+        (
+            "cpgf",
+            "cartao governamental",
+            "cartao corporativo",
+            "cartao de pagamento",
+            "portal da transparencia",
+        ),
+    )
+    return social_cue and cpgf_cue
 
 
 def _is_categorical_challenge(text: str) -> bool:
