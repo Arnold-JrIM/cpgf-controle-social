@@ -21,6 +21,8 @@ data/outputs/
 data/cache/
 data/knowledge/sources/
 data/knowledge/processed/
+data/knowledge/semantic_index/
+data/evidence/knowledge_retrieval/
 *.duckdb
 *.db
 *.sqlite*
