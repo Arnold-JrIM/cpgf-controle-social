@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from cpgf.benchmark import (
@@ -7,6 +8,7 @@ from cpgf.benchmark import (
 )
 
 HOLDOUT = Path("data/benchmarks/joint_retrieval_holdout_v2_0_0.csv")
+MANIFEST = Path("data/manifests/joint_retrieval_flow_attribution_1_0_0.json")
 
 
 def _result() -> dict[str, object]:
@@ -26,6 +28,28 @@ def test_joint_attribution_reproduces_measured_baseline() -> None:
         "route_wrong_filters_wrong": 18,
         "clean_passes": 12,
     }
+
+
+def test_joint_attribution_matches_frozen_diagnostic_manifest() -> None:
+    result = _result()
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    expected = manifest["results"]
+
+    assert manifest["status"] == "POST_HOC_DIAGNOSTIC_FROZEN"
+    assert result["attribution_counts"] == expected["attribution_counts"]
+    assert result["ids_by_attribution"] == expected["ids_by_attribution"]
+    assert result["attribution_by_category"] == expected["attribution_by_category"]
+    assert result["router_only_failures"] == expected["router_only_failures"] == 15
+    assert result["planner_only_failures"] == expected["planner_only_failures"] == 1
+    assert result["shared_router_planner_failures"] == (
+        expected["shared_router_planner_failures"]
+    ) == 12
+    assert result["router_contribution_to_joint_failures"] == 27
+    assert result["planner_contribution_to_joint_failures"] == 13
+    assert result["best_case_joint_exact_with_expected_route_correction_only"] == 27
+    assert result["best_case_joint_exact_rate_with_expected_route_correction_only"] == 0.675
+    assert result["expected_route_filter_exact_cases"] == 27
+    assert result["any_documentary_route_filter_exact_cases"] == 27
 
 
 def test_joint_attribution_is_mutually_exclusive_and_exhaustive() -> None:
