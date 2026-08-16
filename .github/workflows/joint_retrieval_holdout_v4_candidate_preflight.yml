@@ -1,13 +1,6 @@
 name: joint-retrieval-holdout-v4-candidate-preflight
 
 on:
-  pull_request:
-    paths:
-      - "data/benchmarks/joint_retrieval_holdout_v4_0_0.csv"
-      - "src/cpgf/benchmark/joint_retrieval_v4.py"
-      - "scripts/preflight_joint_retrieval_holdout_v4_candidate.py"
-      - "data/knowledge/**"
-      - ".github/workflows/joint_retrieval_holdout_v4_candidate_preflight.yml"
   workflow_dispatch:
 
 jobs:
@@ -24,7 +17,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - name: Validate candidate without Router or Planner execution
+      - name: Reproduce historical candidate preflight without Router or Planner execution
         run: |
           python scripts/preflight_joint_retrieval_holdout_v4_candidate.py \
             --output joint_retrieval_holdout_v4_candidate_preflight.json
@@ -37,6 +30,7 @@ jobs:
               Path("joint_retrieval_holdout_v4_candidate_preflight.json").read_text()
           )
           assert p["status"] == "PASS"
+          assert p["benchmark_sha256"] == "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a"
           assert p["catalog_validation"]["cases"] == 48
           assert p["novelty_validation"]["prior_questions_compared"] == 278
           assert p["novelty_validation"]["normalized_exact_overlap"] == 0
