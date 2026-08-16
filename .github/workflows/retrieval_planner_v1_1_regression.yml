@@ -29,11 +29,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - name: Evaluate known Planner regression sets
+      - name: Evaluate known Planner 1.1 regression sets with current Planner
         run: |
           python scripts/evaluate_retrieval_planner_v1_1_regression.py \
             --output retrieval_planner_v1_1_regression.json
-      - name: Run Planner unit gate
+      - name: Run Planner historical compatibility gate
         run: |
           pytest -q \
             tests/unit/test_retrieval_planner_v1_1.py \
@@ -43,7 +43,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: retrieval-planner-v1.1.0-regression-py${{ matrix.python-version }}
+          name: retrieval-planner-v1.1-known-regression-py${{ matrix.python-version }}
           path: retrieval_planner_v1_1_regression.json
           if-no-files-found: error
       - name: Enforce known-regression gate
@@ -56,7 +56,9 @@ jobs:
               Path("retrieval_planner_v1_1_regression.json").read_text(encoding="utf-8")
           )
           assert payload["status"] == "KNOWN_REGRESSION_ONLY"
-          assert payload["planner_version"] == "1.1.0"
+          assert payload["historical_planner_version"] == "1.1.0"
+          assert isinstance(payload["current_planner_version"], str)
+          assert payload["current_planner_version"]
           assert isinstance(payload["router_version"], str) and payload["router_version"]
           for key in ("development", "known_holdout"):
               result = payload[key]["result"]
@@ -73,7 +75,10 @@ jobs:
                   key,
                   payload[key]["joint_divergent_ids"],
               )
-          assert payload["governance"]["new_generalization_claim"] is False
-          assert payload["governance"]["llm_called"] is False
-          assert payload["governance"]["sql_executed"] is False
+          governance = payload["governance"]
+          assert governance["historical_manifest_preserved"] is True
+          assert governance["current_planner_may_advance"] is True
+          assert governance["new_generalization_claim"] is False
+          assert governance["llm_called"] is False
+          assert governance["sql_executed"] is False
           PY
