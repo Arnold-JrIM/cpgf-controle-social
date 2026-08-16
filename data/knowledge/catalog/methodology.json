@@ -7,9 +7,9 @@
       "authority_level": "scientific_peer_reviewed",
       "distribution_policy": "metadata_only",
       "expected_path": "Artigos Open Acess/Artigo - (In)Conformidade dos Gastos com CPGF.pdf",
-      "expected_sha256": "b3fcabff092e9ffc8e0afe0607f9fc9c14c63a8f3de49d9701dcbe0bc84983ce",
-      "expected_bytes": 443420,
-      "expected_pages": 16,
+      "expected_sha256": "a61af5a7d51ab780b766a0ab853bbad8761b28a1b3baf16e2e8aa2e6bb3835a2",
+      "expected_bytes": 12563016,
+      "expected_pages": 21,
       "authors": ["Pamela Acássia Araujo Carmo"],
       "year": 2018,
       "publisher": "Revista Científica Multidisciplinar Núcleo do Conhecimento",
@@ -17,7 +17,8 @@
       "scope": "methodology",
       "temporal_status": "contextual",
       "supports_trails": ["T08"],
-      "related_trails": ["T03", "T05", "T07"]
+      "related_trails": ["T03", "T05", "T07"],
+      "notes": "Versão text-searchable adotada no corpus local da baseline lexical 1.0.0."
     },
     {
       "document_id": "cavalcanti-benford-cpgf",
