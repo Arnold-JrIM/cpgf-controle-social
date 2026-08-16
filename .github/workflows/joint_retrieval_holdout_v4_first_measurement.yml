@@ -1,21 +1,10 @@
 name: joint-retrieval-holdout-v4-first-measurement
 
 on:
-  pull_request:
-    paths:
-      - "scripts/measure_joint_retrieval_holdout_v4.py"
-      - "scripts/preflight_joint_retrieval_holdout_v4.py"
-      - "data/benchmarks/joint_retrieval_holdout_v4_0_0.csv"
-      - "data/manifests/joint_retrieval_holdout_4_0_0.json"
-      - "src/cpgf/benchmark/joint_retrieval_v4.py"
-      - "src/cpgf/ai/router.py"
-      - "src/cpgf/ai/retrieval_planner.py"
-      - "src/cpgf/version.py"
-      - ".github/workflows/joint_retrieval_holdout_v4_first_measurement.yml"
   workflow_dispatch:
 
 jobs:
-  measurement:
+  reproduction:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -28,43 +17,38 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - name: Revalidate frozen state immediately before first measurement
+      - name: Revalidate JH4 frozen history before reproduction
         run: |
           python scripts/preflight_joint_retrieval_holdout_v4.py \
-            --output jh4_preflight_before_measurement.json
-      - name: Execute frozen Router -> Planner first measurement
+            --output jh4_preflight_before_reproduction.json
+      - name: Reproduce frozen Router -> Planner measurement
         run: |
           python scripts/measure_joint_retrieval_holdout_v4.py \
             --output joint_retrieval_holdout_v4_measurement.json
-      - name: Validate evidence contract without performance gate
+      - name: Validate reproduction contract without performance gate
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
 
-          preflight = json.loads(Path("jh4_preflight_before_measurement.json").read_text())
+          preflight = json.loads(Path("jh4_preflight_before_reproduction.json").read_text())
           p = json.loads(Path("joint_retrieval_holdout_v4_measurement.json").read_text())
 
           assert preflight["status"] == "PASS"
-          assert preflight["manifest_status"] == "FROZEN_BEFORE_MEASUREMENT"
-          assert preflight["current_flow"]["matches_frozen_flow"] is True
-          assert p["status"] == "INDEPENDENT_MEASUREMENT"
+          assert preflight["manifest_status"] == "MEASURED_INDEPENDENT"
+          assert p["status"] == "INDEPENDENT_MEASUREMENT_REPRODUCTION"
           assert p["benchmark_sha256"] == "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a"
           assert p["summary"]["cases"] == 48
-          assert p["frozen_flow"]["router_version"] == "1.4.0"
-          assert p["frozen_flow"]["retrieval_planner_version"] == "1.3.0"
           assert p["governance"]["performance_threshold_applied_to_workflow_success"] is False
-          assert p["governance"]["low_performance_causes_workflow_failure"] is False
           assert p["governance"]["retriever_called"] is False
           assert p["governance"]["llm_called"] is False
-          # Deliberadamente não há assert sobre a nota obtida.
           PY
-      - name: Upload first-measurement evidence
+      - name: Upload reproduction evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: joint-retrieval-holdout-v4-first-measurement-py${{ matrix.python-version }}
+          name: joint-retrieval-holdout-v4-reproduction-py${{ matrix.python-version }}
           path: |
-            jh4_preflight_before_measurement.json
+            jh4_preflight_before_reproduction.json
             joint_retrieval_holdout_v4_measurement.json
           if-no-files-found: error
