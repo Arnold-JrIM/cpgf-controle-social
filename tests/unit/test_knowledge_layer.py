@@ -33,14 +33,14 @@ def _catalog(tmp_path: Path) -> tuple[Path, Path]:
 def test_real_catalog_governance_counts():
     catalog = load_source_catalog(Path("data/knowledge/source_catalog.json"))
     assert len(catalog) == 45
-    assert sum(item.retrieval_default for item in catalog) == 35
+    assert sum(item.retrieval_default for item in catalog) == 36
     assert sum(item.scope.value == "control_external" for item in catalog) == 11
     assert sum(item.scope.value == "methodology" for item in catalog) == 6
     assert sum(item.scope.value == "historical" for item in catalog) == 1
     assert sum(item.scope.value == "institutional_mb" for item in catalog) == 4
     assert sum(item.scope.value == "discovery" for item in catalog) == 3
     assert any(item.document_id == "decreto-12807-2025" and item.source_relative_path is None for item in catalog)
-    assert any(item.document_id == "siafi-macrofuncao-021121-2026" and not item.ingest_content for item in catalog)
+    assert any(item.document_id == "siafi-macrofuncao-021121-2026" and item.ingest_content for item in catalog)
 
 
 def test_expected_path_accepts_nested_and_rejects_traversal():

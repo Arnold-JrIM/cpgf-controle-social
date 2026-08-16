@@ -11,6 +11,7 @@ from cpgf.benchmark import (
     evaluate_retrieval_benchmark,
     load_retrieval_benchmark,
     validate_retrieval_benchmark_against_catalog,
+    validate_retrieval_corpus_coverage,
 )
 from cpgf.knowledge import (
     HybridKnowledgeRetriever,
@@ -96,6 +97,12 @@ def main() -> None:
             f"chunks.parquet não encontrado: {args.chunks}. Rode build_knowledge.py localmente primeiro."
         )
     chunks = pd.read_parquet(args.chunks)
+    if "document_id" not in chunks.columns:
+        raise ValueError("chunks.parquet sem coluna document_id")
+    corpus_validation = validate_retrieval_corpus_coverage(
+        suite,
+        chunks["document_id"].astype(str),
+    )
 
     retrievers: dict[str, object] = {}
     lexical = LexicalKnowledgeRetriever(chunks)
@@ -138,6 +145,7 @@ def main() -> None:
         "k": args.k,
         "methods": list(args.methods),
         "catalog_validation": catalog_validation,
+        "corpus_validation": corpus_validation,
         "results": results,
         "governance": {
             "llm_called": False,

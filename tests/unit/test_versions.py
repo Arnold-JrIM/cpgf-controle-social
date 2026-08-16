@@ -16,7 +16,7 @@ from cpgf.version import (
 
 
 def test_methodology_versions():
-    assert APP_VERSION == "0.11.0-dev"
+    assert APP_VERSION == "0.12.0-dev"
     assert PREPARATION_BASELINE_VERSION == "1.0.0"
     assert PREPARATION_VERSION == "1.1.0"
     assert RULES_VERSION == "1.2.0"

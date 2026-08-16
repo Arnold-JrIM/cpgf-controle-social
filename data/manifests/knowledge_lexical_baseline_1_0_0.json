@@ -1,0 +1,101 @@
+{
+  "artifact": "knowledge_lexical_baseline",
+  "version": "1.0.0",
+  "app_version": "0.12.0-dev",
+  "knowledge_version": "1.2.0",
+  "retrieval_benchmark_version": "1.0.0",
+  "method": "lexical",
+  "k": 5,
+  "benchmark_sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+  "chunks_sha256": "43c7d61e8b963c5b8b1ad747ec24c2cdb5e464d403ea9b2b3776f19a5cb65b7c",
+  "local_result_file": "data/evidence/knowledge_retrieval/lexical_baseline_v1_0_0.json",
+  "local_result_file_sha256": "1a6293ea259ff3d0498f6123b4db9fe40f08e55efc435271e14be36b12833922",
+  "catalog_validation": {
+    "status": "PASS",
+    "cases": 30,
+    "gold_documents": 24,
+    "referenced_documents": 25,
+    "freshness_sensitive_cases": 3
+  },
+  "corpus_validation": {
+    "status": "PASS",
+    "benchmark_cases": 30,
+    "gold_documents": 24,
+    "gold_documents_with_chunks": 24,
+    "available_documents_with_chunks": 41,
+    "missing_gold_documents": []
+  },
+  "local_build": {
+    "documents": 45,
+    "available_documents": 44,
+    "metadata_only_documents": 1,
+    "available_not_ingested": 3,
+    "chunks": 1970,
+    "default_retrieval_chunks": 1610,
+    "validation": "PASS",
+    "expected_not_ingested_document_ids": [
+      "nigrini-benfords-law-applications-2012",
+      "nigrini-forensic-analytics-methods",
+      "referencias-cpgf-projeto"
+    ]
+  },
+  "results": {
+    "governed": {
+      "hit_rate_at_5": 0.8666666666666667,
+      "mean_document_recall_at_5": 0.6944444444444444,
+      "mrr": 0.6505555555555556,
+      "map_at_5": 0.518425925925926,
+      "failed_case_ids": ["KRET-001", "KRET-004", "KRET-010", "KRET-013"],
+      "by_category": {
+        "control_external": {"cases": 1, "hit_rate_at_5": 1.0, "mean_document_recall_at_5": 1.0, "mrr": 1.0, "map_at_5": 1.0},
+        "cross_source": {"cases": 8, "hit_rate_at_5": 1.0, "mean_document_recall_at_5": 0.7083333333333334, "mrr": 0.8375, "map_at_5": 0.5958333333333333},
+        "methodology": {"cases": 6, "hit_rate_at_5": 0.8333333333333334, "mean_document_recall_at_5": 0.75, "mrr": 0.8333333333333334, "map_at_5": 0.75},
+        "normative": {"cases": 15, "hit_rate_at_5": 0.8, "mean_document_recall_at_5": 0.6444444444444444, "mrr": 0.45444444444444443, "map_at_5": 0.35240740740740745}
+      }
+    },
+    "unfiltered": {
+      "hit_rate_at_5": 0.7333333333333333,
+      "mean_document_recall_at_5": 0.55,
+      "mrr": 0.5694444444444444,
+      "map_at_5": 0.44425925925925924,
+      "failed_case_ids": ["KRET-001", "KRET-003", "KRET-004", "KRET-005", "KRET-007", "KRET-010", "KRET-013", "KRET-022"],
+      "by_category": {
+        "control_external": {"cases": 1, "hit_rate_at_5": 1.0, "mean_document_recall_at_5": 1.0, "mrr": 1.0, "map_at_5": 1.0},
+        "cross_source": {"cases": 8, "hit_rate_at_5": 0.875, "mean_document_recall_at_5": 0.6458333333333334, "mrr": 0.7291666666666666, "map_at_5": 0.5208333333333334},
+        "methodology": {"cases": 6, "hit_rate_at_5": 0.8333333333333334, "mean_document_recall_at_5": 0.75, "mrr": 0.8333333333333334, "map_at_5": 0.75},
+        "normative": {"cases": 15, "hit_rate_at_5": 0.6, "mean_document_recall_at_5": 0.3888888888888889, "mrr": 0.35, "map_at_5": 0.24407407407407405}
+      }
+    },
+    "governance_delta": {
+      "hit_rate_at_5": 0.1333333333333334,
+      "mean_document_recall_at_5": 0.1444444444444444,
+      "mrr": 0.0811111111111111,
+      "map_at_5": 0.0741666666666667
+    }
+  },
+  "source_contract_updates_before_first_measurement": [
+    {
+      "document_id": "carmo-inconformidade-cpgf-2018",
+      "sha256": "a61af5a7d51ab780b766a0ab853bbad8761b28a1b3baf16e2e8aa2e6bb3835a2",
+      "bytes": 12563016,
+      "pages": 21,
+      "reason": "versao text-searchable"
+    },
+    {
+      "document_id": "siafi-macrofuncao-021121-2026",
+      "sha256": "b845718989fc14f774e22e8ed455e97fb1e277a3a9ba485cf6af01a20c097cb2",
+      "bytes": 474615,
+      "pages": 23,
+      "reason": "edicao text-searchable de 21/07/2026 promovida a recuperacao padrao"
+    }
+  ],
+  "governance": {
+    "llm_called": false,
+    "sql_executed": false,
+    "external_embeddings_allowed": false,
+    "semantic_queries_leave_local_environment_only_when_explicitly_allowed": true,
+    "benchmark_modified_after_freeze": false,
+    "full_pdfs_committed": false
+  },
+  "interpretation": "Baseline lexical observacional no corpus real. O modo governado superou o modo sem filtros nas quatro metricas agregadas deste benchmark. O resultado nao demonstra superioridade sobre recuperacao semantica ou hibrida e nao deve ser interpretado como avaliacao de resposta final de LLM."
+}
