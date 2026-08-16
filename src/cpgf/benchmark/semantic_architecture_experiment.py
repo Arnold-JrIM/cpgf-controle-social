@@ -9,7 +9,6 @@ from pydantic import BaseModel, ConfigDict
 from cpgf.ai.retrieval_planner import plan_knowledge_retrieval
 from cpgf.ai.router import RouteDecision, route_question
 from cpgf.ai.semantic_experiment import SemanticProvider
-from cpgf.knowledge.models import CorpusScope, TemporalStatus
 
 from .joint_retrieval_v4 import JointRetrievalHoldoutV4Case, JointRetrievalHoldoutV4Suite
 
@@ -215,8 +214,13 @@ def evaluate_semantic_architectures(
             repetition_summaries[architecture.value].append(_repetition_summary(rows))
 
     stability: dict[str, dict[str, object]] = {}
-    for architecture in (SemanticArchitecture.LLM_ROUTE, SemanticArchitecture.HYBRID_ADJUDICATED):
-        signatures: defaultdict[str, list[tuple[str, tuple[str, ...], tuple[str, ...]]]] = defaultdict(list)
+    for architecture in (
+        SemanticArchitecture.LLM_ROUTE,
+        SemanticArchitecture.HYBRID_ADJUDICATED,
+    ):
+        signatures: defaultdict[
+            str, list[tuple[str, tuple[str, ...], tuple[str, ...]]]
+        ] = defaultdict(list)
         for row in architecture_rows[architecture.value]:
             signature = (
                 str(row["predicted_route"]),
