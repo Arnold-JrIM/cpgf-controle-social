@@ -1,0 +1,61 @@
+{
+  "artifact": "joint_retrieval_holdout",
+  "version": "2.0.0",
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "base_main_sha": "3add7d1127387d616abcc7b95a2a717c009a3d1f",
+  "benchmark": {
+    "path": "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv",
+    "sha256": "47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7",
+    "frozen_commit": "3788ba26801b5423df3835f3f05292366e0a6ae7",
+    "cases": 40,
+    "category_counts": {
+      "normative": 10,
+      "methodology": 10,
+      "cross_source": 14,
+      "control_external": 6
+    },
+    "expected_route_counts": {
+      "knowledge": 17,
+      "methodology": 10,
+      "composite": 13
+    },
+    "gold_documents": 28,
+    "referenced_documents": 29,
+    "freshness_sensitive_cases": 2
+  },
+  "frozen_flow": {
+    "router_version": "1.2.0",
+    "router_source": "src/cpgf/ai/router.py",
+    "router_source_git_blob_sha": "f4236a7352e9b8808a22cf7d27c0efb1d4123821",
+    "retrieval_planner_version": "1.1.0",
+    "retrieval_planner_source": "src/cpgf/ai/retrieval_planner.py",
+    "retrieval_planner_source_git_blob_sha": "2f5765a9ba70730b1af7f84ff4fc288eb3a2b96a",
+    "knowledge_version": "1.2.0",
+    "app_version_at_freeze": "0.17.0-dev"
+  },
+  "oracle": {
+    "expected_route_frozen": true,
+    "expected_scopes_frozen": true,
+    "expected_temporal_statuses_frozen": true,
+    "gold_document_ids_frozen": true,
+    "supporting_document_ids_frozen": true,
+    "expected_trails_frozen": true
+  },
+  "measurement": {
+    "first_valid_measurement_run_id": null,
+    "first_valid_measurement_head_sha": null,
+    "first_valid_measurement_result": null
+  },
+  "governance": {
+    "benchmark_authored_after_router_1_2_and_planner_1_1_were_frozen": true,
+    "benchmark_measured_before_freeze": false,
+    "router_or_planner_may_change_after_first_measurement_in_this_increment": false,
+    "prior_benchmarks_may_be_used_only_for_novelty_checks": true,
+    "new_generalization_claim_requires_first_valid_measurement": true,
+    "llm_called": false,
+    "sql_executed": false,
+    "external_embeddings_called": false,
+    "primary_joint_metric": "route + scope + temporal exact match",
+    "retrieval_gold_preserved_for_future_retriever_evaluation": true
+  }
+}
