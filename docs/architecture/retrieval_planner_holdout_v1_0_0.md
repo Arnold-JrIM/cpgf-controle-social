@@ -10,9 +10,11 @@ O incremento é deliberadamente avaliativo. Ele não altera `src/cpgf/ai/retriev
 
 O arquivo `data/benchmarks/retrieval_planner_holdout_v1_0_0.csv` contém 30 perguntas e foi congelado, em sua primeira forma válida de esquema, no commit `e4b47b5376ff7b9b7f5768ab53f3ba5a6d464265`.
 
-SHA-256: `ccbc8b89cb81027b41a380eceaa3ed127663a1d34fc23cf1060e54d1ddcdc480`.
+SHA-256 efetivamente observado sobre os bytes versionados: `4b7dce923ce148d22a9e254e95dafc305952e81938325388401a4b7f836b2f5f`.
 
 O primeiro commit da branch continha uma única falha de serialização CSV: uma vírgula interna sem aspas em uma pergunta. O commit de congelamento válido corrigiu apenas essa serialização, sem modificar pergunta, categoria, gabarito documental, escopo esperado, temporalidade esperada ou trilhas esperadas.
+
+Uma primeira tentativa automatizada no run `31963293358` foi encerrada no preflight porque a constante de SHA-256 do avaliador não correspondia aos bytes efetivamente versionados. A falha ocorreu antes da chamada a `evaluate_retrieval_planner()` e, portanto, não constitui medição válida do Planner 1.0.0. A correção posterior altera somente a referência de integridade.
 
 ## Composição
 
