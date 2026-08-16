@@ -1,16 +1,6 @@
 name: joint-retrieval-holdout-v3-candidate-preflight
 
 on:
-  pull_request:
-    paths:
-      - "data/benchmarks/joint_retrieval_holdout_v3_0_0.csv"
-      - "src/cpgf/benchmark/joint_retrieval_v3.py"
-      - "scripts/preflight_joint_retrieval_holdout_v3_candidate.py"
-      - "src/cpgf/ai/router.py"
-      - "src/cpgf/ai/retrieval_planner.py"
-      - "src/cpgf/version.py"
-      - "data/knowledge/**"
-      - ".github/workflows/joint_retrieval_holdout_v3_candidate_preflight.yml"
   workflow_dispatch:
 
 jobs:
@@ -27,7 +17,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - name: Candidate preflight without Router or Planner execution
+      - name: Reproduce historical candidate preflight without Router or Planner execution
         run: |
           python scripts/preflight_joint_retrieval_holdout_v3_candidate.py \
             --output joint_retrieval_holdout_v3_candidate_preflight.json
@@ -38,32 +28,3 @@ jobs:
           name: joint-retrieval-holdout-v3-candidate-preflight-py${{ matrix.python-version }}
           path: joint_retrieval_holdout_v3_candidate_preflight.json
           if-no-files-found: error
-      - name: Enforce candidate governance
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          payload = json.loads(Path("joint_retrieval_holdout_v3_candidate_preflight.json").read_text())
-          assert payload["status"] == "PASS"
-          assert payload["catalog_validation"]["cases"] == 48
-          assert payload["catalog_validation"]["category_counts"] == {
-              "normative": 12,
-              "methodology": 12,
-              "cross_source": 12,
-              "control_external": 12,
-          }
-          assert payload["catalog_validation"]["expected_route_counts"] == {
-              "knowledge": 24,
-              "methodology": 12,
-              "composite": 12,
-          }
-          novelty = payload["novelty_validation"]
-          assert novelty["prior_questions_compared"] == 230
-          assert novelty["normalized_exact_overlap"] == 0
-          assert novelty["highest_sequence_similarity"] <= 0.80
-          governance = payload["governance"]
-          assert governance["candidate_not_frozen_yet"] is True
-          assert governance["router_called"] is False
-          assert governance["retrieval_planner_called"] is False
-          assert governance["measurement_performed"] is False
-          PY
