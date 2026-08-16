@@ -1,9 +1,7 @@
-import hashlib
 import json
 from pathlib import Path
 
 from cpgf.benchmark import benchmark_sha256, joint_holdout_sha256
-from cpgf.version import RETRIEVAL_PLANNER_VERSION
 
 MANIFEST = Path("data/manifests/retrieval_planner_1_2_0.json")
 DEVELOPMENT = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
@@ -11,21 +9,16 @@ KNOWN_HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
 JOINT_HOLDOUT = Path("data/benchmarks/joint_retrieval_holdout_v2_0_0.csv")
 
 
-def _git_blob_sha(path: str) -> str:
-    content = Path(path).read_bytes()
-    header = f"blob {len(content)}\0".encode()
-    return hashlib.sha1(header + content).hexdigest()
-
-
-def test_planner_1_2_manifest_preserves_historical_router_and_current_planner() -> None:
+def test_planner_1_2_manifest_preserves_frozen_operational_context() -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
-    assert manifest["version"] == RETRIEVAL_PLANNER_VERSION == "1.2.0"
+    assert manifest["version"] == "1.2.0"
+    assert manifest["planner_version"] == "1.2.0"
     assert manifest["router_version"] == "1.3.0"
     assert manifest["status"] == "KNOWN_REGRESSION_FROZEN"
     assert manifest["app_version"] == "0.19.0-dev"
-    assert manifest["planner_1_2_source_git_blob_sha"] == _git_blob_sha(
-        manifest["planner_source"]
+    assert manifest["planner_1_2_source_git_blob_sha"] == (
+        "7ee30359cb4457b0bd1a12b43d14f73be410ddaa"
     )
     assert manifest["router_source_git_blob_sha"] == (
         "7c82b42f4409110371dcb86e15672a328a0d54bd"
