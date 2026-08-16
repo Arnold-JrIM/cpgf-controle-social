@@ -1,0 +1,135 @@
+{
+  "artifact": "joint_retrieval_flow_attribution_v4",
+  "version": "1.0.0",
+  "status": "POST_HOC_DIAGNOSTIC_FROZEN",
+  "source_independent_measurement": {
+    "joint_holdout_version": "4.0.0",
+    "benchmark_sha256": "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a",
+    "measurement_run_id": 31977328529,
+    "measurement_head_sha": "fc77fa2340b9e3cf1ffed1ffa438ef74d38370f8",
+    "joint_exact": 18,
+    "joint_failures": 30,
+    "holdout_already_known_before_this_diagnostic": true
+  },
+  "frozen_flow": {
+    "router_version": "1.4.0",
+    "router_source_git_blob_sha": "89150b97e9c87d9af0d0b0f888870dcc74ef86b1",
+    "retrieval_planner_version": "1.3.0",
+    "retrieval_planner_source_git_blob_sha": "8fa1458c11eeabfdde155635b74a9b770e9960c1"
+  },
+  "diagnostic_evidence": {
+    "workflow_run_id": 31979015958,
+    "head_sha": "9a5819bac9cee9930f80aea9aaa0a44a3b2a1edc",
+    "python_3_11": {
+      "job_id": 95242759323,
+      "artifact_id": 9271842380,
+      "artifact_digest": "sha256:8a122014c1a79ab2d03968a3ea319c0970e89556ea3b15a8571e987904220762"
+    },
+    "python_3_12": {
+      "job_id": 95242759392,
+      "artifact_id": 9271850314,
+      "artifact_digest": "sha256:97dd71270533ca0f41851e8e4a571bb362aebc879d74122cfee1151a1f0ac52e"
+    },
+    "output_json_sha256_both": "6b0f4f184f846a2cf08bf603e6b254e43591ffdb0a627f1cd48a94266a7a4f2c",
+    "python_outputs_byte_identical": true
+  },
+  "results": {
+    "cases": 48,
+    "actual_joint_exact": 18,
+    "actual_joint_failures": 30,
+    "attribution_counts": {
+      "pass": 18,
+      "planner_only": 2,
+      "router_and_planner": 15,
+      "router_only": 13
+    },
+    "ids_by_attribution": {
+      "pass": [
+        "JH4-002", "JH4-006", "JH4-007", "JH4-009", "JH4-010", "JH4-011",
+        "JH4-012", "JH4-013", "JH4-016", "JH4-017", "JH4-018", "JH4-020",
+        "JH4-031", "JH4-037", "JH4-040", "JH4-041", "JH4-045", "JH4-048"
+      ],
+      "planner_only": ["JH4-043", "JH4-044"],
+      "router_and_planner": [
+        "JH4-003", "JH4-025", "JH4-026", "JH4-027", "JH4-029", "JH4-030",
+        "JH4-032", "JH4-034", "JH4-035", "JH4-036", "JH4-038", "JH4-039",
+        "JH4-042", "JH4-046", "JH4-047"
+      ],
+      "router_only": [
+        "JH4-001", "JH4-004", "JH4-005", "JH4-008", "JH4-014", "JH4-015",
+        "JH4-019", "JH4-021", "JH4-022", "JH4-023", "JH4-024", "JH4-028",
+        "JH4-033"
+      ]
+    },
+    "attribution_by_category": {
+      "control_external": {
+        "pass": 5,
+        "planner_only": 2,
+        "router_and_planner": 5
+      },
+      "cross_source": {
+        "pass": 1,
+        "router_and_planner": 9,
+        "router_only": 2
+      },
+      "methodology": {
+        "pass": 5,
+        "router_only": 7
+      },
+      "normative": {
+        "pass": 7,
+        "router_and_planner": 1,
+        "router_only": 4
+      }
+    },
+    "router_only_failures": 13,
+    "planner_only_failures": 2,
+    "shared_router_planner_failures": 15,
+    "router_contribution_to_joint_failures": 28,
+    "router_contribution_rate": 0.9333333333333333,
+    "planner_contribution_to_joint_failures": 17,
+    "planner_contribution_rate": 0.5666666666666667,
+    "shared_failure_rate": 0.5,
+    "best_case_joint_exact_with_expected_route_correction_only": 31,
+    "best_case_joint_exact_rate_with_expected_route_correction_only": 0.6458333333333334,
+    "expected_route_filter_exact_cases": 31,
+    "any_documentary_route_filter_exact_cases": 31,
+    "observed_layer_mismatch_reproduction": {
+      "route_wrong_filters_exact": 6,
+      "route_exact_filters_wrong": 2,
+      "route_wrong_filters_wrong": 22,
+      "clean_passes": 18
+    }
+  },
+  "interpretation": {
+    "seven_observed_route_and_filter_mismatches_recovered_by_route_correction_only": true,
+    "router_participates_in_most_joint_failures": true,
+    "route_only_counterfactual_remains_below_jh4_primary_target": true,
+    "planner_improvement_is_required_even_with_perfect_route_correction": true,
+    "methodology_failures_are_router_only": true,
+    "cross_source_is_primary_shared_interaction_category": true,
+    "control_external_failures_require_planner_attention": true,
+    "semantic_llm_routing_experiment_is_supported_as_next_architectural_test": true,
+    "llm_should_not_be_treated_as_audit_engine": true,
+    "route_only_counterfactual_is_known_holdout_upper_bound_not_prediction": true,
+    "production_readiness_supported": false,
+    "next_step": "controlled_llm_semantic_routing_and_hybrid_experiment_on_known_jh4_before_new_independent_jh5"
+  },
+  "governance": {
+    "diagnostic_is_post_hoc": true,
+    "joint_holdout_4_used_as_new_independent_test": false,
+    "first_independent_measurement_preserved": true,
+    "tuning_performed_in_increment": false,
+    "question_and_oracle_held_fixed": true,
+    "counterfactual_changes_only_route_decision": true,
+    "primary_attribution_uses_expected_route_counterfactual": true,
+    "all_documentary_routes_swept_for_secondary_diagnostics": true,
+    "not_a_new_generalization_claim": true,
+    "future_tuning_or_architecture_selection_on_jh4_requires_new_independent_jh5": true,
+    "llm_called": false,
+    "sql_executed": false,
+    "retriever_called": false,
+    "external_embeddings_called": false,
+    "production_llm_activation_allowed": false
+  }
+}
