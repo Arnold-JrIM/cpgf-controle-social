@@ -1,0 +1,112 @@
+name: semantic-architecture-experiment
+
+on:
+  pull_request:
+    paths:
+      - "src/cpgf/ai/semantic_experiment.py"
+      - "src/cpgf/benchmark/semantic_architecture_experiment.py"
+      - "scripts/run_semantic_architecture_experiment.py"
+      - "data/manifests/semantic_architecture_experiment_1_0_0.json"
+      - "tests/unit/test_semantic_architecture_experiment.py"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - ".github/workflows/semantic_architecture_experiment.yml"
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Modelo congelado no protocolo"
+        required: true
+        default: "gpt-5.6"
+        type: string
+      repeats:
+        description: "Repetições LLM congeladas no protocolo"
+        required: true
+        default: "3"
+        type: string
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Validate semantic experiment offline contract
+        run: |
+          pytest -q \
+            tests/unit/test_semantic_architecture_experiment.py \
+            tests/unit/test_versions.py
+      - name: Enforce pre-LLM governance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(
+              Path("data/manifests/semantic_architecture_experiment_1_0_0.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          assert p["status"] == "PROTOCOL_FROZEN_BEFORE_LLM_RUN"
+          assert p["measurement"]["performed"] is False
+          assert p["execution"]["llm_repetitions"] == 3
+          assert p["execution"]["structured_outputs_strict"] is True
+          assert p["execution"]["external_tools_enabled"] is False
+          assert p["governance"]["production_llm_activation_allowed"] is False
+          assert p["governance"]["new_independent_jh5_required_after_architecture_selection"] is True
+          PY
+
+  live-experiment:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Require API credential without exposing it
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::error::Configure o secret OPENAI_API_KEY antes do experimento."
+            exit 1
+          fi
+      - name: Execute frozen A/B/C experiment on known JH4
+        run: |
+          python scripts/run_semantic_architecture_experiment.py \
+            --model "${{ inputs.model }}" \
+            --repeats "${{ inputs.repeats }}" \
+            --output semantic_architecture_experiment_result.json
+      - name: Validate result governance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(Path("semantic_architecture_experiment_result.json").read_text())
+          assert p["status"] == "KNOWN_MATERIAL_ARCHITECTURE_SELECTION"
+          assert p["benchmark"]["already_known_before_llm_experiment"] is True
+          assert p["governance"]["production_llm_activation"] is False
+          assert p["governance"]["future_generalization_claim_requires_new_jh5"] is True
+          assert p["result"]["governance"]["retriever_called"] is False
+          assert p["result"]["governance"]["external_tools_available_to_llm"] is False
+          PY
+      - name: Upload governed experiment evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-architecture-experiment-v1
+          path: semantic_architecture_experiment_result.json
+          if-no-files-found: error
