@@ -1,0 +1,86 @@
+{
+  "artifact": "joint_retrieval_holdout",
+  "version": "3.0.0",
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "benchmark": {
+    "path": "data/benchmarks/joint_retrieval_holdout_v3_0_0.csv",
+    "sha256": "d9598b3d1c04d2ddf776a931afba864dc972c4dea73dd0ef774b1e93185dd4a8",
+    "frozen_commit": "824caa0d280396e06852a3e19fb58b2ad184bd2d",
+    "cases": 48,
+    "category_counts": {
+      "normative": 12,
+      "methodology": 12,
+      "cross_source": 12,
+      "control_external": 12
+    },
+    "expected_route_counts": {
+      "knowledge": 24,
+      "methodology": 12,
+      "composite": 12
+    },
+    "freshness_sensitive_cases": 2,
+    "gold_documents": 33,
+    "referenced_documents": 35
+  },
+  "candidate_history": {
+    "initial_semantic_candidate_commit": "3bad326341b536a248468911efd53fe3956cc70d",
+    "initial_preflight_failed_before_model_execution": true,
+    "serialization_correction_commit": "7eadb03f4b24c46478a16f252ebbbe439fe1334f",
+    "serialization_correction_only": true,
+    "semantic_oracle_changed_during_serialization_correction": false,
+    "novelty_preflight_after_serialization": {
+      "candidate_sha256": "2e5139b83caa0dcd5fa71fe745d371f745f66373e874db01acc033ba976f82e6",
+      "only_offending_case": "JH3-033",
+      "similarity": 0.8099173553719008,
+      "threshold": 0.8
+    },
+    "novelty_driven_rewrite_commit": "824caa0d280396e06852a3e19fb58b2ad184bd2d",
+    "novelty_rewrite_case": "JH3-033",
+    "oracle_route_scope_temporal_and_documents_preserved_in_rewrite": true
+  },
+  "novelty": {
+    "valid_candidate_preflight_run_id": 31971546533,
+    "python_3_11_job_id": 95224669263,
+    "python_3_12_job_id": 95224669326,
+    "artifact_digest_both": "sha256:a9a0d0aeb059bde1ed06b54b59a6783c8ef36227082290e842e5d2ab9f126668",
+    "prior_questions_compared": 230,
+    "normalized_exact_overlap": 0,
+    "prospective_max_similarity": 0.8,
+    "highest_sequence_similarity": 0.7104247104247104,
+    "highest_sequence_similarity_case": "JH3-016",
+    "top_5": [
+      {"id": "JH3-016", "similarity": 0.7104247104247104},
+      {"id": "JH3-037", "similarity": 0.6808510638297872},
+      {"id": "JH3-041", "similarity": 0.6666666666666666},
+      {"id": "JH3-018", "similarity": 0.6613545816733067},
+      {"id": "JH3-048", "similarity": 0.6590909090909091}
+    ]
+  },
+  "frozen_flow": {
+    "router_version": "1.3.0",
+    "router_source_git_blob_sha": "7c82b42f4409110371dcb86e15672a328a0d54bd",
+    "retrieval_planner_version": "1.2.0",
+    "retrieval_planner_source_git_blob_sha": "7ee30359cb4457b0bd1a12b43d14f73be410ddaa",
+    "knowledge_version": "1.2.0"
+  },
+  "measurement": {
+    "performed": false,
+    "first_valid_measurement": null,
+    "result": null
+  },
+  "governance": {
+    "benchmark_semantics_frozen": true,
+    "benchmark_must_not_change_before_first_measurement": true,
+    "all_oracles_defined_before_model_execution": true,
+    "router_or_planner_called_during_candidate_preflight": false,
+    "no_tuning_allowed_before_first_measurement": true,
+    "performance_threshold_for_workflow_success": null,
+    "low_performance_must_not_fail_measurement_workflow": true,
+    "holdout_becomes_known_after_first_measurement": true,
+    "retriever_called": false,
+    "llm_called": false,
+    "sql_executed": false,
+    "external_embeddings_called": false,
+    "llm_activation_allowed": false
+  }
+}
