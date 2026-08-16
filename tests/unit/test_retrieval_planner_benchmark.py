@@ -3,7 +3,6 @@ from pathlib import Path
 from cpgf.ai import plan_knowledge_retrieval
 from cpgf.benchmark import evaluate_retrieval_planner, load_retrieval_benchmark
 
-
 BENCHMARK = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 
 
