@@ -87,7 +87,7 @@
   },
   "experimental_code_freeze": {
     "semantic_provider_source_git_blob_sha": "fe2bb7d7e464c8629101415828476084680a124f",
-    "architecture_evaluator_source_git_blob_sha": "ebf4e1c87945b6103b17f218452c22fbc1d14fcc"
+    "architecture_evaluator_source_git_blob_sha": "830c65b2871f0345646e574ab04af51fd34c391b"
   },
   "measurement": {
     "performed": false,
