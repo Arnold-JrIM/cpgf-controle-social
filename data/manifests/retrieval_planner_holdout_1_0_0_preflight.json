@@ -8,7 +8,7 @@
   "holdout_sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
   "frozen_before_valid_measurement_commit": "0b8fdb36f17a370ef3d47c979798936cc46c1ce4",
   "cases": 30,
-  "status": "FROZEN_PENDING_FIRST_VALID_AUTOMATED_MEASUREMENT",
+  "status": "SUPERSEDED_BY_FIRST_VALID_MEASUREMENT",
   "preflight_history": [
     {
       "run_id": 31963293358,
@@ -21,6 +21,8 @@
       "valid_measurement": false
     }
   ],
+  "first_valid_measurement_run_id": 31963655100,
+  "final_manifest": "data/manifests/retrieval_planner_holdout_1_0_0.json",
   "governance": {
     "planner_source_modified": false,
     "exact_question_overlap_with_development_benchmark": 0,
