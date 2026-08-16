@@ -5,6 +5,8 @@ on:
     paths:
       - "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv"
       - "data/manifests/joint_retrieval_holdout_2_0_0.json"
+      - "src/cpgf/ai/router.py"
+      - "src/cpgf/ai/retrieval_planner.py"
       - "src/cpgf/benchmark/joint_retrieval.py"
       - "src/cpgf/benchmark/__init__.py"
       - "src/cpgf/version.py"
