@@ -1,0 +1,79 @@
+{
+  "artifact": "retrieval_planner_evaluation",
+  "version": "1.0.0",
+  "app_version": "0.14.0-dev",
+  "retrieval_planner_version": "1.0.0",
+  "retrieval_evaluation_version": "1.1.0",
+  "router_version": "1.1.0",
+  "knowledge_version": "1.2.0",
+  "retrieval_benchmark_version": "1.0.0",
+  "k": 5,
+  "planner_source_git_blob_sha": "6e6a0c7b6b1c39d1313b266f4ac7652ce69edc2f",
+  "benchmark_sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+  "chunks_sha256": "43c7d61e8b963c5b8b1ad747ec24c2cdb5e464d403ea9b2b3776f19a5cb65b7c",
+  "local_result_file": "data/evidence/knowledge_retrieval/retrieval_planner_eval_v1_0_0.json",
+  "local_result_file_sha256": "b56380f54c5132de016181c01e78d72ab41c90fb09a294c03a629aa9fb4732b2",
+  "local_result_file_bytes": 208570,
+  "validation": {
+    "reference_status": "PASS",
+    "catalog_status": "PASS",
+    "corpus_status": "PASS",
+    "cases": 30,
+    "gold_documents": 24,
+    "gold_documents_with_chunks": 24,
+    "available_documents_with_chunks": 41,
+    "missing_gold_documents": []
+  },
+  "planner_evaluation": {
+    "cases": 30,
+    "scope_exact_match_rate": 1.0,
+    "temporal_exact_match_rate": 0.9666666666666667,
+    "joint_exact_match_rate": 0.9666666666666667,
+    "mean_scope_recall": 1.0,
+    "mean_scope_precision": 1.0,
+    "mean_temporal_recall": 0.9833333333333333,
+    "mean_temporal_precision": 1.0,
+    "mismatch_case_ids": ["KRET-002"],
+    "mismatch_note": "KRET-002 preservou cpgf_core, mas previu apenas current onde o oraculo admitia current + contextual. O Planner 1.0.0 nao foi alterado apos a observacao."
+  },
+  "results": {
+    "lexical": {
+      "runtime_governed": {"hit_rate_at_5": 0.8666666666666667, "mean_document_recall_at_5": 0.6944444444444444, "mrr": 0.6561111111111111, "map_at_5": 0.5239814814814815, "failed_case_ids": ["KRET-001", "KRET-004", "KRET-010", "KRET-013"]},
+      "unfiltered": {"hit_rate_at_5": 0.7333333333333333, "mean_document_recall_at_5": 0.55, "mrr": 0.5694444444444444, "map_at_5": 0.44425925925925924},
+      "runtime_delta_vs_unfiltered": {"hit_rate_at_5": 0.1333333333333334, "mean_document_recall_at_5": 0.1444444444444444, "mrr": 0.0866666666666667, "map_at_5": 0.0797222222222223}
+    },
+    "semantic": {
+      "runtime_governed": {"hit_rate_at_5": 0.9666666666666667, "mean_document_recall_at_5": 0.8944444444444444, "mrr": 0.7166666666666667, "map_at_5": 0.6782407407407407, "failed_case_ids": ["KRET-004"]},
+      "unfiltered": {"hit_rate_at_5": 0.9666666666666667, "mean_document_recall_at_5": 0.8333333333333334, "mrr": 0.6688888888888889, "map_at_5": 0.6012962962962962},
+      "runtime_delta_vs_unfiltered": {"hit_rate_at_5": 0.0, "mean_document_recall_at_5": 0.0611111111111110, "mrr": 0.0477777777777778, "map_at_5": 0.0769444444444445}
+    },
+    "hybrid": {
+      "runtime_governed": {"hit_rate_at_5": 0.9666666666666667, "mean_document_recall_at_5": 0.8333333333333334, "mrr": 0.7344444444444443, "map_at_5": 0.6440740740740741, "failed_case_ids": ["KRET-004"]},
+      "unfiltered": {"hit_rate_at_5": 0.9333333333333333, "mean_document_recall_at_5": 0.7555555555555556, "mrr": 0.7022222222222222, "map_at_5": 0.5731481481481481},
+      "runtime_delta_vs_unfiltered": {"hit_rate_at_5": 0.0333333333333333, "mean_document_recall_at_5": 0.0777777777777777, "mrr": 0.0322222222222222, "map_at_5": 0.0709259259259261}
+    }
+  },
+  "provider_telemetry": {
+    "model": "text-embedding-3-small",
+    "dimensions": 768,
+    "evaluation_external_requests": 30,
+    "evaluation_embedded_texts": 30,
+    "query_cache_enabled": true
+  },
+  "governance": {
+    "deterministic": true,
+    "llm_called": false,
+    "sql_executed": false,
+    "runtime_planner_uses_benchmark_oracle": false,
+    "oracle_governed_retained_as_comparison_upper_bound": true,
+    "benchmark_was_visible_during_planner_development": true,
+    "development_in_sample": true,
+    "generalization_claimed": false,
+    "planner_modified_after_first_measurement": false,
+    "new_holdout_required_before_production_policy_selection": true,
+    "benchmark_and_chunks_locked_to_lexical_baseline": true,
+    "full_result_committed": false,
+    "semantic_index_committed": false
+  },
+  "interpretation": "No benchmark de desenvolvimento conhecido, o Planner 1.0.0 reproduziu todos os escopos e 29 de 30 filtros temporais. Semantic e hybrid preservaram integralmente as metricas agregadas do modo-oraculo em runtime_governed. No lexical, Hit Rate e Recall foram preservados, com pequena variacao favoravel de ranking associada ao unico filtro temporal divergente. Semantic apresentou o maior recall documental e MAP@5 em runtime; hybrid apresentou o maior MRR. O resultado e in-sample e nao sustenta generalizacao nem selecao definitiva da politica de producao antes de um novo holdout."
+}

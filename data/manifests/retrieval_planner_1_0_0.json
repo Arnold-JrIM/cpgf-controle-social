@@ -1,0 +1,25 @@
+{
+  "artifact": "retrieval_planner",
+  "version": "1.0.0",
+  "planner_source": "src/cpgf/ai/retrieval_planner.py",
+  "planner_source_git_blob_sha": "6e6a0c7b6b1c39d1313b266f4ac7652ce69edc2f",
+  "router_version": "1.1.0",
+  "retrieval_benchmark_version": "1.0.0",
+  "benchmark_sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+  "chunks_sha256": "43c7d61e8b963c5b8b1ad747ec24c2cdb5e464d403ea9b2b3776f19a5cb65b7c",
+  "knowledge_version": "1.2.0",
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "evaluation_role": "development_in_sample_diagnostic",
+  "governance": {
+    "deterministic": true,
+    "llm_used_by_planner": false,
+    "sql_used_by_planner": false,
+    "planner_reads_gold_document_ids": false,
+    "planner_reads_expected_scopes": false,
+    "planner_reads_expected_temporal_statuses": false,
+    "benchmark_was_visible_during_planner_development": true,
+    "generalization_claimed": false,
+    "planner_rules_must_not_change_after_first_measurement": true,
+    "new_holdout_required_before_production_policy_selection": true
+  }
+}
