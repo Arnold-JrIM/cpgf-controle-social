@@ -31,8 +31,17 @@ def test_joint_holdout_v2_matches_frozen_contract() -> None:
     assert manifest["benchmark"]["sha256"] == (
         "47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7"
     )
-    assert manifest["status"] == "FROZEN_BEFORE_MEASUREMENT"
-    assert manifest["measurement"]["first_valid_measurement_run_id"] is None
+    assert manifest["status"] in {"FROZEN_BEFORE_MEASUREMENT", "MEASURED_INDEPENDENT"}
+
+    measurement = manifest["measurement"]
+    if manifest["status"] == "FROZEN_BEFORE_MEASUREMENT":
+        assert measurement["first_valid_measurement_run_id"] is None
+        assert measurement["first_valid_measurement_head_sha"] is None
+        assert measurement["first_valid_measurement_result"] is None
+    else:
+        assert measurement["first_valid_measurement_run_id"] is not None
+        assert measurement["first_valid_measurement_head_sha"] is not None
+        assert measurement["first_valid_measurement_result"] is not None
 
 
 def test_joint_holdout_v2_has_planned_balance() -> None:
@@ -71,7 +80,7 @@ def test_joint_holdout_v2_has_no_normalized_exact_overlap_with_prior_sets() -> N
     assert result["normalized_exact_overlap"] == 0
 
 
-def test_joint_holdout_v2_manifest_freezes_router_and_planner_before_measurement() -> None:
+def test_joint_holdout_v2_manifest_preserves_frozen_router_planner_and_oracle() -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     frozen = manifest["frozen_flow"]
     governance = manifest["governance"]
