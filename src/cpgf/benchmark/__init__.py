@@ -8,6 +8,11 @@ from .joint_retrieval import (
     validate_joint_holdout_against_catalog,
     validate_joint_holdout_novelty,
 )
+from .joint_retrieval_attribution import (
+    DOCUMENTARY_ROUTES,
+    JointRetrievalFlowAttribution,
+    evaluate_joint_retrieval_flow_attribution,
+)
 from .loader import load_benchmark, validate_benchmark_against_catalog
 from .models import BenchmarkCase, BenchmarkSuite, ExpectedRoute, QuestionFamily
 from .retrieval import (
@@ -31,7 +36,9 @@ from .retrieval_reference import validate_retrieval_reference
 __all__ = [
     "BenchmarkCase",
     "BenchmarkSuite",
+    "DOCUMENTARY_ROUTES",
     "ExpectedRoute",
+    "JointRetrievalFlowAttribution",
     "JointRetrievalHoldoutCase",
     "JointRetrievalHoldoutSuite",
     "QuestionFamily",
@@ -42,6 +49,7 @@ __all__ = [
     "RetrievalFlowAttribution",
     "benchmark_sha256",
     "evaluate_answer_contract",
+    "evaluate_joint_retrieval_flow_attribution",
     "evaluate_retrieval",
     "evaluate_retrieval_benchmark",
     "evaluate_retrieval_flow_attribution",
