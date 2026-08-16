@@ -27,7 +27,7 @@ def _set_metrics(expected: set[str], predicted: set[str]) -> tuple[float, float]
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Primeira medição independente do Joint Holdout 3.0. "
+            "Mede ou reproduz o Joint Holdout 3.0 congelado. "
             "A nota obtida nunca determina sucesso/falha do processo."
         )
     )
@@ -35,13 +35,16 @@ def main() -> None:
     args = parser.parse_args()
 
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    if manifest["status"] != "FROZEN_BEFORE_MEASUREMENT":
-        raise ValueError(
-            "Medição oficial só é permitida no estado FROZEN_BEFORE_MEASUREMENT; "
-            f"estado atual: {manifest['status']}"
-        )
+    manifest_status = manifest["status"]
+    if manifest_status not in {"FROZEN_BEFORE_MEASUREMENT", "MEASURED_INDEPENDENT"}:
+        raise ValueError(f"Estado do JH3 não permite medição/reprodução: {manifest_status}")
+    output_status = (
+        "INDEPENDENT_MEASUREMENT"
+        if manifest_status == "FROZEN_BEFORE_MEASUREMENT"
+        else "INDEPENDENT_MEASUREMENT_REPRODUCTION"
+    )
     if joint_holdout_v3_sha256(BENCHMARK) != manifest["benchmark"]["sha256"]:
-        raise ValueError("Benchmark divergiu do SHA congelado antes da medição")
+        raise ValueError("Benchmark divergiu do SHA congelado")
 
     suite = load_joint_retrieval_holdout_v3(BENCHMARK)
     rows: list[dict[str, object]] = []
@@ -153,7 +156,7 @@ def main() -> None:
     payload = {
         "artifact": "joint_retrieval_holdout_v3_measurement",
         "version": "3.0.0",
-        "status": "INDEPENDENT_MEASUREMENT",
+        "status": output_status,
         "benchmark_sha256": manifest["benchmark"]["sha256"],
         "frozen_flow": manifest["frozen_flow"],
         "summary": summary,
@@ -180,7 +183,7 @@ def main() -> None:
             "llm_called": False,
             "sql_executed": False,
             "external_embeddings_called": False,
-            "holdout_becomes_known_after_this_measurement": True,
+            "holdout_already_known": manifest_status == "MEASURED_INDEPENDENT",
         },
     }
     args.output.write_text(
