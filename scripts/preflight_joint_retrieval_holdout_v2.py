@@ -35,8 +35,9 @@ def _git_blob_sha(path: Path) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Executa somente preflight estrutural/novidade do Joint Retrieval Holdout 2.0.0. "
-            "Não chama Router, Retrieval Planner, LLM, SQL ou embeddings."
+            "Executa preflight estrutural/novidade do Joint Retrieval Holdout 2.0.0. "
+            "Antes da medição exige o fluxo corrente congelado; depois da medição preserva "
+            "o freeze histórico sem bloquear evolução operacional."
         )
     )
     parser.add_argument("--holdout", type=Path, default=DEFAULT_HOLDOUT)
@@ -69,19 +70,20 @@ def main() -> None:
             raise ValueError("Manifesto medido não registra a primeira medição completa")
 
     frozen = manifest["frozen_flow"]
-    if ROUTER_VERSION != frozen["router_version"]:
-        raise ValueError("Router corrente divergiu da versão congelada")
-    if RETRIEVAL_PLANNER_VERSION != frozen["retrieval_planner_version"]:
-        raise ValueError("Planner corrente divergiu da versão congelada")
+    current_router_blob = _git_blob_sha(Path(str(frozen["router_source"])))
+    current_planner_blob = _git_blob_sha(Path(str(frozen["retrieval_planner_source"])))
+    current_flow_matches_frozen = (
+        ROUTER_VERSION == frozen["router_version"]
+        and RETRIEVAL_PLANNER_VERSION == frozen["retrieval_planner_version"]
+        and KNOWLEDGE_VERSION == frozen["knowledge_version"]
+        and current_router_blob == frozen["router_source_git_blob_sha"]
+        and current_planner_blob == frozen["retrieval_planner_source_git_blob_sha"]
+    )
+
+    if manifest["status"] == "FROZEN_BEFORE_MEASUREMENT" and not current_flow_matches_frozen:
+        raise ValueError("Fluxo corrente divergiu do freeze antes da primeira medição")
     if KNOWLEDGE_VERSION != frozen["knowledge_version"]:
         raise ValueError("Knowledge corrente divergiu da versão congelada")
-
-    router_blob = _git_blob_sha(Path(str(frozen["router_source"])))
-    planner_blob = _git_blob_sha(Path(str(frozen["retrieval_planner_source"])))
-    if router_blob != frozen["router_source_git_blob_sha"]:
-        raise ValueError("Blob do Router divergiu do freeze")
-    if planner_blob != frozen["retrieval_planner_source_git_blob_sha"]:
-        raise ValueError("Blob do Planner divergiu do freeze")
 
     catalog = validate_joint_holdout_against_catalog(suite, args.catalog)
     novelty = validate_joint_holdout_novelty(suite, DEFAULT_PRIOR)
@@ -94,11 +96,21 @@ def main() -> None:
         "benchmark_sha256": actual_sha,
         "frozen_commit": manifest["benchmark"]["frozen_commit"],
         "frozen_flow": {
+            "router_version": frozen["router_version"],
+            "router_source_git_blob_sha": frozen["router_source_git_blob_sha"],
+            "retrieval_planner_version": frozen["retrieval_planner_version"],
+            "retrieval_planner_source_git_blob_sha": frozen[
+                "retrieval_planner_source_git_blob_sha"
+            ],
+            "knowledge_version": frozen["knowledge_version"],
+        },
+        "current_flow": {
             "router_version": ROUTER_VERSION,
-            "router_source_git_blob_sha": router_blob,
+            "router_source_git_blob_sha": current_router_blob,
             "retrieval_planner_version": RETRIEVAL_PLANNER_VERSION,
-            "retrieval_planner_source_git_blob_sha": planner_blob,
+            "retrieval_planner_source_git_blob_sha": current_planner_blob,
             "knowledge_version": KNOWLEDGE_VERSION,
+            "matches_frozen_flow": current_flow_matches_frozen,
         },
         "catalog_validation": catalog,
         "novelty_validation": novelty,
@@ -109,6 +121,9 @@ def main() -> None:
             "sql_executed": False,
             "external_embeddings_called": False,
             "measurement_performed_by_this_preflight": False,
+            "pre_measurement_requires_current_flow_match": True,
+            "post_measurement_allows_operational_versions_to_advance": True,
+            "historical_frozen_flow_preserved_from_manifest": True,
         },
     }
     text = json.dumps(payload, ensure_ascii=False, indent=2)
