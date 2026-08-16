@@ -35,7 +35,19 @@ Nenhum LLM conversacional é chamado, nenhum SQL é executado e nenhum PDF ou í
 
 ## Execução local planejada
 
-Após atualizar a branch e confirmar que o corpus local ainda corresponde ao manifesto de referência:
+Primeiro deve ser feito um preflight inteiramente local, sem chave de API e sem chamada externa:
+
+```powershell
+python scripts/build_semantic_index.py `
+  --bundle-dir data/knowledge/processed `
+  --output-dir data/knowledge/semantic_index `
+  --model text-embedding-3-small `
+  --dimensions 768 `
+  --batch-size 64 `
+  --dry-run
+```
+
+Somente após `KNOWLEDGE SEMANTIC INDEX PREFLIGHT: PASS`, a construção real pode ser executada com credencial de sessão e consentimento explícito:
 
 ```powershell
 $env:OPENAI_API_KEY="<CHAVE_DA_SESSAO>"
@@ -58,6 +70,12 @@ python scripts/evaluate_knowledge_retrieval.py `
   --semantic-index-dir data/knowledge/semantic_index `
   --allow-external-embeddings `
   --output data/evidence/knowledge_retrieval/semantic_hybrid_eval_v1_0_0.json
+```
+
+Ao final da sessão, a variável pode ser removida com:
+
+```powershell
+Remove-Item Env:OPENAI_API_KEY
 ```
 
 A avaliação registra resultados `governed` e `unfiltered` para os três métodos, além de hashes, validações e telemetria lógica do provider.
