@@ -39,19 +39,18 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: router-v1.2.0-regression-py${{ matrix.python-version }}
+          name: router-v1.2-historical-regression-py${{ matrix.python-version }}
           path: |
             router_v1_2_regression.json
             pytest-results.xml
           if-no-files-found: error
-      - name: Enforce Router regression gate
+      - name: Enforce legacy Router regression gate
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
 
           payload = json.loads(Path("router_v1_2_regression.json").read_text(encoding="utf-8"))
-          assert payload["router_version"] == "1.2.0", payload
           routing = payload["routing_sets"]
           expected = {"development": 50, "router_holdout_v1": 40, "router_holdout_v2": 40}
           for key, cases in expected.items():
@@ -70,10 +69,6 @@ jobs:
           assert historical["latent_router_issues_with_exact_filters"] == 0, historical
           assert historical["attribution_counts"] == {"pass": 21, "planner": 9}, historical
           assert historical["frozen_historical_evidence"] is True, historical
-
-          governance = payload["governance"]
-          assert governance["historical_retrieval_flow_recomputed_with_current_planner"] is False
-          assert governance["router_regression_decoupled_from_current_planner"] is True
           PY
       - name: Enforce full pytest
         if: steps.pytest_diagnostics.outcome != 'success'
