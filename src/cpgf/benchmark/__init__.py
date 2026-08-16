@@ -13,6 +13,15 @@ from .joint_retrieval_attribution import (
     JointRetrievalFlowAttribution,
     evaluate_joint_retrieval_flow_attribution,
 )
+from .joint_retrieval_v4 import (
+    JointRetrievalHoldoutV4Case,
+    JointRetrievalHoldoutV4Suite,
+    joint_holdout_v4_sha256,
+    load_joint_retrieval_holdout_v4,
+    normalize_question_v4,
+    validate_joint_holdout_v4_against_catalog,
+    validate_joint_holdout_v4_novelty,
+)
 from .loader import load_benchmark, validate_benchmark_against_catalog
 from .models import BenchmarkCase, BenchmarkSuite, ExpectedRoute, QuestionFamily
 from .retrieval import (
@@ -41,6 +50,8 @@ __all__ = [
     "JointRetrievalFlowAttribution",
     "JointRetrievalHoldoutCase",
     "JointRetrievalHoldoutSuite",
+    "JointRetrievalHoldoutV4Case",
+    "JointRetrievalHoldoutV4Suite",
     "QuestionFamily",
     "RETRIEVAL_CAPABLE_ROUTES",
     "RetrievalBenchmarkCase",
@@ -56,13 +67,18 @@ __all__ = [
     "evaluate_retrieval_planner",
     "evaluate_routing",
     "joint_holdout_sha256",
+    "joint_holdout_v4_sha256",
     "load_benchmark",
     "load_joint_retrieval_holdout",
+    "load_joint_retrieval_holdout_v4",
     "load_retrieval_benchmark",
     "normalize_question",
+    "normalize_question_v4",
     "validate_benchmark_against_catalog",
     "validate_joint_holdout_against_catalog",
     "validate_joint_holdout_novelty",
+    "validate_joint_holdout_v4_against_catalog",
+    "validate_joint_holdout_v4_novelty",
     "validate_retrieval_benchmark_against_catalog",
     "validate_retrieval_corpus_coverage",
     "validate_retrieval_reference",
