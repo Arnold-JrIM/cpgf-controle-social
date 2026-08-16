@@ -16,7 +16,9 @@ A métrica principal da primeira medição será a concordância exata conjunta 
 
 O benchmark foi criado a partir da `main` no commit `3add7d1127387d616abcc7b95a2a717c009a3d1f`.
 
-O CSV foi congelado no commit `3788ba26801b5423df3835f3f05292366e0a6ae7`, antes de qualquer execução do Router ou Planner sobre as perguntas. Seu SHA-256 é:
+O primeiro commit do CSV, `3788ba26801b5423df3835f3f05292366e0a6ae7`, continha apenas uma falha de serialização CSV: campos textuais com vírgulas não estavam escapados de forma uniforme. O preflight falhou antes de qualquer chamada ao Router ou Planner. Nenhuma pergunta, categoria, rota esperada, escopo, temporalidade, trilha ou documento-gabarito foi alterado.
+
+A serialização canônica foi então congelada no commit `d5bd22029e161c5a20722bdfbe638ec51a92da60`. Seu SHA-256 é:
 
 `47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7`
 
