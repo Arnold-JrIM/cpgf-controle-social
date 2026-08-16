@@ -90,7 +90,10 @@ def _evaluate_joint() -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Avalia o Planner 1.2.0 somente em conjuntos já conhecidos."
+        description=(
+            "Avalia o Planner 1.2.0 em conjuntos conhecidos, preservando o Router 1.3 "
+            "como contexto histórico de seu tuning e permitindo Router corrente posterior."
+        )
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -99,7 +102,8 @@ def main() -> None:
     payload = {
         "artifact": "retrieval_planner_1_2_regression",
         "status": "KNOWN_REGRESSION_ONLY",
-        "router_version_held_fixed": ROUTER_VERSION,
+        "router_version_held_fixed": router_manifest["router_version"],
+        "current_router_version": ROUTER_VERSION,
         "planner_version": RETRIEVAL_PLANNER_VERSION,
         "development": _evaluate_retrieval(DEVELOPMENT),
         "known_holdout": _evaluate_retrieval(KNOWN_HOLDOUT),
@@ -120,7 +124,9 @@ def main() -> None:
         "governance": {
             "all_evaluation_sets_known_before_planner_1_2_tuning": True,
             "joint_holdout_v2_is_known_regression": True,
-            "router_modified": False,
+            "router_modified_during_planner_1_2_tuning": False,
+            "historical_router_1_3_context_preserved": True,
+            "current_router_may_advance": True,
             "case_id_specific_rules_added": False,
             "new_generalization_claim": False,
             "llm_called": False,
