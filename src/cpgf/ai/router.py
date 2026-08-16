@@ -125,6 +125,8 @@ def _asks_scientific_sources(text: str) -> bool:
             "referencias cientificas",
             "referencia tecnica",
             "referencias tecnicas",
+            "artigo academico",
+            "artigos academicos",
             "trabalho academico",
             "trabalhos academicos",
             "trabalho cientifico",
@@ -137,12 +139,14 @@ def _asks_scientific_sources(text: str) -> bool:
             "estudos cientificos",
             "estudo recente",
             "estudos recentes",
+            "estudo sobre",
             "aplicacao empirica",
             "aplicacoes empiricas",
             "producao academica",
             "literatura academica",
             "literatura cientifica",
             "literatura de auditoria",
+            "literatura e orientacao",
             "que literatura",
             "literatura pode",
             "literatura sobre",
@@ -170,6 +174,7 @@ def _has_normative_cross_source_cues(text: str) -> bool:
             "norma geral",
             "normas gerais",
             "normas basicas",
+            "estudos e normas",
             "fonte normativa",
             "fontes normativas",
             "referencia normativa",
@@ -453,7 +458,7 @@ def _route_methodology(text: str) -> RouteDecision | None:
         "distribuicao atipica dos primeiros",
         "padroes dos primeiros digitos",
     )
-    if _contains_any(text, benford_paraphrases):
+    if _contains_any(text, benford_paraphrases) and not _is_quantitative_request(text):
         return _decision(
             Route.METHODOLOGY,
             "pergunta metodológica sobre distribuição de dígitos",
