@@ -8,7 +8,7 @@ from typing import Protocol
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from cpgf.ai.retrieval_planner import plan_knowledge_retrieval
-from cpgf.ai.router import Route, RouteDecision, route_question
+from cpgf.ai.router import Route, RouteDecision
 from cpgf.knowledge.models import CorpusScope, TemporalStatus
 
 DOCUMENTARY_ROUTES = (Route.KNOWLEDGE, Route.METHODOLOGY, Route.COMPOSITE)
@@ -239,14 +239,3 @@ class OpenAIResponsesSemanticProvider:
             output=SemanticPlanOutput.model_validate(data),
             metadata=metadata,
         )
-
-
-def deterministic_documentary_prediction(question: str) -> SemanticPlanOutput:
-    decision = route_question(question)
-    plan = plan_knowledge_retrieval(question, decision=decision)
-    return SemanticPlanOutput(
-        route=decision.route,
-        scopes=plan.scopes,
-        temporal_statuses=plan.temporal_statuses,
-        reason=decision.reason,
-    )
