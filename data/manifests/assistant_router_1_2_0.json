@@ -1,0 +1,135 @@
+{
+  "artifact": "assistant_router_regression",
+  "version": "1.2.0",
+  "status": "KNOWN_REGRESSION_FROZEN",
+  "app_version": "0.16.0-dev",
+  "router_version": "1.2.0",
+  "planner_version_held_fixed": "1.0.0",
+  "base_main_sha": "83b4582c73950c96ba0ed785a83e30182c597c8a",
+  "known_regression_sets": {
+    "development": {
+      "path": "data/benchmarks/assistant_v1_0_0.csv",
+      "sha256": "be1a0245f597f9b2456aacdc6485187d6fdb9c52230f0072519d6387148b5820",
+      "cases": 50,
+      "exact": 50,
+      "accuracy": 1.0
+    },
+    "router_holdout_v1": {
+      "path": "data/benchmarks/assistant_router_holdout_v1_0_0.csv",
+      "sha256": "429836fcee9c608478d63df3d69f64aebff4e1219431adf15ea3823b22ad5155",
+      "cases": 40,
+      "exact": 40,
+      "accuracy": 1.0
+    },
+    "router_holdout_v2": {
+      "path": "data/benchmarks/assistant_router_holdout_v2_0_0.csv",
+      "sha256": "df48a03af598e86e84bac797f122404db8135c8b77caf19b7024ca52079a298b",
+      "cases": 40,
+      "exact": 40,
+      "accuracy": 1.0,
+      "independent_measurement_before_tuning": {
+        "router_version": "1.1.0",
+        "exact": 23,
+        "accuracy": 0.575,
+        "manifest": "data/manifests/assistant_router_holdout_2_0_0.json"
+      }
+    },
+    "retrieval_planner_holdout_v1": {
+      "path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
+      "sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+      "cases": 30,
+      "joint_exact": 21,
+      "joint_exact_rate": 0.7,
+      "joint_filter_failures": 9,
+      "router_contribution_to_joint_failures": 0,
+      "planner_contribution_to_joint_failures": 9,
+      "latent_router_issues_with_exact_filters": 0,
+      "attribution_counts": {
+        "pass": 21,
+        "planner": 9
+      },
+      "planner_failure_ids": [
+        "KRET-102",
+        "KRET-107",
+        "KRET-108",
+        "KRET-119",
+        "KRET-120",
+        "KRET-123",
+        "KRET-127",
+        "KRET-128",
+        "KRET-129"
+      ],
+      "independent_measurement_before_tuning": {
+        "router_version": "1.1.0",
+        "planner_version": "1.0.0",
+        "joint_exact": 14,
+        "joint_exact_rate": 0.4666666666666667,
+        "manifest": "data/manifests/retrieval_planner_holdout_1_0_0.json"
+      },
+      "post_hoc_attribution_before_tuning": {
+        "router_only_joint_failures": 7,
+        "planner_only_joint_failures": 4,
+        "shared_router_planner_joint_failures": 5,
+        "latent_router_issues": 7,
+        "manifest": "data/manifests/retrieval_flow_attribution_1_0_0.json"
+      }
+    }
+  },
+  "development_history": [
+    {
+      "run_id": 31965261704,
+      "head_sha": "deda3a48fdb05733edafae3efbc45c402bad3820",
+      "result": "REGRESSION_GATE_FAILED",
+      "reason": "20/30 no holdout documental conhecido; KRET-118 ainda era router_selection por critério cross-source amplo demais.",
+      "used_for_generalization_claim": false
+    },
+    {
+      "run_id": 31965576711,
+      "head_sha": "f635ca64beb36db92e0a27d0efdd418b93cfb737",
+      "result": "FULL_PYTEST_DIAGNOSTIC_REVEALED_HISTORICAL_TEST_COUPLING",
+      "reason": "test_router_holdout_v2 exigia ROUTER_VERSION=1.1.0 em vez de validar a versão histórica no manifesto congelado.",
+      "used_for_generalization_claim": false
+    }
+  ],
+  "final_regression_evidence": {
+    "head_sha": "7b91f2219b2cc484bb6cd3baca2b4dd677e10ce9",
+    "router_regression_workflow": {
+      "run_id": 31965654038,
+      "python_3_11": {
+        "job_id": 95210317499,
+        "conclusion": "success",
+        "artifact_id": 9268416085,
+        "artifact_digest": "sha256:d2150e8fc0e4571b63ef3b2b8e5a26cfeac5934a391f047423ce9ec477526b27"
+      },
+      "python_3_12": {
+        "job_id": 95210317512,
+        "conclusion": "success",
+        "artifact_id": 9268415692,
+        "artifact_digest": "sha256:29bc31e143abc1d8d1aac1ee3cc0d9d0f2c3e9e0a2b90c061de918bc8b05ed76"
+      }
+    },
+    "general_ci": {
+      "run_id": 31965654065,
+      "python_3_11_job_id": 95210317637,
+      "python_3_11": "PASS",
+      "python_3_12_job_id": 95210317607,
+      "python_3_12": "PASS",
+      "ruff": "PASS",
+      "pytest": "PASS"
+    }
+  },
+  "governance": {
+    "all_evaluation_sets_known_before_router_v1_2": true,
+    "holdout_v2_used_for_tuning": true,
+    "retrieval_planner_holdout_used_for_tuning": true,
+    "new_generalization_claim": false,
+    "router_rules_are_deterministic": true,
+    "case_id_specific_rules_added": false,
+    "planner_modified_in_increment": false,
+    "llm_called": false,
+    "sql_executed": false,
+    "historical_manifests_preserved": true,
+    "next_layer_to_tune": "Retrieval Planner 1.1.0",
+    "next_generalization_gate": "novo holdout conjunto independente congelado depois do tuning do Router 1.2.0 e Planner 1.1.0 e antes da primeira medicao do fluxo ajustado"
+  }
+}
