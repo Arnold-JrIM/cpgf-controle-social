@@ -4,7 +4,7 @@
   "status": "PENDING_FIRST_VALID_AUTOMATED_MEASUREMENT",
   "planner_version": "1.0.0",
   "router_version": "1.1.0",
-  "holdout_sha256": "4b7dce923ce148d22a9e254e95dafc305952e81938325388401a4b7f836b2f5f",
-  "frozen_before_valid_measurement_commit": "e4b47b5376ff7b9b7f5768ab53f3ba5a6d464265",
-  "invalid_preflight_run_id": 31963293358
+  "holdout_sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+  "frozen_before_valid_measurement_commit": "0b8fdb36f17a370ef3d47c979798936cc46c1ce4",
+  "invalid_preflight_run_ids": [31963293358, 31963454354]
 }
