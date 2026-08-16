@@ -8,12 +8,14 @@ on:
       - "src/cpgf/version.py"
       - "scripts/evaluate_retrieval_planner_v1_3_regression.py"
       - "tests/unit/test_retrieval_planner_v1_3.py"
+      - "tests/unit/test_retrieval_planner_v1_3_manifest.py"
       - "tests/unit/test_versions.py"
       - "data/benchmarks/knowledge_retrieval_v1_0_0.csv"
       - "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv"
       - "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv"
       - "data/benchmarks/joint_retrieval_holdout_v3_0_0.csv"
       - "data/manifests/assistant_router_1_4_0.json"
+      - "data/manifests/retrieval_planner_1_3_0.json"
       - ".github/workflows/retrieval_planner_v1_3_regression.yml"
   workflow_dispatch:
 
@@ -35,10 +37,11 @@ jobs:
         run: |
           python scripts/evaluate_retrieval_planner_v1_3_regression.py \
             --output retrieval_planner_v1_3_regression.json
-      - name: Run Planner 1.3 unit gate
+      - name: Run Planner 1.3 unit and manifest gates
         run: |
           pytest -q \
             tests/unit/test_retrieval_planner_v1_3.py \
+            tests/unit/test_retrieval_planner_v1_3_manifest.py \
             tests/unit/test_versions.py
       - name: Upload Planner 1.3 evidence
         if: always()
@@ -47,17 +50,27 @@ jobs:
           name: retrieval-planner-v1.3-known-regression-py${{ matrix.python-version }}
           path: retrieval_planner_v1_3_regression.json
           if-no-files-found: error
-      - name: Enforce Planner 1.3 regression contract
+      - name: Enforce Planner 1.3 frozen regression contract
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
 
           p = json.loads(Path("retrieval_planner_v1_3_regression.json").read_text())
+          manifest = json.loads(
+              Path("data/manifests/retrieval_planner_1_3_0.json").read_text()
+          )
+
           assert p["status"] == "KNOWN_REGRESSION_ONLY"
           assert p["router_version_held_fixed"] == "1.4.0"
           assert p["router_source_git_blob_sha"] == "89150b97e9c87d9af0d0b0f888870dcc74ef86b1"
           assert p["planner_version"] == "1.3.0"
+          assert p["planner_source_git_blob_sha"] == "8fa1458c11eeabfdde155635b74a9b770e9960c1"
+
+          assert manifest["status"] == "KNOWN_REGRESSION_FROZEN"
+          assert manifest["version"] == "1.3.0"
+          assert manifest["planner_1_3_source_git_blob_sha"] == p["planner_source_git_blob_sha"]
+          assert manifest["router_source_git_blob_sha"] == p["router_source_git_blob_sha"]
 
           for key in ("development", "known_holdout"):
               r = p[key]["result"]
@@ -74,11 +87,18 @@ jobs:
           assert jh2["joint_exact"] == 40, jh2["joint_error_ids"]
 
           baseline = p["baseline_before_planner_1_3"]
-          assert baseline["route_exact"] == 48
-          assert baseline["scope_exact"] == 41
-          assert baseline["temporal_exact"] == 41
-          assert baseline["joint_exact"] == 39
-          assert len(baseline["remaining_joint_error_ids"]) == 9
+          assert baseline == {
+              "joint_exact": 39,
+              "planner_version": "1.2.0",
+              "remaining_joint_error_ids": [
+                  "JH3-003", "JH3-027", "JH3-028", "JH3-029", "JH3-030",
+                  "JH3-033", "JH3-034", "JH3-036", "JH3-037",
+              ],
+              "route_exact": 48,
+              "router_version": "1.4.0",
+              "scope_exact": 41,
+              "temporal_exact": 41,
+          }
 
           jh3 = p["joint_holdout_v3_known_regression"]
           assert jh3["cases"] == 48
@@ -87,11 +107,18 @@ jobs:
           assert jh3["temporal_exact"] == 48, jh3["temporal_error_ids"]
           assert jh3["joint_exact"] == 48, jh3["joint_error_ids"]
 
+          frozen_jh3 = manifest["known_regression_sets"]["joint_holdout_v3"]
+          assert frozen_jh3["route_exact"] == 48
+          assert frozen_jh3["scope_exact"] == 48
+          assert frozen_jh3["temporal_exact"] == 48
+          assert frozen_jh3["joint_exact"] == 48
+
           g = p["governance"]
           assert g["router_modified_in_increment"] is False
           assert g["router_blob_preserved"] is True
           assert g["case_id_specific_rules_added"] is False
           assert g["new_generalization_claim"] is False
           assert g["llm_called"] is False
+          assert g["sql_executed"] is False
           assert g["retriever_called"] is False
           PY
