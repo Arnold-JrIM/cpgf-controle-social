@@ -33,23 +33,44 @@ def main() -> None:
     parser.add_argument("--dimensions", type=int, default=768)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--allow-external-embeddings", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     chunks_path = args.bundle_dir / "chunks.parquet"
     if not chunks_path.is_file():
         raise FileNotFoundError(f"chunks.parquet não encontrado em {args.bundle_dir}")
-    if not args.allow_external_embeddings:
-        raise ValueError(
-            "Construir o índice envia chunks ao provider externo; use --allow-external-embeddings conscientemente"
-        )
 
     reference_validation = validate_retrieval_reference(
         args.reference_baseline_manifest,
         args.benchmark,
         chunks_path,
     )
-    output_dir = args.output_dir or args.bundle_dir
     chunks = pd.read_parquet(chunks_path)
+
+    if args.dry_run:
+        print("KNOWLEDGE SEMANTIC INDEX PREFLIGHT: PASS")
+        print(
+            json.dumps(
+                {
+                    "reference_validation": reference_validation,
+                    "chunks": int(len(chunks)),
+                    "model": args.model,
+                    "dimensions": args.dimensions,
+                    "batch_size": args.batch_size,
+                    "external_calls_made": False,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+        return
+
+    if not args.allow_external_embeddings:
+        raise ValueError(
+            "Construir o índice envia chunks ao provider externo; use --allow-external-embeddings conscientemente"
+        )
+
+    output_dir = args.output_dir or args.bundle_dir
     provider = OpenAIEmbeddingProvider(model=args.model, dimensions=args.dimensions)
     index = build_semantic_index(chunks, provider, batch_size=args.batch_size)
     manifest = persist_semantic_index(chunks_path, index, output_dir, provider)
