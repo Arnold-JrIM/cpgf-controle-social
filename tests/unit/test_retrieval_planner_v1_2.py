@@ -91,7 +91,7 @@ def test_planner_1_2_uses_general_cross_source_patterns() -> None:
     assert external_method.temporal_statuses == (TemporalStatus.CONTEXTUAL,)
 
     method_and_guidance = plan_knowledge_retrieval(
-        "Que literatura de auditoria e orientação oficial sustentam validar humanamente um sinal analítico?",
+        "Que literatura de auditoria e orientação oficial sustentam a validação humana de um sinal analítico?",
         decision=_decision(Route.COMPOSITE),
     )
     assert set(method_and_guidance.scopes) == {
