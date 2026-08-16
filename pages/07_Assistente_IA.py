@@ -28,7 +28,7 @@ with left:
     )
 with right:
     st.success(
-        f"Knowledge {KNOWLEDGE_VERSION}: 45 referências catalogadas, 35 elegíveis para recuperação padrão, "
+        f"Knowledge {KNOWLEDGE_VERSION}: 45 referências catalogadas, 36 elegíveis para recuperação padrão, "
         "com escopo, temporalidade, autoridade e proveniência explícitos."
     )
 
@@ -69,9 +69,14 @@ st.markdown(
     - o Retrieval Benchmark {RETRIEVAL_BENCHMARK_VERSION} contém 30 casos e 24 documentos-gabarito distintos;
     - a avaliação é feita em nível de documento, contraindo múltiplos chunks do mesmo documento;
     - as métricas contratadas são Hit Rate@k, Recall documental@k, MRR e MAP@k;
-    - serão comparados os modos governado e sem filtros esperados, separando o efeito da governança do algoritmo;
-    - **nenhuma pontuação lexical, semântica ou híbrida foi produzida ainda sobre o corpus real**;
-    - fontes sem conteúdo local ingerido podem ser referências de apoio, mas não documento-gabarito recuperável.
+    - o mesmo benchmark e o mesmo `chunks.parquet` foram usados nos três métodos, com `k=5`;
+    - no modo governado, o lexical obteve Hit Rate@5 de **86,67%**, Recall documental@5 de **69,44%**,
+      MRR de **0,6506** e MAP@5 de **0,5184**;
+    - o semântico elevou esses resultados para **96,67%**, **89,44%**, **0,7167** e **0,6782**;
+    - o híbrido obteve **96,67%**, **83,33%**, **0,7344** e **0,6441**, respectivamente;
+    - o semântico apresentou a maior cobertura documental e MAP; o híbrido apresentou o maior MRR agregado;
+    - `KRET-004` foi o único caso sem gold no top 5 tanto no semântico quanto no híbrido;
+    - a governança continuou melhorando recall/MRR/MAP no semântico e as quatro métricas agregadas no híbrido.
 
     ### Governança do roteamento e da evidência
 
@@ -82,14 +87,15 @@ st.markdown(
       constituem, isoladamente, confirmação automática de fraude ou irregularidade;
     - T01 e T06 não foram artificialmente associados a documentos no benchmark de recuperação apenas para obter
       cobertura numérica das nove trilhas;
+    - o índice vetorial e os PDFs permanecem fora do Git; embeddings externos continuam opt-in explícito;
     - nenhuma rota executa ferramenta ou chama LLM automaticamente nesta versão.
     """
 )
 
 st.info(
-    "Próxima etapa do Knowledge: executar a primeira baseline lexical sobre o corpus real já governado e, "
-    "em seguida, comparar recuperação semântica e híbrida pelo mesmo benchmark congelado. Embeddings externos "
-    "continuam desabilitados por padrão e exigem consentimento explícito na execução local."
+    "Próxima etapa do Knowledge: transformar esta evidência em uma política de recuperação de produção, "
+    "sem alterar retroativamente o benchmark. A escolha deve equilibrar cobertura documental, posição do primeiro "
+    "resultado relevante, autoridade das fontes e custo de embeddings antes de conectar qualquer LLM."
 )
 
 st.markdown(

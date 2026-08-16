@@ -138,21 +138,26 @@ def test_build_persist_and_validate_semantic_index(tmp_path: Path):
     assert validation["chunks"] == 3
 
 
-def test_openai_embedding_provider_uses_explicit_float_encoding():
+def test_openai_embedding_provider_uses_cache_and_explicit_float_encoding():
     calls: list[dict[str, object]] = []
 
     class FakeEmbeddings:
         def create(self, **kwargs: object) -> object:
             calls.append(kwargs)
-            return SimpleNamespace(
-                data=[SimpleNamespace(embedding=[1.0, 0.0]), SimpleNamespace(embedding=[0.0, 1.0])]
-            )
+            inputs = list(kwargs["input"])
+            vectors = [[1.0, 0.0] if text == "um" else [0.0, 1.0] for text in inputs]
+            return SimpleNamespace(data=[SimpleNamespace(embedding=vector) for vector in vectors])
 
     fake_client = SimpleNamespace(embeddings=FakeEmbeddings())
     provider = OpenAIEmbeddingProvider(model="text-embedding-3-small", dimensions=2, client=fake_client)
     vectors = provider.embed_texts(["um", "dois"])
+    cached = provider.embed_texts(["um"])
 
     assert vectors.shape == (2, 2)
+    assert cached.shape == (1, 2)
+    assert len(calls) == 1
     assert calls[0]["model"] == "text-embedding-3-small"
     assert calls[0]["dimensions"] == 2
     assert calls[0]["encoding_format"] == "float"
+    assert provider.external_request_count == 1
+    assert provider.embedded_text_count == 2

@@ -1,0 +1,125 @@
+{
+  "artifact": "knowledge_semantic_hybrid_evaluation",
+  "version": "1.0.0",
+  "app_version": "0.13.0-dev",
+  "knowledge_version": "1.2.0",
+  "retrieval_benchmark_version": "1.0.0",
+  "retrieval_evaluation_version": "1.0.0",
+  "k": 5,
+  "benchmark_sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+  "chunks_sha256": "43c7d61e8b963c5b8b1ad747ec24c2cdb5e464d403ea9b2b3776f19a5cb65b7c",
+  "local_result_file": "data/evidence/knowledge_retrieval/semantic_hybrid_eval_v1_0_0.json",
+  "local_result_file_sha256": "d07c6ef4839718acd74636a9a8ed38917cdce13b49a0eb2fbb75309ec4078a22",
+  "semantic_index": {
+    "model": "text-embedding-3-small",
+    "dimensions": 768,
+    "chunks": 1970,
+    "source_chunks_sha256": "43c7d61e8b963c5b8b1ad747ec24c2cdb5e464d403ea9b2b3776f19a5cb65b7c",
+    "local_artifact_sha256": "f11396ef4b3d48efa6f5bcfbce574b52064a087cfcd6b485dcba8fec9fdfa351",
+    "local_artifact_bytes": 2931818,
+    "index_build_external_requests": 31,
+    "index_build_embedded_texts": 1970,
+    "distribution": "local_artifact_not_committed"
+  },
+  "validation": {
+    "reference_status": "PASS",
+    "catalog_status": "PASS",
+    "corpus_status": "PASS",
+    "cases": 30,
+    "gold_documents": 24,
+    "gold_documents_with_chunks": 24,
+    "missing_gold_documents": []
+  },
+  "results": {
+    "lexical": {
+      "governed": {
+        "hit_rate_at_5": 0.8666666666666667,
+        "mean_document_recall_at_5": 0.6944444444444444,
+        "mrr": 0.6505555555555556,
+        "map_at_5": 0.518425925925926,
+        "failed_case_ids": ["KRET-001", "KRET-004", "KRET-010", "KRET-013"]
+      },
+      "unfiltered": {
+        "hit_rate_at_5": 0.7333333333333333,
+        "mean_document_recall_at_5": 0.55,
+        "mrr": 0.5694444444444444,
+        "map_at_5": 0.44425925925925924,
+        "failed_case_ids": ["KRET-001", "KRET-003", "KRET-004", "KRET-005", "KRET-007", "KRET-010", "KRET-013", "KRET-022"]
+      }
+    },
+    "semantic": {
+      "governed": {
+        "hit_rate_at_5": 0.9666666666666667,
+        "mean_document_recall_at_5": 0.8944444444444444,
+        "mrr": 0.7166666666666667,
+        "map_at_5": 0.6782407407407407,
+        "failed_case_ids": ["KRET-004"],
+        "normative": {
+          "hit_rate_at_5": 0.9333333333333333,
+          "mean_document_recall_at_5": 0.788888888888889,
+          "mrr": 0.6722222222222223,
+          "map_at_5": 0.5992592592592593
+        }
+      },
+      "unfiltered": {
+        "hit_rate_at_5": 0.9666666666666667,
+        "mean_document_recall_at_5": 0.8333333333333334,
+        "mrr": 0.6688888888888889,
+        "map_at_5": 0.6012962962962962,
+        "failed_case_ids": ["KRET-004"]
+      }
+    },
+    "hybrid": {
+      "governed": {
+        "hit_rate_at_5": 0.9666666666666667,
+        "mean_document_recall_at_5": 0.8333333333333334,
+        "mrr": 0.7344444444444443,
+        "map_at_5": 0.6440740740740741,
+        "failed_case_ids": ["KRET-004"],
+        "normative": {
+          "hit_rate_at_5": 0.9333333333333333,
+          "mean_document_recall_at_5": 0.7666666666666667,
+          "mrr": 0.6466666666666666,
+          "map_at_5": 0.5581481481481482
+        }
+      },
+      "unfiltered": {
+        "hit_rate_at_5": 0.9333333333333333,
+        "mean_document_recall_at_5": 0.7555555555555556,
+        "mrr": 0.7022222222222222,
+        "map_at_5": 0.5731481481481481,
+        "failed_case_ids": ["KRET-004", "KRET-007"]
+      }
+    }
+  },
+  "governed_delta_vs_lexical": {
+    "semantic": {
+      "hit_rate_at_5": 0.1,
+      "mean_document_recall_at_5": 0.2,
+      "mrr": 0.06611111111111112,
+      "map_at_5": 0.15981481481481474
+    },
+    "hybrid": {
+      "hit_rate_at_5": 0.1,
+      "mean_document_recall_at_5": 0.13888888888888895,
+      "mrr": 0.08388888888888879,
+      "map_at_5": 0.12564814814814818
+    }
+  },
+  "provider_telemetry": {
+    "model": "text-embedding-3-small",
+    "dimensions": 768,
+    "evaluation_external_requests": 30,
+    "evaluation_embedded_texts": 30,
+    "query_cache_enabled": true
+  },
+  "governance": {
+    "llm_called": false,
+    "sql_executed": false,
+    "external_embeddings_allowed": true,
+    "benchmark_and_chunks_locked_to_lexical_baseline": true,
+    "full_result_committed": false,
+    "semantic_index_committed": false
+  },
+  "interpretation": "Avaliacao pareada no mesmo benchmark e corpus da baseline lexical. No modo governado, semantic e hybrid atingiram Hit Rate@5 de 0.9667. Semantic obteve o maior Mean Document Recall@5 e MAP@5; hybrid obteve o maior MRR. KRET-004 permaneceu sem gold no top 5 em ambos. Os resultados avaliam recuperacao documental, nao qualidade da resposta final de LLM."
+}

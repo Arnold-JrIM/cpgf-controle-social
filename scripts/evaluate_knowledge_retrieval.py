@@ -12,6 +12,7 @@ from cpgf.benchmark import (
     load_retrieval_benchmark,
     validate_retrieval_benchmark_against_catalog,
     validate_retrieval_corpus_coverage,
+    validate_retrieval_reference,
 )
 from cpgf.knowledge import (
     HybridKnowledgeRetriever,
@@ -21,7 +22,11 @@ from cpgf.knowledge import (
     validate_semantic_index,
 )
 from cpgf.knowledge.loader import sha256_file
-from cpgf.version import KNOWLEDGE_VERSION, RETRIEVAL_BENCHMARK_VERSION
+from cpgf.version import (
+    KNOWLEDGE_VERSION,
+    RETRIEVAL_BENCHMARK_VERSION,
+    RETRIEVAL_EVALUATION_VERSION,
+)
 
 
 def _parse_methods(value: str) -> tuple[str, ...]:
@@ -41,7 +46,7 @@ def _semantic_retriever(
     index_dir: Path,
     *,
     allow_external_embeddings: bool,
-) -> SemanticKnowledgeRetriever:
+) -> tuple[SemanticKnowledgeRetriever, OpenAIEmbeddingProvider]:
     if not allow_external_embeddings:
         raise ValueError(
             "semantic/hybrid requer --allow-external-embeddings; consultas podem ser enviadas ao provider"
@@ -58,7 +63,7 @@ def _semantic_retriever(
     index = pd.read_parquet(index_dir / str(manifest["artifact"]["path"]))
     if int(validation["chunks"]) != len(chunks):
         raise ValueError("Índice semântico e chunks divergem em cardinalidade")
-    return SemanticKnowledgeRetriever(chunks, index, provider)
+    return SemanticKnowledgeRetriever(chunks, index, provider), provider
 
 
 def main() -> None:
@@ -83,6 +88,11 @@ def main() -> None:
         type=Path,
         default=Path("data/knowledge/processed/chunks.parquet"),
     )
+    parser.add_argument(
+        "--reference-baseline-manifest",
+        type=Path,
+        default=Path("data/manifests/knowledge_lexical_baseline_1_0_0.json"),
+    )
     parser.add_argument("--semantic-index-dir", type=Path)
     parser.add_argument("--methods", type=_parse_methods, default=("lexical",))
     parser.add_argument("--k", type=int, default=5)
@@ -103,6 +113,11 @@ def main() -> None:
         suite,
         chunks["document_id"].astype(str),
     )
+    reference_validation = validate_retrieval_reference(
+        args.reference_baseline_manifest,
+        args.benchmark,
+        args.chunks,
+    )
 
     retrievers: dict[str, object] = {}
     lexical = LexicalKnowledgeRetriever(chunks)
@@ -110,10 +125,11 @@ def main() -> None:
         retrievers["lexical"] = lexical
 
     semantic = None
+    provider: OpenAIEmbeddingProvider | None = None
     if "semantic" in args.methods or "hybrid" in args.methods:
         if args.semantic_index_dir is None:
             raise ValueError("semantic/hybrid requer --semantic-index-dir")
-        semantic = _semantic_retriever(
+        semantic, provider = _semantic_retriever(
             chunks,
             args.chunks,
             args.semantic_index_dir,
@@ -138,20 +154,32 @@ def main() -> None:
         }
 
     payload = {
+        "retrieval_evaluation_version": RETRIEVAL_EVALUATION_VERSION,
         "retrieval_benchmark_version": RETRIEVAL_BENCHMARK_VERSION,
         "knowledge_version": KNOWLEDGE_VERSION,
         "benchmark_sha256": benchmark_sha256(args.benchmark),
         "chunks_sha256": sha256_file(args.chunks),
+        "reference_validation": reference_validation,
         "k": args.k,
         "methods": list(args.methods),
         "catalog_validation": catalog_validation,
         "corpus_validation": corpus_validation,
         "results": results,
+        "provider_telemetry": None
+        if provider is None
+        else {
+            "model": provider.model,
+            "dimensions": provider.dimensions,
+            "external_requests": provider.external_request_count,
+            "embedded_texts": provider.embedded_text_count,
+            "query_cache_enabled": provider.cache_enabled,
+        },
         "governance": {
             "llm_called": False,
             "sql_executed": False,
             "external_embeddings_allowed": bool(args.allow_external_embeddings),
             "semantic_queries_leave_local_environment_only_when_explicitly_allowed": True,
+            "benchmark_and_chunks_locked_to_lexical_baseline": True,
         },
     }
     text = json.dumps(payload, ensure_ascii=False, indent=2)

@@ -7,6 +7,7 @@ from cpgf.version import (
     PREPARATION_BASELINE_VERSION,
     PREPARATION_VERSION,
     RETRIEVAL_BENCHMARK_VERSION,
+    RETRIEVAL_EVALUATION_VERSION,
     ROUTER_HOLDOUT_V2_VERSION,
     ROUTER_HOLDOUT_VERSION,
     ROUTER_VERSION,
@@ -16,7 +17,7 @@ from cpgf.version import (
 
 
 def test_methodology_versions():
-    assert APP_VERSION == "0.12.0-dev"
+    assert APP_VERSION == "0.13.0-dev"
     assert PREPARATION_BASELINE_VERSION == "1.0.0"
     assert PREPARATION_VERSION == "1.1.0"
     assert RULES_VERSION == "1.2.0"
@@ -26,6 +27,7 @@ def test_methodology_versions():
     assert KNOWLEDGE_VERSION == "1.2.0"
     assert BENCHMARK_VERSION == "1.0.0"
     assert RETRIEVAL_BENCHMARK_VERSION == "1.0.0"
+    assert RETRIEVAL_EVALUATION_VERSION == "1.0.0"
     assert ROUTER_VERSION == "1.1.0"
     assert ROUTER_HOLDOUT_VERSION == "1.0.0"
     assert ROUTER_HOLDOUT_V2_VERSION == "2.0.0"

@@ -11,6 +11,7 @@ from .retrieval import (
     validate_retrieval_benchmark_against_catalog,
 )
 from .retrieval_corpus import validate_retrieval_corpus_coverage
+from .retrieval_reference import validate_retrieval_reference
 
 __all__ = [
     "BenchmarkCase",
@@ -30,4 +31,5 @@ __all__ = [
     "validate_benchmark_against_catalog",
     "validate_retrieval_benchmark_against_catalog",
     "validate_retrieval_corpus_coverage",
+    "validate_retrieval_reference",
 ]
