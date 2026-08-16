@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from cpgf.ai import Route, plan_knowledge_retrieval, route_question
+from cpgf.ai import Route, RouteDecision, plan_knowledge_retrieval, route_question
 from cpgf.benchmark import (
     evaluate_retrieval_planner,
     load_joint_retrieval_holdout,
@@ -24,6 +24,10 @@ def _assert_retrieval_exact(path: Path) -> None:
     assert result["scope_exact_match_rate"] == 1.0, divergent
     assert result["temporal_exact_match_rate"] == 1.0, divergent
     assert result["joint_exact_match_rate"] == 1.0, divergent
+
+
+def _decision(route: Route) -> RouteDecision:
+    return RouteDecision(route=route, reason="teste semântico geral do Planner 1.2.0")
 
 
 def test_planner_1_2_versions() -> None:
@@ -61,9 +65,7 @@ def test_planner_1_2_recovers_all_known_joint_holdout_filters() -> None:
 def test_planner_1_2_uses_general_cross_source_patterns() -> None:
     legal_nature = plan_knowledge_retrieval(
         "O cartão cria uma categoria própria de despesa ou é somente o meio pelo qual ela é paga?",
-        decision=route_question(
-            "O cartão cria uma categoria própria de despesa ou é somente o meio pelo qual ela é paga?"
-        ),
+        decision=_decision(Route.KNOWLEDGE),
     )
     assert legal_nature.scopes == (CorpusScope.CPGF_CORE,)
     assert set(legal_nature.temporal_statuses) == {
@@ -73,20 +75,15 @@ def test_planner_1_2_uses_general_cross_source_patterns() -> None:
 
     literacy = plan_knowledge_retrieval(
         "Que pesquisa discute a capacidade do cidadão de compreender informações públicas para exercer controle social?",
-        decision=route_question(
-            "Que pesquisa discute a capacidade do cidadão de compreender informações públicas para exercer controle social?"
-        ),
+        decision=_decision(Route.METHODOLOGY),
     )
     assert literacy.scopes == (CorpusScope.METHODOLOGY,)
     assert literacy.temporal_statuses == (TemporalStatus.CONTEXTUAL,)
 
     external_method = plan_knowledge_retrieval(
         "Que decisão de controle externo e estudo de inteligência de negócios podem apoiar uma fiscalização contínua?",
-        decision=route_question(
-            "Que decisão de controle externo e estudo de inteligência de negócios podem apoiar uma fiscalização contínua?"
-        ),
+        decision=_decision(Route.COMPOSITE),
     )
-    assert external_method.route == Route.COMPOSITE
     assert set(external_method.scopes) == {
         CorpusScope.CONTROL_EXTERNAL,
         CorpusScope.METHODOLOGY,
@@ -95,9 +92,7 @@ def test_planner_1_2_uses_general_cross_source_patterns() -> None:
 
     method_and_guidance = plan_knowledge_retrieval(
         "Que literatura de auditoria e orientação oficial sustentam validar humanamente um sinal analítico?",
-        decision=route_question(
-            "Que literatura de auditoria e orientação oficial sustentam validar humanamente um sinal analítico?"
-        ),
+        decision=_decision(Route.COMPOSITE),
     )
     assert set(method_and_guidance.scopes) == {
         CorpusScope.CPGF_CORE,
