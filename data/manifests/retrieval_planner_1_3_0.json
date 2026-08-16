@@ -1,0 +1,172 @@
+{
+  "artifact": "retrieval_planner_regression",
+  "version": "1.3.0",
+  "status": "KNOWN_REGRESSION_FROZEN",
+  "app_version": "0.21.0-dev",
+  "router_version_held_fixed": "1.4.0",
+  "router_source": "src/cpgf/ai/router.py",
+  "router_source_git_blob_sha": "89150b97e9c87d9af0d0b0f888870dcc74ef86b1",
+  "planner_version": "1.3.0",
+  "planner_source": "src/cpgf/ai/retrieval_planner.py",
+  "planner_1_2_source_git_blob_sha": "7ee30359cb4457b0bd1a12b43d14f73be410ddaa",
+  "planner_1_3_source_git_blob_sha": "8fa1458c11eeabfdde155635b74a9b770e9960c1",
+  "known_regression_sets": {
+    "development": {
+      "path": "data/benchmarks/knowledge_retrieval_v1_0_0.csv",
+      "sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+      "cases": 30,
+      "scope_exact": 30,
+      "temporal_exact": 30,
+      "joint_exact": 30,
+      "joint_exact_rate": 1.0,
+      "divergent_ids": []
+    },
+    "retrieval_planner_holdout_v1": {
+      "path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
+      "sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+      "cases": 30,
+      "scope_exact": 30,
+      "temporal_exact": 30,
+      "joint_exact": 30,
+      "joint_exact_rate": 1.0,
+      "divergent_ids": []
+    },
+    "joint_holdout_v2": {
+      "path": "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv",
+      "sha256": "47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7",
+      "cases": 40,
+      "route_exact": 40,
+      "scope_exact": 40,
+      "temporal_exact": 40,
+      "joint_exact": 40,
+      "joint_exact_rate": 1.0,
+      "joint_error_ids": []
+    },
+    "joint_holdout_v3": {
+      "path": "data/benchmarks/joint_retrieval_holdout_v3_0_0.csv",
+      "sha256": "d9598b3d1c04d2ddf776a931afba864dc972c4dea73dd0ef774b1e93185dd4a8",
+      "cases": 48,
+      "route_exact": 48,
+      "scope_exact": 48,
+      "temporal_exact": 48,
+      "joint_exact": 48,
+      "joint_exact_rate": 1.0,
+      "route_error_ids": [],
+      "scope_error_ids": [],
+      "temporal_error_ids": [],
+      "joint_error_ids": []
+    }
+  },
+  "baseline_before_planner_1_3": {
+    "router_version": "1.4.0",
+    "planner_version": "1.2.0",
+    "route_exact": 48,
+    "scope_exact": 41,
+    "temporal_exact": 41,
+    "joint_exact": 39,
+    "joint_exact_rate": 0.8125,
+    "remaining_joint_error_ids": [
+      "JH3-003",
+      "JH3-027",
+      "JH3-028",
+      "JH3-029",
+      "JH3-030",
+      "JH3-033",
+      "JH3-034",
+      "JH3-036",
+      "JH3-037"
+    ]
+  },
+  "historical_independent_evidence": {
+    "joint_holdout_v3_first_measurement": {
+      "router_version": "1.3.0",
+      "planner_version": "1.2.0",
+      "route_exact": 31,
+      "scope_exact": 35,
+      "temporal_exact": 35,
+      "joint_exact": 27,
+      "joint_exact_rate": 0.5625,
+      "independent": true,
+      "run_id": 31971798204
+    },
+    "post_hoc_flow_attribution_v3": {
+      "router_only_failures": 12,
+      "planner_only_failures": 4,
+      "shared_router_planner_failures": 5,
+      "planner_contribution_to_joint_failures": 9,
+      "route_only_counterfactual_joint_exact": 39,
+      "independent": false,
+      "run_id": 31973728073
+    },
+    "after_router_1_4_before_planner_1_3": {
+      "router_version": "1.4.0",
+      "planner_version": "1.2.0",
+      "route_exact": 48,
+      "scope_exact": 41,
+      "temporal_exact": 41,
+      "joint_exact": 39,
+      "joint_exact_rate": 0.8125,
+      "independent": false
+    }
+  },
+  "tuning_evidence": {
+    "first_ci_attempt": {
+      "head_sha": "3f2201547fc12252b562da232c84bf188aca4594",
+      "run_id": 31975875017,
+      "python_3_12_job_id": 95235165143,
+      "semantic_measurement_completed": false,
+      "failure_class": "evaluation_harness",
+      "failure": "KeyError ao mapear nomes históricos do baseline do Router 1.4",
+      "planner_rules_changed_after_failure": false
+    },
+    "first_valid_known_regression": {
+      "head_sha": "54d5376965a082054c639fd3761c4b87752b4e00",
+      "run_id": 31975986365,
+      "python_3_11": {
+        "job_id": 95235448227,
+        "artifact_id": 9271057937,
+        "artifact_digest": "sha256:d6e43621235b089622f782e886bc2b4a1a46a2b8b7cfc35f4969c78c2f81ce5d",
+        "conclusion": "success"
+      },
+      "python_3_12": {
+        "job_id": 95235448149,
+        "artifact_id": 9271060224,
+        "artifact_digest": "sha256:1e8fd529e6c17dfde6f2dffccf51ef4299c0c913aa3b0e46f1ff47e50697344b",
+        "conclusion": "success"
+      },
+      "python_outputs_byte_identical": true,
+      "output_json_sha256_both": "7600790addec6b5261f54f5fd6a8b4bf119b31c635b3ba2d19d02f3b56f735b0"
+    }
+  },
+  "semantic_changes": [
+    "instrumentalidade jurídica do cartão e classificação da despesa",
+    "ponte entre fonte normativa e estudo interpretativo",
+    "competência e educação informacional combinadas a participação social",
+    "metodologia genérica combinada a orientação institucional",
+    "padrões digitais e análise digital combinados a fontes oficiais",
+    "controle externo combinado a enquadramento normativo ou metodologia",
+    "referência temática ao Tribunal de Contas sem depender da sigla TCU"
+  ],
+  "governance": {
+    "all_evaluation_sets_known_before_planner_1_3_tuning": true,
+    "joint_holdout_v2_used_as_known_regression": true,
+    "joint_holdout_v3_used_as_known_regression": true,
+    "joint_holdout_v3_48_of_48_is_generalization_claim": false,
+    "new_generalization_claim": false,
+    "case_id_specific_rules_added": false,
+    "semantic_family_tuning_only": true,
+    "router_modified_in_increment": false,
+    "router_blob_preserved": true,
+    "historical_independent_measurement_preserved": true,
+    "historical_post_hoc_diagnostic_preserved": true,
+    "planner_rules_are_deterministic": true,
+    "llm_called": false,
+    "sql_executed": false,
+    "retriever_called": false,
+    "external_embeddings_called": false,
+    "production_readiness_supported": false,
+    "llm_activation_allowed": false,
+    "next_generalization_gate": "Joint Holdout 4.0 independente, criado e congelado antes da primeira medição",
+    "retriever_evaluation_still_separate": true
+  }
+}
