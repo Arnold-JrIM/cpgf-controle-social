@@ -8,11 +8,13 @@ on:
       - "src/cpgf/version.py"
       - "scripts/evaluate_retrieval_planner_v1_2_regression.py"
       - "tests/unit/test_retrieval_planner_v1_2.py"
+      - "tests/unit/test_retrieval_planner_v1_2_manifest.py"
       - "tests/unit/test_versions.py"
       - "data/benchmarks/knowledge_retrieval_v1_0_0.csv"
       - "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv"
       - "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv"
       - "data/manifests/assistant_router_1_3_0.json"
+      - "data/manifests/retrieval_planner_1_2_0.json"
       - ".github/workflows/retrieval_planner_v1_2_regression.yml"
   workflow_dispatch:
 
@@ -34,10 +36,11 @@ jobs:
         run: |
           python scripts/evaluate_retrieval_planner_v1_2_regression.py \
             --output retrieval_planner_v1_2_regression.json
-      - name: Run Planner 1.2 unit gate
+      - name: Run Planner 1.2 unit and manifest gates
         run: |
           pytest -q \
             tests/unit/test_retrieval_planner_v1_2.py \
+            tests/unit/test_retrieval_planner_v1_2_manifest.py \
             tests/unit/test_versions.py
       - name: Upload Planner 1.2 evidence
         if: always()
