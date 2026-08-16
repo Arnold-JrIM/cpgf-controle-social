@@ -55,7 +55,7 @@ def test_router_v1_4_semantic_expansion_uses_general_families() -> None:
         "Há pesquisa empírica que tenha aplicado análise digital a despesas governamentais?": Route.METHODOLOGY,
         "Qual literatura explica técnicas forenses baseadas em dígitos e seus limites interpretativos?": Route.METHODOLOGY,
         "Qual estudo mostra como inteligência de negócios ajuda a priorizar gastos públicos para fiscalização?": Route.METHODOLOGY,
-        "Que normas e estudos ajudam a contextualizar compras repetidas antes de qualquer conclusão jurídica?": Route.COMPOSITE,
+        "Que normas e estudos sobre compras repetidas ajudam a contextualizar o padrão antes de qualquer conclusão jurídica?": Route.COMPOSITE,
         "Que base acadêmica e fontes oficiais devem ser combinadas para analisar uma anomalia sem chamá-la de fraude?": Route.COMPOSITE,
         "Um pronunciamento do TCU e diplomas estruturantes do regime de adiantamento devem ser lidos juntos. Que fontes usar?": Route.COMPOSITE,
         "Quais fontes ligam dados do CPGF, capacidade de interpretação e participação social?": Route.COMPOSITE,
@@ -63,6 +63,14 @@ def test_router_v1_4_semantic_expansion_uses_general_families() -> None:
     }
     for question, expected in cases.items():
         assert route_question(question).route is expected, question
+
+
+def test_router_v1_4_direct_named_control_external_lookup_stays_knowledge() -> None:
+    question = (
+        "Em uma consulta documental sobre o Acórdão 2.000/2026, qual fonte oficial "
+        "do universo de controle externo deve ser selecionada?"
+    )
+    assert route_question(question).route is Route.KNOWLEDGE
 
 
 def test_router_v1_4_does_not_steal_quantitative_requests() -> None:
