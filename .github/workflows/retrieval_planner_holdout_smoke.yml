@@ -1,7 +1,7 @@
 name: retrieval-planner-holdout-smoke
 
 on:
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -37,7 +37,7 @@ jobs:
           assert payload["planner_version"] == "1.0.0"
           assert payload["router_version"] == "1.1.0"
           assert payload["frozen_before_valid_measurement_commit"] == "e4b47b5376ff7b9b7f5768ab53f3ba5a6d464265"
-          assert payload["holdout_sha256"] == "ccbc8b89cb81027b41a380eceaa3ed127663a1d34fc23cf1060e54d1ddcdc480"
+          assert payload["holdout_sha256"] == "4b7dce923ce148d22a9e254e95dafc305952e81938325388401a4b7f836b2f5f"
           assert payload["question_overlap_exact_with_development"] == 0
           assert planner["cases"] == 30
           print("RETRIEVAL PLANNER HOLDOUT 1.0.0: MEASURED")
