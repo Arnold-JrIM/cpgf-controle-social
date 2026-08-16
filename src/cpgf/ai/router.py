@@ -403,6 +403,189 @@ def _is_quantitative_request(text: str) -> bool:
     return _contains_any(text, quantitative_cues)
 
 
+def _route_v1_4_semantic_expansion(text: str) -> RouteDecision | None:
+    """Amplia famílias semânticas sem substituir as regras estabilizadas do Router 1.3."""
+    if _is_quantitative_request(text):
+        return None
+
+    expanded_scientific_sources = _asks_scientific_sources(text) or _contains_any(
+        text,
+        (
+            "pesquisa empirica",
+            "pesquisas empiricas",
+            "estudos sobre",
+            "estudo metodologico",
+            "estudos metodologicos",
+            "qual estudo",
+            "qual literatura",
+            "que trabalhos",
+        ),
+    )
+    expanded_normative_sources = _has_normative_cross_source_cues(text) or _contains_any(
+        text,
+        (
+            "normas e estudos",
+            "fonte oficial",
+            "fontes oficiais",
+            "orientacao publica",
+            "orientacoes publicas",
+            "normas de contratacao",
+            "regras de contratacao",
+            "enquadramento juridico",
+            "diploma estruturante",
+            "diplomas estruturantes",
+            "regime de adiantamento",
+        ),
+    )
+    expanded_control_social = _has_control_social_cross_source_cues(text) or (
+        _contains_any(
+            text,
+            (
+                "participacao social",
+                "capacidade de interpretacao",
+                "interpretacao dos dados",
+                "educacao informacional",
+                "acompanhamento cidadao",
+            ),
+        )
+        and _contains_any(
+            text,
+            (
+                "cpgf",
+                "cartao governamental",
+                "cartao de pagamento",
+                "dados abertos do cartao",
+                "gastos do cartao",
+                "despesas do cartao",
+            ),
+        )
+    )
+    control_external_sources = _has_control_external_cues(text)
+
+    if expanded_scientific_sources and (
+        expanded_normative_sources or expanded_control_social or control_external_sources
+    ):
+        return _decision(
+            Route.COMPOSITE,
+            "formulação documental combina literatura com evidência normativa, social ou de controle externo",
+            EvidenceLayer.METHODOLOGY,
+            EvidenceLayer.KNOWLEDGE,
+        )
+
+    if control_external_sources and expanded_normative_sources:
+        return _decision(
+            Route.COMPOSITE,
+            "formulação combina controle externo com enquadramento normativo",
+            EvidenceLayer.KNOWLEDGE,
+        )
+
+    if expanded_control_social and _contains_any(
+        text,
+        (
+            "competencia informacional",
+            "competencia em informacao",
+            "capacidade de interpretacao",
+            "interpretacao dos dados",
+            "educacao informacional",
+            "acompanhamento cidadao",
+        ),
+    ):
+        return _decision(
+            Route.COMPOSITE,
+            "formulação combina transparência do cartão com capacidade informacional ou participação social",
+            EvidenceLayer.METHODOLOGY,
+            EvidenceLayer.KNOWLEDGE,
+        )
+
+    digital_method_cues = (
+        "algarismos mais a esquerda",
+        "frequencia dos algarismos",
+        "analise digital",
+        "tecnica forense",
+        "tecnicas forenses",
+        "baseada em digitos",
+        "baseadas em digitos",
+        "padroes digitais",
+        "teste numerico",
+        "distribuicao atipica",
+        "limites interpretativos",
+    )
+    scientific_method_topics = (
+        "inteligencia de negocios",
+        "business intelligence",
+        "auditoria",
+        "gastos publicos",
+        "informacao publica",
+        "compreensao da informacao publica",
+        "controle social",
+        "participacao no controle",
+        "capacidade de interpretacao",
+        "competencia informacional",
+        "competencia em informacao",
+        "analise digital",
+        "tecnica forense",
+        "tecnicas forenses",
+        "padroes digitais",
+        "limites interpretativos",
+    )
+    if _contains_any(text, digital_method_cues) and (
+        expanded_scientific_sources
+        or _contains_any(
+            text,
+            (
+                "sinal analitico",
+                "prova automatica",
+                "desvio",
+                "cautela",
+                "cautelas",
+            ),
+        )
+    ):
+        return _decision(
+            Route.METHODOLOGY,
+            "formulação metodológica sobre análise digital, sinal analítico ou limites interpretativos",
+            EvidenceLayer.METHODOLOGY,
+            EvidenceLayer.KNOWLEDGE,
+        )
+    if expanded_scientific_sources and _contains_any(text, scientific_method_topics):
+        return _decision(
+            Route.METHODOLOGY,
+            "formulação científica sobre método, auditoria ou capacidade de interpretação",
+            EvidenceLayer.METHODOLOGY,
+        )
+
+    if _contains_any(
+        text,
+        (
+            "receber suprimento",
+            "combinacao normativa",
+            "sequencia regulatoria",
+            "evolucao regulatoria",
+            "evolucao ministerial",
+            "via suprimento",
+            "limites do suprimento",
+            "lei de licitacoes",
+            "norma sobre valores",
+        ),
+    ) and _contains_any(
+        text,
+        (
+            "suprimento",
+            "cartao",
+            "contratacao",
+            "licitacao",
+            "recursos publicos",
+        ),
+    ):
+        return _decision(
+            Route.KNOWLEDGE,
+            "formulação documental/normativa do suprimento ou evolução regulatória do cartão",
+            EvidenceLayer.KNOWLEDGE,
+        )
+
+    return None
+
+
 def _route_methodology(text: str) -> RouteDecision | None:
     trails = _trail_tokens(text)
     explanation_cues = (
@@ -807,6 +990,7 @@ def route_question(question: str) -> RouteDecision:
     text = _normalize(validated)
 
     for classifier in (
+        _route_v1_4_semantic_expansion,
         _route_composite,
         _route_methodology,
         _route_data,
