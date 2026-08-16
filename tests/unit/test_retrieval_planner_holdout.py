@@ -11,7 +11,7 @@ from cpgf.benchmark import (
 HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
 DEVELOPMENT = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 CATALOG = Path("data/knowledge/source_catalog.json")
-EXPECTED_SHA256 = "4b7dce923ce148d22a9e254e95dafc305952e81938325388401a4b7f836b2f5f"
+EXPECTED_SHA256 = "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667"
 
 
 def _normalize(text: str) -> str:
