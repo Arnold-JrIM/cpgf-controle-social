@@ -1,0 +1,55 @@
+name: joint-retrieval-holdout-v3-preflight
+
+on:
+  pull_request:
+    paths:
+      - "data/benchmarks/joint_retrieval_holdout_v3_0_0.csv"
+      - "data/manifests/joint_retrieval_holdout_3_0_0.json"
+      - "src/cpgf/benchmark/joint_retrieval_v3.py"
+      - "scripts/preflight_joint_retrieval_holdout_v3.py"
+      - "src/cpgf/ai/router.py"
+      - "src/cpgf/ai/retrieval_planner.py"
+      - "src/cpgf/version.py"
+      - "data/knowledge/**"
+      - ".github/workflows/joint_retrieval_holdout_v3_preflight.yml"
+  workflow_dispatch:
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Validate frozen holdout without measurement
+        run: python scripts/preflight_joint_retrieval_holdout_v3.py --output jh3_preflight.json
+      - name: Upload frozen preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joint-retrieval-holdout-v3-preflight-py${{ matrix.python-version }}
+          path: jh3_preflight.json
+          if-no-files-found: error
+      - name: Enforce frozen contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("jh3_preflight.json").read_text())
+          assert p["status"] == "PASS"
+          assert p["benchmark_sha256"] == "d9598b3d1c04d2ddf776a931afba864dc972c4dea73dd0ef774b1e93185dd4a8"
+          assert p["catalog_validation"]["cases"] == 48
+          assert p["novelty_validation"]["prior_questions_compared"] == 230
+          assert p["novelty_validation"]["highest_sequence_similarity"] <= 0.80
+          g=p["governance"]
+          assert g["router_called"] is False
+          assert g["retrieval_planner_called"] is False
+          assert g["measurement_performed"] is False
+          PY
