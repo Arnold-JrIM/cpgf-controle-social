@@ -1,0 +1,9 @@
+{
+  "artifact": "retrieval_planner_holdout_evaluation",
+  "version": "1.0.0",
+  "status": "PENDING_FIRST_AUTOMATED_MEASUREMENT",
+  "planner_version": "1.0.0",
+  "router_version": "1.1.0",
+  "holdout_sha256": "ccbc8b89cb81027b41a380eceaa3ed127663a1d34fc23cf1060e54d1ddcdc480",
+  "frozen_before_valid_measurement_commit": "e4b47b5376ff7b9b7f5768ab53f3ba5a6d464265"
+}
