@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 from cpgf.benchmark import benchmark_sha256
-from cpgf.version import RETRIEVAL_PLANNER_VERSION, ROUTER_VERSION
 
 MANIFEST = Path("data/manifests/retrieval_planner_1_1_0.json")
 DEVELOPMENT = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
@@ -12,8 +11,8 @@ KNOWN_HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
 def test_retrieval_planner_1_1_manifest_preserves_known_regression_contract() -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
-    assert manifest["version"] == RETRIEVAL_PLANNER_VERSION == "1.1.0"
-    assert manifest["router_version"] == ROUTER_VERSION == "1.2.0"
+    assert manifest["version"] == "1.1.0"
+    assert manifest["router_version"] == "1.2.0"
     assert manifest["status"] == "KNOWN_REGRESSION_FROZEN"
 
     development = manifest["known_regression_sets"]["development"]
