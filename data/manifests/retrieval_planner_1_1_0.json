@@ -1,0 +1,115 @@
+{
+  "artifact": "retrieval_planner_regression",
+  "version": "1.1.0",
+  "status": "KNOWN_REGRESSION_FROZEN",
+  "app_version": "0.17.0-dev",
+  "router_version": "1.2.0",
+  "planner_version": "1.1.0",
+  "base_main_sha": "4ade646cd18971c18719aa9750f399c77bba1632",
+  "planner_1_0_frozen_blob": "6e6a0c7b6b1c39d1313b266f4ac7652ce69edc2f",
+  "known_regression_sets": {
+    "development": {
+      "path": "data/benchmarks/knowledge_retrieval_v1_0_0.csv",
+      "sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+      "cases": 30,
+      "scope_exact": 30,
+      "temporal_exact": 30,
+      "joint_exact": 30,
+      "scope_exact_rate": 1.0,
+      "temporal_exact_rate": 1.0,
+      "joint_exact_rate": 1.0,
+      "divergent_ids": [],
+      "route_counts": {
+        "composite": 3,
+        "knowledge": 22,
+        "methodology": 1,
+        "overview": 2,
+        "trails": 1,
+        "unsupported": 1
+      },
+      "historical_planner_1_0_joint_exact": 29,
+      "historical_planner_1_0_joint_exact_rate": 0.9666666666666667,
+      "historical_planner_1_0_divergent_ids": ["KRET-002"]
+    },
+    "retrieval_planner_holdout_v1": {
+      "path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
+      "sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+      "cases": 30,
+      "scope_exact": 30,
+      "temporal_exact": 30,
+      "joint_exact": 30,
+      "scope_exact_rate": 1.0,
+      "temporal_exact_rate": 1.0,
+      "joint_exact_rate": 1.0,
+      "divergent_ids": [],
+      "route_counts": {
+        "composite": 3,
+        "knowledge": 20,
+        "methodology": 7
+      },
+      "first_independent_measurement_before_tuning": {
+        "router_version": "1.1.0",
+        "planner_version": "1.0.0",
+        "joint_exact": 14,
+        "joint_exact_rate": 0.4666666666666667,
+        "manifest": "data/manifests/retrieval_planner_holdout_1_0_0.json"
+      },
+      "after_router_1_2_before_planner_tuning": {
+        "router_version": "1.2.0",
+        "planner_version": "1.0.0",
+        "joint_exact": 21,
+        "joint_exact_rate": 0.7,
+        "planner_failure_ids": [
+          "KRET-102",
+          "KRET-107",
+          "KRET-108",
+          "KRET-119",
+          "KRET-120",
+          "KRET-123",
+          "KRET-127",
+          "KRET-128",
+          "KRET-129"
+        ],
+        "manifest": "data/manifests/assistant_router_1_2_0.json"
+      }
+    }
+  },
+  "first_valid_known_regression_evidence": {
+    "head_sha": "4e2f872b38f078609fdb9f678c38875e6d0f042d",
+    "workflow": "retrieval-planner-v1.1-regression",
+    "run_id": 31966123250,
+    "python_3_11": {
+      "job_id": 95211448640,
+      "conclusion": "success",
+      "artifact_id": 9268535736,
+      "artifact_digest": "sha256:9e8bb1cc6ca862b6216a80579ec29cd65ff74020c5916a63dce57da82db1f86e"
+    },
+    "python_3_12": {
+      "job_id": 95211448626,
+      "conclusion": "success",
+      "artifact_id": 9268537292,
+      "artifact_digest": "sha256:c218f549f0b5b59ef551ce39b9f341425daddfa5c2125aa028145419b1743661"
+    }
+  },
+  "tuning_classes": [
+    "natureza e instrumentalidade juridica do cartao",
+    "ponte entre literatura academica e regime normativo",
+    "controle social ligado explicitamente ao CPGF",
+    "parafrases de controle externo",
+    "repeticao e possivel fracionamento sem termo literal"
+  ],
+  "governance": {
+    "development_set_used_for_tuning": true,
+    "prior_holdout_used_for_tuning": true,
+    "new_generalization_claim": false,
+    "known_60_of_60_is_production_accuracy_claim": false,
+    "router_modified_in_increment": false,
+    "case_id_specific_rules_added": false,
+    "planner_rules_are_deterministic": true,
+    "llm_called": false,
+    "sql_executed": false,
+    "historical_router_1_2_retrieval_baseline_preserved_with_planner_1_0": true,
+    "next_generalization_gate": "novo holdout conjunto independente congelado depois do Router 1.2.0 e Planner 1.1.0 e antes da primeira medicao do fluxo ajustado",
+    "llm_activation_allowed_before_next_holdout": false
+  }
+}
