@@ -408,6 +408,43 @@ def _route_v1_4_semantic_expansion(text: str) -> RouteDecision | None:
     if _is_quantitative_request(text):
         return None
 
+    direct_control_lookup = (
+        _has_control_external_cues(text)
+        and "acordao" in text
+        and _contains_any(
+            text,
+            (
+                "qual fonte oficial",
+                "qual referencia oficial",
+                "qual referencia documental",
+                "qual documento",
+                "deve ser selecionada",
+                "deve ser selecionado",
+            ),
+        )
+        and not _asks_scientific_sources(text)
+        and not _contains_any(
+            text,
+            (
+                "norma vigente",
+                "normas vigentes",
+                "normas gerais",
+                "diploma estruturante",
+                "diplomas estruturantes",
+                "regime de adiantamento",
+                "literatura",
+                "estudo cientifico",
+                "pesquisa empirica",
+            ),
+        )
+    )
+    if direct_control_lookup:
+        return _decision(
+            Route.KNOWLEDGE,
+            "consulta documental direta de decisão de controle externo já nomeada",
+            EvidenceLayer.KNOWLEDGE,
+        )
+
     expanded_scientific_sources = _asks_scientific_sources(text) or _contains_any(
         text,
         (
