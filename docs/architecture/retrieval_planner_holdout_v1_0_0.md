@@ -8,13 +8,20 @@ O incremento é deliberadamente avaliativo. Ele não altera `src/cpgf/ai/retriev
 
 ## Congelamento
 
-O arquivo `data/benchmarks/retrieval_planner_holdout_v1_0_0.csv` contém 30 perguntas e foi congelado, em sua primeira forma válida de esquema, no commit `e4b47b5376ff7b9b7f5768ab53f3ba5a6d464265`.
+O arquivo `data/benchmarks/retrieval_planner_holdout_v1_0_0.csv` contém 30 perguntas. A primeira versão estruturalmente válida do CSV foi congelada no commit `0b8fdb36f17a370ef3d47c979798936cc46c1ce4`.
 
-SHA-256 efetivamente observado sobre os bytes versionados: `4b7dce923ce148d22a9e254e95dafc305952e81938325388401a4b7f836b2f5f`.
+SHA-256: `ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667`.
 
-O primeiro commit da branch continha uma única falha de serialização CSV: uma vírgula interna sem aspas em uma pergunta. O commit de congelamento válido corrigiu apenas essa serialização, sem modificar pergunta, categoria, gabarito documental, escopo esperado, temporalidade esperada ou trilhas esperadas.
+As correções anteriores ao congelamento válido foram exclusivamente de serialização CSV: perguntas que continham vírgulas internas precisaram ser delimitadas por aspas. Não houve alteração de texto, categoria, gabarito documental, escopo esperado, temporalidade esperada ou trilhas esperadas para elevar desempenho.
 
-Uma primeira tentativa automatizada no run `31963293358` foi encerrada no preflight porque a constante de SHA-256 do avaliador não correspondia aos bytes efetivamente versionados. A falha ocorreu antes da chamada a `evaluate_retrieval_planner()` e, portanto, não constitui medição válida do Planner 1.0.0. A correção posterior altera somente a referência de integridade.
+## Preflights inválidos
+
+Duas tentativas automatizadas foram encerradas antes da chamada a `evaluate_retrieval_planner()`:
+
+- run `31963293358`: divergência entre a constante de SHA-256 e os bytes versionados;
+- run `31963454354`: falha de validação de esquema causada por vírgulas internas ainda não escapadas em algumas perguntas.
+
+Nenhum dos dois runs constitui medição do Planner 1.0.0. O congelamento metodológico válido passa a ser o commit e o SHA-256 informados acima.
 
 ## Composição
 
