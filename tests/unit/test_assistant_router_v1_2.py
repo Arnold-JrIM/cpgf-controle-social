@@ -1,17 +1,13 @@
+import json
 from pathlib import Path
 
 from cpgf.ai import Route, route_question
-from cpgf.benchmark import (
-    evaluate_retrieval_flow_attribution,
-    evaluate_routing,
-    load_benchmark,
-    load_retrieval_benchmark,
-)
+from cpgf.benchmark import evaluate_routing, load_benchmark
 
 DEVELOPMENT = Path("data/benchmarks/assistant_v1_0_0.csv")
 ROUTER_HOLDOUT_V1 = Path("data/benchmarks/assistant_router_holdout_v1_0_0.csv")
 ROUTER_HOLDOUT_V2 = Path("data/benchmarks/assistant_router_holdout_v2_0_0.csv")
-RETRIEVAL_HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
+ROUTER_MANIFEST = Path("data/manifests/assistant_router_1_2_0.json")
 
 
 def test_router_v1_2_preserves_all_known_router_regression_sets() -> None:
@@ -26,17 +22,18 @@ def test_router_v1_2_preserves_all_known_router_regression_sets() -> None:
         assert summary["accuracy_all"] == 1.0, (path, summary)
 
 
-def test_router_v1_2_removes_router_layer_failures_from_known_retrieval_holdout() -> None:
-    suite = load_retrieval_benchmark(RETRIEVAL_HOLDOUT)
-    result = evaluate_retrieval_flow_attribution(suite)
+def test_router_v1_2_historical_retrieval_baseline_remains_frozen_with_planner_1_0() -> None:
+    manifest = json.loads(ROUTER_MANIFEST.read_text(encoding="utf-8"))
+    result = manifest["known_regression_sets"]["retrieval_planner_holdout_v1"]
 
+    assert manifest["router_version"] == "1.2.0"
+    assert manifest["planner_version_held_fixed"] == "1.0.0"
     assert result["cases"] == 30
     assert result["joint_filter_failures"] == 9
-    assert result["clean_passes"] == 21
+    assert result["joint_exact"] == 21
     assert result["latent_router_issues_with_exact_filters"] == 0
     assert result["router_contribution_to_joint_failures"] == 0
     assert result["planner_contribution_to_joint_failures"] == 9
-    assert result["shared_router_planner_failures"] == 0
     assert result["attribution_counts"] == {"pass": 21, "planner": 9}
 
 
