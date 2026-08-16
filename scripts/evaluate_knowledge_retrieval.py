@@ -22,7 +22,11 @@ from cpgf.knowledge import (
     validate_semantic_index,
 )
 from cpgf.knowledge.loader import sha256_file
-from cpgf.version import KNOWLEDGE_VERSION, RETRIEVAL_BENCHMARK_VERSION
+from cpgf.version import (
+    KNOWLEDGE_VERSION,
+    RETRIEVAL_BENCHMARK_VERSION,
+    RETRIEVAL_EVALUATION_VERSION,
+)
 
 
 def _parse_methods(value: str) -> tuple[str, ...]:
@@ -150,6 +154,7 @@ def main() -> None:
         }
 
     payload = {
+        "retrieval_evaluation_version": RETRIEVAL_EVALUATION_VERSION,
         "retrieval_benchmark_version": RETRIEVAL_BENCHMARK_VERSION,
         "knowledge_version": KNOWLEDGE_VERSION,
         "benchmark_sha256": benchmark_sha256(args.benchmark),
