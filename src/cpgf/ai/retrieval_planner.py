@@ -47,13 +47,44 @@ def _contains_any(text: str, terms: tuple[str, ...]) -> bool:
 
 def _trail_hints(text: str) -> tuple[str, ...]:
     hints: set[str] = set(re.findall(r"\bt0[1-9]\b", text))
-    if _contains_any(text, ("benford", "primeiro digito", "primeiros digitos")):
+    if _contains_any(
+        text,
+        (
+            "benford",
+            "primeiro digito",
+            "primeiros digitos",
+            "primeiro algarismo",
+            "primeiros algarismos",
+            "digitos iniciais",
+        ),
+    ):
         hints.add("t08")
     if _contains_any(text, ("saque", "dinheiro em especie", "retirada de dinheiro")):
         hints.add("t07")
-    if _contains_any(text, ("fracionamento", "compras repetidas", "despesas repetidas")):
+    if _contains_any(
+        text,
+        (
+            "fracionamento",
+            "compras repetidas",
+            "despesas repetidas",
+            "aquisicoes semelhantes",
+            "aquisicoes recorrentes",
+            "divisao indevida",
+            "despesa foi dividida",
+        ),
+    ):
         hints.update(("t03", "t04", "t05"))
-    if _contains_any(text, ("lei 14.133", "lei 14133", "dispensa de licitacao", "limite")):
+    if _contains_any(
+        text,
+        (
+            "lei 14.133",
+            "lei 14133",
+            "dispensa de licitacao",
+            "contratacao direta",
+            "contratacoes diretas",
+            "limite",
+        ),
+    ):
         hints.add("t09")
     return tuple(sorted(hint.upper() for hint in hints))
 
@@ -65,7 +96,10 @@ def _is_control_external(text: str) -> bool:
             "tcu",
             "tribunal de contas da uniao",
             "acordao",
+            "controle externo",
+            "decisao de controle externo",
             "fiscalizacao continua",
+            "fiscalizacao continuada",
             "fiscalizacao do cpgf",
         ),
     )
@@ -80,17 +114,15 @@ def _is_methodology_only(text: str) -> bool:
             "contabilidade forense",
             "business intelligence",
             "inteligencia artificial aplicada a auditoria",
-            "inteligencia artificial aplicada à auditoria",
             "competencia em informacao",
-            "competência em informação",
         ),
     )
 
 
 def _is_portal_control_social(text: str) -> bool:
-    return _contains_any(text, ("portal da transparencia", "portal da transparência")) and _contains_any(
+    return "portal da transparencia" in text and _contains_any(
         text,
-        ("controle social", "participacao cidada", "participação cidadã"),
+        ("controle social", "participacao cidada"),
     )
 
 
@@ -102,17 +134,101 @@ def _asks_scientific_or_interpretive_sources(text: str) -> bool:
             "estudo",
             "estudos",
             "artigo",
-            "trabalho",
+            "trabalho cientifico",
+            "trabalhos cientificos",
+            "pesquisa academica",
+            "pesquisas academicas",
+            "producao academica",
             "referencia cientifica",
             "referencias cientificas",
-            "referência científica",
-            "referências científicas",
+            "referencia academica",
+            "referencias academicas",
             "literatura academica",
-            "literatura acadêmica",
             "fundamentos normativos",
             "sistematize",
+            "sistematizar",
         ),
     )
+
+
+def _has_normative_bridge_cues(text: str) -> bool:
+    return _contains_any(
+        text,
+        (
+            "lei 14.133",
+            "lei 14133",
+            "dispensa de licitacao",
+            "contratacao direta",
+            "contratacoes diretas",
+            "regime atual de licitacoes",
+            "regime atual de contratacoes",
+            "arcabouco juridico",
+            "normas basicas",
+            "fundamentos normativos",
+        ),
+    )
+
+
+def _is_legal_nature_interpretation(text: str) -> bool:
+    nature_cue = _contains_any(
+        text,
+        (
+            "natureza da despesa",
+            "nova especie de despesa",
+            "tipo de despesa",
+        ),
+    )
+    instrument_cue = _contains_any(
+        text,
+        (
+            "instrumento de pagamento",
+            "viabiliza seu pagamento",
+            "viabiliza o pagamento",
+            "apenas viabiliza",
+        ),
+    )
+    return nature_cue and instrument_cue
+
+
+def _is_cpgf_social_cross_source(text: str) -> bool:
+    social_cue = _contains_any(
+        text,
+        (
+            "controle social",
+            "fiscalizacao pela sociedade",
+            "participacao cidada",
+            "capacidade do cidadao",
+            "acompanhar o uso",
+            "divulgacao de gastos",
+            "abrir dados",
+            "dados de despesas publicas",
+        ),
+    )
+    cpgf_cue = _contains_any(
+        text,
+        (
+            "cpgf",
+            "cartao governamental",
+            "cartao corporativo",
+            "cartao de pagamento",
+            "portal da transparencia",
+        ),
+    )
+    source_cue = _contains_any(
+        text,
+        (
+            "estudo",
+            "estudos",
+            "pesquisa",
+            "pesquisas",
+            "referencia",
+            "referencias",
+            "literatura",
+            "trabalho",
+            "trabalhos",
+        ),
+    )
+    return social_cue and cpgf_cue and source_cue
 
 
 def _is_repetition_or_fragmentation(text: str) -> bool:
@@ -124,7 +240,26 @@ def _is_repetition_or_fragmentation(text: str) -> bool:
             "despesas repetidas",
             "mesmo objeto",
             "repeticao",
-            "repetição",
+            "aquisicoes semelhantes",
+            "aquisicoes recorrentes",
+            "em sequencia",
+            "divisao indevida",
+            "despesa foi dividida",
+            "mesmo tipo",
+        ),
+    )
+
+
+def _asks_source_basis(text: str) -> bool:
+    return _contains_any(
+        text,
+        (
+            "fontes",
+            "referencias",
+            "fundamentar",
+            "fundamentacao",
+            "investigar",
+            "examinar",
         ),
     )
 
@@ -136,8 +271,11 @@ def _derive_scopes(text: str, decision: RouteDecision) -> tuple[CorpusScope, ...
     if _is_methodology_only(text):
         return (CorpusScope.METHODOLOGY,)
 
+    if _is_cpgf_social_cross_source(text):
+        return (CorpusScope.CPGF_CORE, CorpusScope.METHODOLOGY)
+
     if _is_portal_control_social(text):
-        if _contains_any(text, ("competencia em informacao", "competência em informação")):
+        if "competencia em informacao" in text:
             return (CorpusScope.METHODOLOGY,)
         return (CorpusScope.CPGF_CORE, CorpusScope.METHODOLOGY)
 
@@ -157,26 +295,16 @@ def _derive_temporal_statuses(
     if scopes == (CorpusScope.METHODOLOGY,):
         return (TemporalStatus.CONTEXTUAL,)
 
-    if _is_portal_control_social(text):
+    if _is_cpgf_social_cross_source(text) or _is_portal_control_social(text):
         return (TemporalStatus.CONTEXTUAL,)
 
-    if _asks_scientific_or_interpretive_sources(text):
-        if _contains_any(
-            text,
-            (
-                "lei 14.133",
-                "lei 14133",
-                "dispensa de licitacao",
-                "dispensa de licitação",
-                "fundamentos normativos",
-            ),
-        ):
-            return (TemporalStatus.CURRENT, TemporalStatus.CONTEXTUAL)
+    if _is_legal_nature_interpretation(text):
+        return (TemporalStatus.CURRENT, TemporalStatus.CONTEXTUAL)
 
-    if _is_repetition_or_fragmentation(text) and _contains_any(
-        text,
-        ("fontes", "referencias", "referências", "fundamentar", "fundamentacao", "fundamentação"),
-    ):
+    if _asks_scientific_or_interpretive_sources(text) and _has_normative_bridge_cues(text):
+        return (TemporalStatus.CURRENT, TemporalStatus.CONTEXTUAL)
+
+    if _is_repetition_or_fragmentation(text) and _asks_source_basis(text):
         return (TemporalStatus.CURRENT, TemporalStatus.CONTEXTUAL)
 
     return (TemporalStatus.CURRENT,)
