@@ -1,10 +1,11 @@
 name: joint-retrieval-holdout-v2-measurement
 
+# A primeira medição independente válida já foi executada no run 31967548985.
+# Depois que o manifesto muda para MEASURED_INDEPENDENT, este workflow deixa de
+# ser disparado por pull_request para impedir que commits documentais tentem
+# produzir uma nova "primeira medição". Mantê-lo em workflow_dispatch preserva
+# o procedimento histórico, enquanto o manifesto estático preserva o resultado.
 on:
-  pull_request:
-    paths:
-      - "scripts/measure_joint_retrieval_holdout_v2.py"
-      - ".github/workflows/joint_retrieval_holdout_v2_measurement.yml"
   workflow_dispatch:
 
 jobs:
