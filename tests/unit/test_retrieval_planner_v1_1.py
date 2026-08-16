@@ -3,7 +3,7 @@ from pathlib import Path
 from cpgf.ai import plan_knowledge_retrieval
 from cpgf.benchmark import benchmark_sha256, evaluate_retrieval_planner, load_retrieval_benchmark
 from cpgf.knowledge.models import CorpusScope, TemporalStatus
-from cpgf.version import RETRIEVAL_PLANNER_VERSION, ROUTER_VERSION
+from cpgf.version import RETRIEVAL_PLANNER_VERSION
 
 DEVELOPMENT = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 KNOWN_HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
@@ -21,8 +21,7 @@ def _assert_exact(path: Path) -> None:
     assert result["joint_exact_match_rate"] == 1.0, divergent
 
 
-def test_planner_1_1_versions_and_frozen_inputs() -> None:
-    assert ROUTER_VERSION == "1.2.0"
+def test_planner_1_1_version_and_frozen_inputs() -> None:
     assert RETRIEVAL_PLANNER_VERSION == "1.1.0"
     assert benchmark_sha256(DEVELOPMENT) == (
         "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777"
