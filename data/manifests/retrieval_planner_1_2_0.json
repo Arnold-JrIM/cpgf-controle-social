@@ -1,0 +1,138 @@
+{
+  "artifact": "retrieval_planner_regression",
+  "version": "1.2.0",
+  "status": "KNOWN_REGRESSION_FROZEN",
+  "app_version": "0.19.0-dev",
+  "router_version": "1.3.0",
+  "planner_version": "1.2.0",
+  "base_main_sha": "eee6bb2d0181b89890ea852bc2ed33957cffe401",
+  "router_source": "src/cpgf/ai/router.py",
+  "router_source_git_blob_sha": "7c82b42f4409110371dcb86e15672a328a0d54bd",
+  "planner_source": "src/cpgf/ai/retrieval_planner.py",
+  "planner_1_1_source_git_blob_sha": "2f5765a9ba70730b1af7f84ff4fc288eb3a2b96a",
+  "planner_1_2_source_git_blob_sha": "7ee30359cb4457b0bd1a12b43d14f73be410ddaa",
+  "known_regression_sets": {
+    "development": {
+      "path": "data/benchmarks/knowledge_retrieval_v1_0_0.csv",
+      "sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+      "cases": 30,
+      "scope_exact": 30,
+      "temporal_exact": 30,
+      "joint_exact": 30,
+      "joint_exact_rate": 1.0,
+      "divergent_ids": []
+    },
+    "retrieval_planner_holdout_v1": {
+      "path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
+      "sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+      "cases": 30,
+      "scope_exact": 30,
+      "temporal_exact": 30,
+      "joint_exact": 30,
+      "joint_exact_rate": 1.0,
+      "divergent_ids": []
+    },
+    "joint_holdout_v2": {
+      "path": "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv",
+      "sha256": "47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7",
+      "cases": 40,
+      "route_exact": 40,
+      "scope_exact": 40,
+      "temporal_exact": 40,
+      "filter_joint_exact": 40,
+      "joint_exact": 40,
+      "joint_exact_rate": 1.0,
+      "route_error_ids": [],
+      "scope_error_ids": [],
+      "temporal_error_ids": [],
+      "filter_error_ids": [],
+      "joint_error_ids": []
+    }
+  },
+  "historical_evolution": {
+    "joint_holdout_v2_first_independent_measurement": {
+      "router_version": "1.2.0",
+      "planner_version": "1.1.0",
+      "route_exact": 13,
+      "joint_exact": 12,
+      "joint_exact_rate": 0.3,
+      "independent": true
+    },
+    "after_router_1_3_before_planner_1_2": {
+      "router_version": "1.3.0",
+      "planner_version": "1.1.0",
+      "route_exact": 40,
+      "filter_joint_exact": 27,
+      "joint_exact": 27,
+      "joint_exact_rate": 0.675,
+      "remaining_filter_error_ids": [
+        "JH2-003",
+        "JH2-016",
+        "JH2-021",
+        "JH2-023",
+        "JH2-025",
+        "JH2-027",
+        "JH2-028",
+        "JH2-029",
+        "JH2-030",
+        "JH2-031",
+        "JH2-032",
+        "JH2-033",
+        "JH2-034"
+      ],
+      "independent": false
+    },
+    "after_planner_1_2_known_regression": {
+      "router_version": "1.3.0",
+      "planner_version": "1.2.0",
+      "route_exact": 40,
+      "filter_joint_exact": 40,
+      "joint_exact": 40,
+      "joint_exact_rate": 1.0,
+      "independent": false
+    }
+  },
+  "first_valid_known_regression_evidence": {
+    "head_sha": "e2fc2be638598c9e8a2b79fc6706a036453e4654",
+    "workflow": "retrieval-planner-v1.2-regression",
+    "run_id": 31970356324,
+    "python_3_11": {
+      "job_id": 95221772963,
+      "conclusion": "success",
+      "artifact_id": 9269620321,
+      "artifact_digest": "sha256:8b227e8f45997d06a6fc6fea379ff0a81e10d5e1099da01c1631bf477c8864a7"
+    },
+    "python_3_12": {
+      "job_id": 95221773029,
+      "conclusion": "success",
+      "artifact_id": 9269626299,
+      "artifact_digest": "sha256:cca0ba12529dd8a48947d9bf34e54caa1b2447ad19bf6d98ee031f859a5c4799"
+    }
+  },
+  "tuning_classes": [
+    "natureza juridica e instrumentalidade do cartao",
+    "competencia informacional e compreensao de informacao publica",
+    "repeticao ou possivel fracionamento com fontes de contextualizacao",
+    "literatura metodologica combinada a orientacao institucional",
+    "controle externo combinado a metodologia",
+    "controle externo combinado a normas gerais do suprimento de fundos"
+  ],
+  "governance": {
+    "all_evaluation_sets_known_before_planner_1_2_tuning": true,
+    "joint_holdout_v2_used_for_planner_1_2_tuning": true,
+    "joint_holdout_v2_40_of_40_is_generalization_claim": false,
+    "new_generalization_claim": false,
+    "router_modified_in_increment": false,
+    "router_1_3_blob_preserved": true,
+    "case_id_specific_rules_added": false,
+    "planner_rules_are_deterministic": true,
+    "historical_independent_measurement_preserved": true,
+    "historical_router_1_3_planner_1_1_regression_preserved": true,
+    "llm_called": false,
+    "sql_executed": false,
+    "retriever_called": false,
+    "external_embeddings_called": false,
+    "llm_activation_allowed": false,
+    "next_generalization_gate": "Joint Holdout 3.0 independente congelado antes da primeira medicao do par Router 1.3.0 + Planner 1.2.0"
+  }
+}

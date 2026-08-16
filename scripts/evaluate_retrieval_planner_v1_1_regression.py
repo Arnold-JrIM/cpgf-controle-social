@@ -10,6 +10,7 @@ from cpgf.version import RETRIEVAL_PLANNER_VERSION, ROUTER_VERSION
 
 DEVELOPMENT = Path("data/benchmarks/knowledge_retrieval_v1_0_0.csv")
 KNOWN_HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
+MANIFEST = Path("data/manifests/retrieval_planner_1_1_0.json")
 
 
 def _evaluate(path: Path) -> dict[str, object]:
@@ -28,19 +29,26 @@ def _evaluate(path: Path) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Avalia o Retrieval Planner 1.1.0 somente em conjuntos já conhecidos."
+        description=(
+            "Avalia os conjuntos conhecidos do Planner 1.1.0 com o Planner corrente, "
+            "preservando separadamente a versão histórica congelada."
+        )
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     payload = {
-        "artifact": "retrieval_planner_1_1_regression",
+        "artifact": "retrieval_planner_1_1_known_regression",
         "status": "KNOWN_REGRESSION_ONLY",
+        "historical_planner_version": manifest["version"],
+        "current_planner_version": RETRIEVAL_PLANNER_VERSION,
         "router_version": ROUTER_VERSION,
-        "planner_version": RETRIEVAL_PLANNER_VERSION,
         "development": _evaluate(DEVELOPMENT),
         "known_holdout": _evaluate(KNOWN_HOLDOUT),
         "governance": {
+            "historical_manifest_preserved": True,
+            "current_planner_may_advance": True,
             "new_generalization_claim": False,
             "development_set_already_known": True,
             "holdout_set_already_known_after_prior_measurement": True,

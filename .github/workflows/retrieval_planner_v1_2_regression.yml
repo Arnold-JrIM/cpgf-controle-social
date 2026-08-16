@@ -1,0 +1,106 @@
+name: retrieval-planner-v1.2-regression
+
+on:
+  pull_request:
+    paths:
+      - "src/cpgf/ai/retrieval_planner.py"
+      - "src/cpgf/ai/router.py"
+      - "src/cpgf/version.py"
+      - "scripts/evaluate_retrieval_planner_v1_2_regression.py"
+      - "tests/unit/test_retrieval_planner_v1_2.py"
+      - "tests/unit/test_retrieval_planner_v1_2_manifest.py"
+      - "tests/unit/test_versions.py"
+      - "data/benchmarks/knowledge_retrieval_v1_0_0.csv"
+      - "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv"
+      - "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv"
+      - "data/manifests/assistant_router_1_3_0.json"
+      - "data/manifests/retrieval_planner_1_2_0.json"
+      - ".github/workflows/retrieval_planner_v1_2_regression.yml"
+  workflow_dispatch:
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Evaluate Planner 1.2 known regression sets
+        run: |
+          python scripts/evaluate_retrieval_planner_v1_2_regression.py \
+            --output retrieval_planner_v1_2_regression.json
+      - name: Run Planner 1.2 unit and manifest gates
+        run: |
+          pytest -q \
+            tests/unit/test_retrieval_planner_v1_2.py \
+            tests/unit/test_retrieval_planner_v1_2_manifest.py \
+            tests/unit/test_versions.py
+      - name: Upload Planner 1.2 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: retrieval-planner-v1.2.0-regression-py${{ matrix.python-version }}
+          path: retrieval_planner_v1_2_regression.json
+          if-no-files-found: error
+      - name: Enforce Planner 1.2 regression gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(
+              Path("retrieval_planner_v1_2_regression.json").read_text(encoding="utf-8")
+          )
+          assert payload["status"] == "KNOWN_REGRESSION_ONLY"
+          assert payload["router_version_held_fixed"] == "1.3.0"
+          assert payload["planner_version"] == "1.2.0"
+
+          for key in ("development", "known_holdout"):
+              result = payload[key]["result"]
+              assert result["cases"] == 30, (key, result)
+              assert result["scope_exact_match_rate"] == 1.0, (
+                  key,
+                  payload[key]["joint_divergent_ids"],
+              )
+              assert result["temporal_exact_match_rate"] == 1.0, (
+                  key,
+                  payload[key]["joint_divergent_ids"],
+              )
+              assert result["joint_exact_match_rate"] == 1.0, (
+                  key,
+                  payload[key]["joint_divergent_ids"],
+              )
+
+          joint = payload["joint_holdout_v2_known_regression"]
+          assert joint["cases"] == 40, joint
+          assert joint["route_exact"] == 40, joint["route_error_ids"]
+          assert joint["scope_exact"] == 40, joint["scope_error_ids"]
+          assert joint["temporal_exact"] == 40, joint["temporal_error_ids"]
+          assert joint["filter_joint_exact"] == 40, joint["filter_error_ids"]
+          assert joint["joint_exact"] == 40, joint["joint_error_ids"]
+
+          baseline = payload["baseline_before_planner_1_2"]
+          assert baseline["router_version"] == "1.3.0"
+          assert baseline["planner_version"] == "1.1.0"
+          assert baseline["route_exact"] == 40
+          assert baseline["filter_joint_exact"] == 27
+          assert len(baseline["remaining_filter_error_ids"]) == 13
+
+          governance = payload["governance"]
+          assert governance["all_evaluation_sets_known_before_planner_1_2_tuning"] is True
+          assert governance["joint_holdout_v2_is_known_regression"] is True
+          assert governance["router_modified"] is False
+          assert governance["case_id_specific_rules_added"] is False
+          assert governance["new_generalization_claim"] is False
+          assert governance["llm_called"] is False
+          assert governance["sql_executed"] is False
+          assert governance["retriever_called"] is False
+          assert governance["external_embeddings_called"] is False
+          PY
