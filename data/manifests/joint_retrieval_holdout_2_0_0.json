@@ -6,7 +6,9 @@
   "benchmark": {
     "path": "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv",
     "sha256": "47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7",
-    "frozen_commit": "3788ba26801b5423df3835f3f05292366e0a6ae7",
+    "frozen_commit": "d5bd22029e161c5a20722bdfbe638ec51a92da60",
+    "initial_serialization_commit": "3788ba26801b5423df3835f3f05292366e0a6ae7",
+    "serialization_correction_only": true,
     "cases": 40,
     "category_counts": {
       "normative": 10,
@@ -39,7 +41,8 @@
     "expected_temporal_statuses_frozen": true,
     "gold_document_ids_frozen": true,
     "supporting_document_ids_frozen": true,
-    "expected_trails_frozen": true
+    "expected_trails_frozen": true,
+    "semantic_oracle_changed_during_serialization_correction": false
   },
   "measurement": {
     "first_valid_measurement_run_id": null,
@@ -49,6 +52,7 @@
   "governance": {
     "benchmark_authored_after_router_1_2_and_planner_1_1_were_frozen": true,
     "benchmark_measured_before_freeze": false,
+    "preflight_serialization_correction_occurred_before_any_model_measurement": true,
     "router_or_planner_may_change_after_first_measurement_in_this_increment": false,
     "prior_benchmarks_may_be_used_only_for_novelty_checks": true,
     "new_generalization_claim_requires_first_valid_measurement": true,
