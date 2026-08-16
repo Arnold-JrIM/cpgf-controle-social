@@ -108,28 +108,52 @@ def _asks_scientific_sources(text: str) -> bool:
     return _contains_any(
         text,
         (
+            "base academica",
+            "base cientifica",
+            "fundamento cientifico",
+            "fundamentos cientificos",
+            "suporte academico",
+            "evidencia academica",
+            "evidencias academicas",
             "pesquisa academica",
             "pesquisas academicas",
+            "pesquisa recente",
+            "pesquisas recentes",
             "referencia academica",
             "referencias academicas",
             "referencia cientifica",
             "referencias cientificas",
             "referencia tecnica",
             "referencias tecnicas",
+            "artigo academico",
+            "artigos academicos",
+            "trabalho academico",
+            "trabalhos academicos",
             "trabalho cientifico",
             "trabalhos cientificos",
             "trabalho empirico",
             "trabalhos empiricos",
+            "estudo academico",
+            "estudos academicos",
             "estudo cientifico",
             "estudos cientificos",
             "estudo recente",
             "estudos recentes",
+            "estudo sobre",
+            "aplicacao empirica",
+            "aplicacoes empiricas",
             "producao academica",
             "literatura academica",
             "literatura cientifica",
+            "literatura de auditoria",
+            "literatura e orientacao",
+            "que literatura",
+            "literatura pode",
+            "literatura sobre",
             "que estudo",
             "que pesquisa",
             "qual pesquisa",
+            "quais pesquisas",
             "quais estudos",
             "quais trabalhos",
         ),
@@ -143,15 +167,44 @@ def _has_normative_cross_source_cues(text: str) -> bool:
             "arcabouco juridico",
             "regime atual de contratacoes",
             "regime atual de licitacoes",
+            "norma vigente",
+            "normas vigentes",
+            "norma oficial",
+            "normas oficiais",
+            "norma geral",
+            "normas gerais",
             "normas basicas",
+            "estudos e normas",
             "fonte normativa",
             "fontes normativas",
             "referencia normativa",
             "referencias normativas",
+            "orientacao oficial",
+            "orientacoes oficiais",
+            "orientacao institucional",
+            "orientacoes institucionais",
             "contratacao direta",
+            "contratacoes diretas",
+            "contratacao publica",
+            "contratacoes publicas",
             "licitacao",
             "lei 14.133",
             "lei 14133",
+        ),
+    )
+
+
+def _has_control_external_cues(text: str) -> bool:
+    return _contains_any(
+        text,
+        (
+            "tcu",
+            "tribunal de contas da uniao",
+            "acordao",
+            "controle externo",
+            "decisao de controle externo",
+            "precedente do tcu",
+            "pronunciamento do tcu",
         ),
     )
 
@@ -169,6 +222,8 @@ def _has_control_social_cross_source_cues(text: str) -> bool:
             "dados de despesas publicas",
             "divulgacao de gastos",
             "transparencia governamental",
+            "competencia informacional",
+            "competencia em informacao",
         ),
     )
     cpgf_cue = _contains_any(
@@ -178,7 +233,8 @@ def _has_control_social_cross_source_cues(text: str) -> bool:
             "cartao governamental",
             "cartao corporativo",
             "cartao de pagamento",
-            "portal da transparencia",
+            "gastos do cartao",
+            "despesas do cartao",
         ),
     )
     return social_cue and cpgf_cue
@@ -231,12 +287,35 @@ def _is_categorical_challenge(text: str) -> bool:
 
 def _route_composite(text: str) -> RouteDecision | None:
     """Combina camadas quando a pergunta exige mais de uma família de evidência."""
-    if _asks_scientific_sources(text) and (
-        _has_normative_cross_source_cues(text) or _has_control_social_cross_source_cues(text)
+    scientific_sources = _asks_scientific_sources(text)
+    normative_sources = _has_normative_cross_source_cues(text)
+    control_social_sources = _has_control_social_cross_source_cues(text)
+    control_external_sources = _has_control_external_cues(text)
+
+    if scientific_sources and (
+        normative_sources or control_social_sources or control_external_sources
     ):
         return _decision(
             Route.COMPOSITE,
-            "pergunta documental combina literatura com evidência normativa ou controle social",
+            "pergunta documental combina literatura com outra família de evidência",
+            EvidenceLayer.METHODOLOGY,
+            EvidenceLayer.KNOWLEDGE,
+        )
+
+    if control_external_sources and normative_sources:
+        return _decision(
+            Route.COMPOSITE,
+            "pergunta combina decisão de controle externo com base normativa",
+            EvidenceLayer.KNOWLEDGE,
+        )
+
+    if control_social_sources and _contains_any(
+        text,
+        ("competencia informacional", "competencia em informacao"),
+    ):
+        return _decision(
+            Route.COMPOSITE,
+            "pergunta combina transparência do CPGF com capacidade informacional",
             EvidenceLayer.METHODOLOGY,
             EvidenceLayer.KNOWLEDGE,
         )
@@ -369,32 +448,70 @@ def _route_methodology(text: str) -> RouteDecision | None:
         )
 
     benford_paraphrases = (
+        "lei de benford",
+        "benford",
         "primeiros algarismos",
         "primeiro algarismo",
+        "algarismos iniciais",
         "digitos iniciais",
         "primeiros digitos",
         "distribuicao atipica dos primeiros",
         "padroes dos primeiros digitos",
     )
-    if _contains_any(text, benford_paraphrases):
+    if _contains_any(text, benford_paraphrases) and not _is_quantitative_request(text):
         return _decision(
             Route.METHODOLOGY,
-            "pergunta metodológica sobre distribuição de dígitos sem depender do termo Benford",
+            "pergunta metodológica sobre distribuição de dígitos",
             EvidenceLayer.METHODOLOGY,
             EvidenceLayer.KNOWLEDGE,
+        )
+
+    statistical_interpretation_cues = (
+        "distribuicao numerica",
+        "padrao esperado",
+        "anomalia estatistica",
+        "alerta estatistico",
+        "sinal estatistico",
+        "resultado isolado",
+        "triagem",
+        "validacao humana",
+    )
+    if _contains_any(text, statistical_interpretation_cues) and _contains_any(
+        text,
+        ("fraude", "investigacao", "diagnosticar", "conclusao", "validacao", "triagem"),
+    ):
+        return _decision(
+            Route.METHODOLOGY,
+            "pedido de interpretação cautelosa de sinal ou anomalia analítica",
+            EvidenceLayer.METHODOLOGY,
         )
 
     scientific_method_topics = (
         "inteligencia de negocios",
         "business intelligence",
+        "painel analitico",
         "paineis",
         "inteligencia artificial",
         "auditoria de recursos publicos",
         "fiscalizacao de gastos publicos",
+        "gasto publico",
+        "gastos publicos",
         "informacao publica",
         "compreender informacao publica",
+        "portal da transparencia",
         "transparencia governamental",
+        "controle social",
         "participacao no controle",
+        "capacidade do cidadao",
+        "competencia informacional",
+        "competencia em informacao",
+        "selecionar casos",
+        "exame mais aprofundado",
+        "triagem",
+        "investigacao",
+        "validacao humana",
+        "analise forense",
+        "analises forenses",
     )
     if _asks_scientific_sources(text) and _contains_any(text, scientific_method_topics):
         return _decision(
@@ -567,6 +684,11 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "como funciona a prestacao",
         "explique em termos simples",
         "a retirada de dinheiro",
+        "como reconstruir ",
+        "preciso consultar ",
+        "qual documento ",
+        "o que consta ",
+        "se eu precisar consultar ",
     )
     domain_terms = (
         "cpgf",
@@ -574,8 +696,10 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "cartao de pagamento do governo",
         "cartao corporativo federal",
         "cartao governamental",
+        "cartao do governo",
         "suprimento de fundos",
         "suprimentos de fundos",
+        "por suprimento",
         "agente suprido",
         "suprido",
         "ordenador de despesa",
@@ -587,6 +711,11 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "fracionamento",
         "material permanente",
         "cartilha",
+        "portaria",
+        "portarias",
+        "acordao",
+        "tribunal de contas da uniao",
+        "tcu",
         "fiscalizacao continua",
         "controle externo",
         "parcelar uma aquisicao",
@@ -594,6 +723,8 @@ def _route_knowledge(text: str) -> RouteDecision | None:
     documentary_cues = (
         "referencia",
         "referencias",
+        "fonte oficial",
+        "fontes oficiais",
         "orientacao oficial",
         "orientacoes oficiais",
         "ato federal",
@@ -606,6 +737,10 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "regulamentacao",
         "decisao de controle externo",
         "deliberacao",
+        "pronunciamento",
+        "precedente",
+        "documento do corpus",
+        "consultar",
     )
     public_spending_cues = (
         "despesa",
@@ -619,17 +754,19 @@ def _route_knowledge(text: str) -> RouteDecision | None:
         "adiantamento",
         "numerario",
         "controle externo",
+        "tcu",
+        "acordao",
     )
     if text.startswith(conceptual_starts) or _contains_any(text, domain_terms):
         return _decision(
             Route.KNOWLEDGE,
-            "pergunta conceitual/normativa sobre o domínio CPGF",
+            "pergunta conceitual/normativa sobre o domínio CPGF ou controle externo",
             EvidenceLayer.KNOWLEDGE,
         )
     if _contains_any(text, documentary_cues) and _contains_any(text, public_spending_cues):
         return _decision(
             Route.KNOWLEDGE,
-            "pedido documental/normativo sobre despesa pública ou CPGF",
+            "pedido documental/normativo sobre despesa pública, CPGF ou controle externo",
             EvidenceLayer.KNOWLEDGE,
         )
     return None

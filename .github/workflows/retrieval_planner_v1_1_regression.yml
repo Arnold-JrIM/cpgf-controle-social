@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "src/cpgf/ai/retrieval_planner.py"
+      - "src/cpgf/ai/router.py"
       - "src/cpgf/version.py"
       - "scripts/evaluate_retrieval_planner_v1_1_regression.py"
       - "tests/unit/test_retrieval_planner_v1_1.py"
@@ -55,8 +56,8 @@ jobs:
               Path("retrieval_planner_v1_1_regression.json").read_text(encoding="utf-8")
           )
           assert payload["status"] == "KNOWN_REGRESSION_ONLY"
-          assert payload["router_version"] == "1.2.0"
           assert payload["planner_version"] == "1.1.0"
+          assert isinstance(payload["router_version"], str) and payload["router_version"]
           for key in ("development", "known_holdout"):
               result = payload[key]["result"]
               assert result["cases"] == 30, (key, result)

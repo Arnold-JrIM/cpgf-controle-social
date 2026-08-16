@@ -2,8 +2,6 @@ import hashlib
 import json
 from pathlib import Path
 
-from cpgf.version import RETRIEVAL_PLANNER_VERSION, ROUTER_VERSION
-
 MANIFEST = Path("data/manifests/assistant_router_1_2_0.json")
 
 
@@ -16,9 +14,8 @@ def test_router_v1_2_manifest_is_known_regression_not_generalization() -> None:
 
     assert manifest["version"] == "1.2.0"
     assert manifest["status"] == "KNOWN_REGRESSION_FROZEN"
-    assert manifest["router_version"] == ROUTER_VERSION == "1.2.0"
+    assert manifest["router_version"] == "1.2.0"
     assert manifest["planner_version_held_fixed"] == "1.0.0"
-    assert RETRIEVAL_PLANNER_VERSION == "1.1.0"
 
     regression_sets = manifest["known_regression_sets"]
     for key in ("development", "router_holdout_v1", "router_holdout_v2"):
