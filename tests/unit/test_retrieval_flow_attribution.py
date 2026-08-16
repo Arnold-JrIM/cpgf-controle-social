@@ -1,8 +1,14 @@
+import json
 from pathlib import Path
 
-from cpgf.benchmark import evaluate_retrieval_flow_attribution, load_retrieval_benchmark
+from cpgf.benchmark import (
+    benchmark_sha256,
+    evaluate_retrieval_flow_attribution,
+    load_retrieval_benchmark,
+)
 
 HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
+MANIFEST = Path("data/manifests/retrieval_flow_attribution_1_0_0.json")
 
 
 def test_retrieval_flow_attribution_decomposes_known_holdout_without_tuning() -> None:
@@ -73,3 +79,23 @@ def test_retrieval_flow_attribution_decomposes_known_holdout_without_tuning() ->
         "question_and_oracle_held_fixed": True,
         "not_a_new_generalization_claim": True,
     }
+
+
+def test_frozen_attribution_manifest_matches_reproducible_diagnostic() -> None:
+    suite = load_retrieval_benchmark(HOLDOUT)
+    result = evaluate_retrieval_flow_attribution(suite)
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+
+    assert manifest["version"] == "1.0.0"
+    assert manifest["holdout"]["sha256"] == benchmark_sha256(HOLDOUT)
+    assert manifest["results"]["attribution_counts"] == result["attribution_counts"]
+    assert manifest["results"]["ids_by_attribution"] == result["ids_by_attribution"]
+    assert manifest["results"]["actual_joint_filter_failures"] == result[
+        "joint_filter_failures"
+    ]
+    assert manifest["results"]["router_contribution_to_joint_failures"] == result[
+        "router_contribution_to_joint_failures"
+    ]
+    assert manifest["results"]["planner_contribution_to_joint_failures"] == result[
+        "planner_contribution_to_joint_failures"
+    ]
