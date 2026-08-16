@@ -1,0 +1,47 @@
+name: joint-retrieval-holdout-v3-measurement
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reproduction:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Revalidate frozen state before reproduction
+        run: python scripts/preflight_joint_retrieval_holdout_v3.py --output jh3_preflight_before_measurement.json
+      - name: Reproduce frozen Router -> Planner measurement
+        run: |
+          python scripts/measure_joint_retrieval_holdout_v3.py \
+            --output joint_retrieval_holdout_v3_measurement.json
+      - name: Validate evidence contract without performance threshold
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("joint_retrieval_holdout_v3_measurement.json").read_text())
+          assert p["status"] in {"INDEPENDENT_MEASUREMENT", "INDEPENDENT_MEASUREMENT_REPRODUCTION"}
+          assert p["benchmark_sha256"] == "d9598b3d1c04d2ddf776a931afba864dc972c4dea73dd0ef774b1e93185dd4a8"
+          assert p["summary"]["cases"] == 48
+          assert p["governance"]["performance_threshold_applied"] is False
+          assert p["governance"]["retriever_called"] is False
+          assert p["governance"]["llm_called"] is False
+          PY
+      - name: Upload reproduction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joint-retrieval-holdout-v3-reproduction-py${{ matrix.python-version }}
+          path: |
+            jh3_preflight_before_measurement.json
+            joint_retrieval_holdout_v3_measurement.json
+          if-no-files-found: error
