@@ -1,0 +1,73 @@
+name: joint-retrieval-flow-attribution-v3
+
+on:
+  pull_request:
+    paths:
+      - "src/cpgf/benchmark/joint_retrieval_attribution_v3.py"
+      - "scripts/diagnose_joint_retrieval_flow_attribution_v3.py"
+      - "tests/unit/test_joint_retrieval_flow_attribution_v3.py"
+      - "data/manifests/joint_retrieval_flow_attribution_v3_1_0_0.json"
+      - "docs/architecture/joint_retrieval_flow_attribution_v3_1_0_0.md"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - ".github/workflows/joint_retrieval_flow_attribution_v3.yml"
+  workflow_dispatch:
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Run frozen post-hoc diagnostic
+        run: |
+          python scripts/diagnose_joint_retrieval_flow_attribution_v3.py \
+            --output joint_retrieval_flow_attribution_v3.json
+      - name: Run diagnostic unit gate
+        run: pytest -q tests/unit/test_joint_retrieval_flow_attribution_v3.py
+      - name: Validate diagnostic governance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(
+              Path("joint_retrieval_flow_attribution_v3.json").read_text(encoding="utf-8")
+          )
+          assert payload["status"] == "POST_HOC_DIAGNOSTIC"
+          source = payload["source_independent_measurement"]
+          assert source["joint_holdout_version"] == "3.0.0"
+          assert source["joint_exact"] == 27
+          assert source["joint_failures"] == 21
+          result = payload["result"]
+          assert result["actual_joint_exact"] == 27
+          assert result["actual_joint_failures"] == 21
+          assert result["observed_layer_mismatch_reproduction"] == {
+              "route_wrong_filters_exact": 6,
+              "route_exact_filters_wrong": 4,
+              "route_wrong_filters_wrong": 11,
+              "clean_passes": 27,
+          }
+          governance = result["governance"]
+          assert governance["diagnostic_is_post_hoc"] is True
+          assert governance["not_a_new_generalization_claim"] is True
+          assert governance["router_rules_modified"] is False
+          assert governance["planner_rules_modified"] is False
+          assert governance["llm_called"] is False
+          assert governance["retriever_called"] is False
+          PY
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joint-retrieval-flow-attribution-v3-py${{ matrix.python-version }}
+          path: joint_retrieval_flow_attribution_v3.json
+          if-no-files-found: error
