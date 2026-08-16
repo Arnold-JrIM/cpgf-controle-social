@@ -1,7 +1,7 @@
 {
   "artifact": "joint_retrieval_holdout",
   "version": "4.0.0",
-  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "status": "MEASURED_INDEPENDENT",
   "benchmark": {
     "path": "data/benchmarks/joint_retrieval_holdout_v4_0_0.csv",
     "sha256": "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a",
@@ -65,10 +65,10 @@
   "prospective_success_criteria": {
     "defined_before_first_measurement": true,
     "primary_metric": "joint_route_scope_temporal_exact_rate",
-    "primary_joint_exact_target": 0.70,
-    "route_exact_floor": 0.80,
+    "primary_joint_exact_target": 0.7,
+    "route_exact_floor": 0.8,
     "filter_joint_exact_floor": 0.75,
-    "per_category_joint_exact_floor": 0.50,
+    "per_category_joint_exact_floor": 0.5,
     "criteria_are_project_governance_thresholds_not_statistical_significance_tests": true,
     "performance_threshold_causes_measurement_workflow_failure": false,
     "measurement_must_be_preserved_even_below_thresholds": true,
@@ -78,9 +78,211 @@
     "meeting_criteria_does_not_unlock_llm": true
   },
   "measurement": {
-    "performed": false,
-    "first_valid_measurement": null,
-    "result": null
+    "performed": true,
+    "official_reference_python": "3.11",
+    "first_valid_measurement": {
+      "run_id": 31977328529,
+      "head_sha": "fc77fa2340b9e3cf1ffed1ffa438ef74d38370f8",
+      "python_3_11": {
+        "job_id": 95238664976,
+        "artifact_id": 9271407550,
+        "artifact_digest": "sha256:d288d73060275b3a5d4958fdb43c6f1bc7e0307125fee690051527276d06517b",
+        "conclusion": "success"
+      },
+      "python_3_12": {
+        "job_id": 95238665031,
+        "artifact_id": 9271409218,
+        "artifact_digest": "sha256:f9d82ed2e9e97376f7125dbc5ee50a77627fcea2cf8382b0477cfcb92eda4d58",
+        "conclusion": "success"
+      },
+      "python_outputs_byte_identical": true,
+      "output_json_sha256_both": "0004fd93146c36bd6218663b85ad3eb8604303cb46a7d83a1c093bd54458988e",
+      "preflight_json_sha256_both": "c3f199b056830b16158bfe610b442a68c331f3fd181dba8eebad25ba0d075370"
+    },
+    "result": {
+      "summary": {
+        "cases": 48,
+        "route_exact": 20,
+        "route_exact_rate": 0.4166666666666667,
+        "scope_exact": 28,
+        "scope_exact_rate": 0.5833333333333334,
+        "temporal_exact": 25,
+        "temporal_exact_rate": 0.5208333333333334,
+        "filter_joint_exact": 24,
+        "filter_joint_exact_rate": 0.5,
+        "joint_exact": 18,
+        "joint_exact_rate": 0.375
+      },
+      "by_category": {
+        "control_external": {
+          "cases": 12,
+          "route_exact": 7,
+          "route_exact_rate": 0.5833333333333334,
+          "scope_exact": 5,
+          "scope_exact_rate": 0.4166666666666667,
+          "temporal_exact": 5,
+          "temporal_exact_rate": 0.4166666666666667,
+          "filter_joint_exact": 5,
+          "filter_joint_exact_rate": 0.4166666666666667,
+          "joint_exact": 5,
+          "joint_exact_rate": 0.4166666666666667
+        },
+        "cross_source": {
+          "cases": 12,
+          "route_exact": 1,
+          "route_exact_rate": 0.08333333333333333,
+          "scope_exact": 6,
+          "scope_exact_rate": 0.5,
+          "temporal_exact": 4,
+          "temporal_exact_rate": 0.3333333333333333,
+          "filter_joint_exact": 3,
+          "filter_joint_exact_rate": 0.25,
+          "joint_exact": 1,
+          "joint_exact_rate": 0.08333333333333333
+        },
+        "methodology": {
+          "cases": 12,
+          "route_exact": 5,
+          "route_exact_rate": 0.4166666666666667,
+          "scope_exact": 5,
+          "scope_exact_rate": 0.4166666666666667,
+          "temporal_exact": 5,
+          "temporal_exact_rate": 0.4166666666666667,
+          "filter_joint_exact": 5,
+          "filter_joint_exact_rate": 0.4166666666666667,
+          "joint_exact": 5,
+          "joint_exact_rate": 0.4166666666666667
+        },
+        "normative": {
+          "cases": 12,
+          "route_exact": 7,
+          "route_exact_rate": 0.5833333333333334,
+          "scope_exact": 12,
+          "scope_exact_rate": 1.0,
+          "temporal_exact": 11,
+          "temporal_exact_rate": 0.9166666666666666,
+          "filter_joint_exact": 11,
+          "filter_joint_exact_rate": 0.9166666666666666,
+          "joint_exact": 7,
+          "joint_exact_rate": 0.5833333333333334
+        }
+      },
+      "route_confusion_matrix": {
+        "composite": {
+          "composite": 1,
+          "knowledge": 5,
+          "methodology": 3,
+          "overview": 2,
+          "trails": 1
+        },
+        "knowledge": {
+          "knowledge": 14,
+          "overview": 3,
+          "unsupported": 7
+        },
+        "methodology": {
+          "knowledge": 1,
+          "methodology": 5,
+          "overview": 2,
+          "trails": 1,
+          "unsupported": 3
+        }
+      },
+      "mismatch_ids": {
+        "route": [
+          "JH4-001", "JH4-003", "JH4-004", "JH4-005", "JH4-008", "JH4-014",
+          "JH4-015", "JH4-019", "JH4-021", "JH4-022", "JH4-023", "JH4-024",
+          "JH4-025", "JH4-026", "JH4-027", "JH4-028", "JH4-029", "JH4-030",
+          "JH4-032", "JH4-033", "JH4-034", "JH4-035", "JH4-036", "JH4-038",
+          "JH4-039", "JH4-042", "JH4-046", "JH4-047"
+        ],
+        "scope": [
+          "JH4-014", "JH4-015", "JH4-019", "JH4-021", "JH4-022", "JH4-023",
+          "JH4-024", "JH4-029", "JH4-030", "JH4-032", "JH4-034", "JH4-035",
+          "JH4-036", "JH4-038", "JH4-039", "JH4-042", "JH4-043", "JH4-044",
+          "JH4-046", "JH4-047"
+        ],
+        "temporal": [
+          "JH4-003", "JH4-014", "JH4-015", "JH4-019", "JH4-021", "JH4-022",
+          "JH4-023", "JH4-024", "JH4-025", "JH4-026", "JH4-027", "JH4-029",
+          "JH4-030", "JH4-032", "JH4-035", "JH4-036", "JH4-038", "JH4-039",
+          "JH4-042", "JH4-043", "JH4-044", "JH4-046", "JH4-047"
+        ],
+        "filter_joint": [
+          "JH4-003", "JH4-014", "JH4-015", "JH4-019", "JH4-021", "JH4-022",
+          "JH4-023", "JH4-024", "JH4-025", "JH4-026", "JH4-027", "JH4-029",
+          "JH4-030", "JH4-032", "JH4-034", "JH4-035", "JH4-036", "JH4-038",
+          "JH4-039", "JH4-042", "JH4-043", "JH4-044", "JH4-046", "JH4-047"
+        ],
+        "joint": [
+          "JH4-001", "JH4-003", "JH4-004", "JH4-005", "JH4-008", "JH4-014",
+          "JH4-015", "JH4-019", "JH4-021", "JH4-022", "JH4-023", "JH4-024",
+          "JH4-025", "JH4-026", "JH4-027", "JH4-028", "JH4-029", "JH4-030",
+          "JH4-032", "JH4-033", "JH4-034", "JH4-035", "JH4-036", "JH4-038",
+          "JH4-039", "JH4-042", "JH4-043", "JH4-044", "JH4-046", "JH4-047"
+        ]
+      },
+      "mean_set_metrics": {
+        "scope_precision": 0.6875,
+        "scope_recall": 0.6354166666666666,
+        "temporal_precision": 0.6875,
+        "temporal_recall": 0.6041666666666666
+      },
+      "criteria_evaluation": {
+        "primary_joint_exact_target_met": false,
+        "route_exact_floor_met": false,
+        "filter_joint_exact_floor_met": false,
+        "per_category_joint_exact_floor_met": false,
+        "all_prospective_criteria_met": false,
+        "per_category_joint_exact_floor_details": {
+          "control_external": {
+            "joint_exact_rate": 0.4166666666666667,
+            "floor": 0.5,
+            "met": false
+          },
+          "cross_source": {
+            "joint_exact_rate": 0.08333333333333333,
+            "floor": 0.5,
+            "met": false
+          },
+          "methodology": {
+            "joint_exact_rate": 0.4166666666666667,
+            "floor": 0.5,
+            "met": false
+          },
+          "normative": {
+            "joint_exact_rate": 0.5833333333333334,
+            "floor": 0.5,
+            "met": true
+          }
+        }
+      },
+      "descriptive_layer_decomposition": {
+        "pass": 18,
+        "route_wrong_filters_exact": 6,
+        "route_exact_filters_wrong": 2,
+        "route_wrong_filters_wrong": 22,
+        "causal_attribution": false
+      }
+    }
+  },
+  "interpretation": {
+    "new_independent_generalization_evidence_observed": true,
+    "joint_exact_rate": 0.375,
+    "all_prospective_criteria_met": false,
+    "comparison_with_jh3_independent_is_unpaired": true,
+    "jh3_independent_joint_exact_rate": 0.5625,
+    "comparison_with_jh2_independent_is_unpaired": true,
+    "jh2_independent_joint_exact_rate": 0.3,
+    "weakest_categories_by_joint_exact_rate": [
+      "cross_source",
+      "control_external",
+      "methodology"
+    ],
+    "retriever_evaluation_unblocked": false,
+    "production_readiness_supported": false,
+    "llm_integration_unblocked": false,
+    "next_step": "post_hoc_counterfactual_attribution_before_any_tuning"
   },
   "governance": {
     "benchmark_semantics_frozen": true,
@@ -92,11 +294,17 @@
     "llm_called": false,
     "sql_executed": false,
     "external_embeddings_called": false,
-    "measurement_allowed_in_this_pr": false,
     "first_measurement_requires_separate_post_merge_pr": true,
     "holdout_becomes_known_immediately_after_first_measurement": true,
     "future_tuning_on_jh4_requires_new_independent_holdout": true,
     "production_readiness_supported": false,
-    "llm_activation_allowed": false
+    "llm_activation_allowed": false,
+    "benchmark_changed_after_freeze": false,
+    "router_or_planner_tuned_during_measurement": false,
+    "performance_threshold_applied_to_workflow_success": false,
+    "low_performance_did_not_fail_measurement_workflow": true,
+    "first_measurement_performed_in_separate_post_merge_pr": true,
+    "holdout_is_known_after_first_measurement": true,
+    "retriever_evaluation_allowed": false
   }
 }

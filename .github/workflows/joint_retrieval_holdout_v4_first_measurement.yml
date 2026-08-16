@@ -1,0 +1,54 @@
+name: joint-retrieval-holdout-v4-first-measurement
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reproduction:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Revalidate JH4 frozen history before reproduction
+        run: |
+          python scripts/preflight_joint_retrieval_holdout_v4.py \
+            --output jh4_preflight_before_reproduction.json
+      - name: Reproduce frozen Router -> Planner measurement
+        run: |
+          python scripts/measure_joint_retrieval_holdout_v4.py \
+            --output joint_retrieval_holdout_v4_measurement.json
+      - name: Validate reproduction contract without performance gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          preflight = json.loads(Path("jh4_preflight_before_reproduction.json").read_text())
+          p = json.loads(Path("joint_retrieval_holdout_v4_measurement.json").read_text())
+
+          assert preflight["status"] == "PASS"
+          assert preflight["manifest_status"] == "MEASURED_INDEPENDENT"
+          assert p["status"] == "INDEPENDENT_MEASUREMENT_REPRODUCTION"
+          assert p["benchmark_sha256"] == "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a"
+          assert p["summary"]["cases"] == 48
+          assert p["governance"]["performance_threshold_applied_to_workflow_success"] is False
+          assert p["governance"]["retriever_called"] is False
+          assert p["governance"]["llm_called"] is False
+          PY
+      - name: Upload reproduction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joint-retrieval-holdout-v4-reproduction-py${{ matrix.python-version }}
+          path: |
+            jh4_preflight_before_reproduction.json
+            joint_retrieval_holdout_v4_measurement.json
+          if-no-files-found: error

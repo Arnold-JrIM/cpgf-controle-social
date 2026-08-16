@@ -58,10 +58,10 @@ def test_jh4_structure_catalog_and_novelty_are_frozen() -> None:
     assert novelty["highest_sequence_similarity"] <= 0.75
 
 
-def test_jh4_manifest_freezes_benchmark_flow_and_candidate_evidence() -> None:
+def test_jh4_manifest_preserves_benchmark_flow_and_candidate_evidence() -> None:
     manifest = _manifest()
     assert manifest["version"] == "4.0.0"
-    assert manifest["status"] == "FROZEN_BEFORE_MEASUREMENT"
+    assert manifest["status"] in {"FROZEN_BEFORE_MEASUREMENT", "MEASURED_INDEPENDENT"}
     assert manifest["benchmark"]["sha256"] == joint_holdout_v4_sha256(BENCHMARK)
     assert manifest["benchmark"]["sha256"] == (
         "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a"
@@ -106,16 +106,54 @@ def test_jh4_success_criteria_are_prospective_and_non_destructive() -> None:
     assert criteria["meeting_criteria_does_not_support_production_readiness"] is True
     assert criteria["meeting_criteria_does_not_unlock_llm"] is True
 
-    measurement = manifest["measurement"]
-    assert measurement["performed"] is False
-    assert measurement["first_valid_measurement"] is None
-    assert measurement["result"] is None
 
+def test_jh4_measurement_state_is_consistent() -> None:
+    manifest = _manifest()
+    measurement = manifest["measurement"]
+
+    if manifest["status"] == "FROZEN_BEFORE_MEASUREMENT":
+        assert measurement["performed"] is False
+        assert measurement["first_valid_measurement"] is None
+        assert measurement["result"] is None
+        return
+
+    assert manifest["status"] == "MEASURED_INDEPENDENT"
+    assert measurement["performed"] is True
+    first = measurement["first_valid_measurement"]
+    assert first["run_id"] == 31977328529
+    assert first["head_sha"] == "fc77fa2340b9e3cf1ffed1ffa438ef74d38370f8"
+    assert first["python_3_11"]["job_id"] == 95238664976
+    assert first["python_3_11"]["artifact_id"] == 9271407550
+    assert first["python_3_12"]["job_id"] == 95238665031
+    assert first["python_3_12"]["artifact_id"] == 9271409218
+    assert first["python_outputs_byte_identical"] is True
+    assert first["output_json_sha256_both"] == (
+        "0004fd93146c36bd6218663b85ad3eb8604303cb46a7d83a1c093bd54458988e"
+    )
+
+    result = measurement["result"]
+    summary = result["summary"]
+    assert summary["cases"] == 48
+    assert summary["route_exact"] == 20
+    assert summary["scope_exact"] == 28
+    assert summary["temporal_exact"] == 25
+    assert summary["filter_joint_exact"] == 24
+    assert summary["joint_exact"] == 18
+    assert summary["joint_exact_rate"] == 0.375
+
+    criteria = result["criteria_evaluation"]
+    assert criteria["primary_joint_exact_target_met"] is False
+    assert criteria["route_exact_floor_met"] is False
+    assert criteria["filter_joint_exact_floor_met"] is False
+    assert criteria["per_category_joint_exact_floor_met"] is False
+    assert criteria["all_prospective_criteria_met"] is False
+
+
+def test_jh4_governance_remains_conservative() -> None:
+    manifest = _manifest()
     governance = manifest["governance"]
     assert governance["benchmark_semantics_frozen"] is True
     assert governance["all_oracles_defined_before_model_execution"] is True
     assert governance["router_or_planner_called_during_candidate_preflight"] is False
-    assert governance["measurement_allowed_in_this_pr"] is False
-    assert governance["first_measurement_requires_separate_post_merge_pr"] is True
     assert governance["production_readiness_supported"] is False
     assert governance["llm_activation_allowed"] is False

@@ -2,90 +2,43 @@
 
 ## Finalidade
 
-O Joint Retrieval Holdout 4.0.0 (JH4) foi concebido como o próximo gate independente de generalização do fluxo documental do assistente após os incrementos conhecidos Router 1.4.0 e Retrieval Planner 1.3.0.
+O Joint Retrieval Holdout 4.0.0 (JH4) foi concebido como novo gate independente de generalização após os incrementos conhecidos Router 1.4.0 e Retrieval Planner 1.3.0.
 
-O JH3 deixou de ser independente assim que foi medido e posteriormente utilizado para diagnóstico e tuning. Por isso, o resultado conhecido de 48/48 obtido com Router 1.4 + Planner 1.3 não pode ser usado como evidência de generalização. O JH4 separa novamente construção do teste e execução do sistema.
+O JH3 deixou de ser independente assim que foi medido e posteriormente utilizado para diagnóstico e tuning. Por isso, o resultado conhecido de 48/48 obtido com Router 1.4 + Planner 1.3 não podia ser usado como evidência de generalização. O JH4 separou novamente construção do teste e execução do sistema.
 
-## Regra de independência
+## Construção e independência
 
-Este PR congela o benchmark sem executar suas perguntas no Router ou no Planner. A primeira medição deve ocorrer somente depois do merge, em um PR separado.
+O benchmark foi criado e congelado no PR #50 sem executar suas perguntas no Router ou no Planner. Durante essa fase foram permitidas apenas verificações independentes do comportamento do sistema: parsing, contrato estrutural, catálogo governado, balanceamento, duplicidade, novidade textual e hashes.
 
-Durante a construção do candidato são permitidas apenas verificações que não dependem do comportamento do sistema:
+O JH4 contém 48 perguntas, igualmente distribuídas entre `normative`, `methodology`, `cross_source` e `control_external`. As rotas esperadas são 24 `knowledge`, 12 `methodology` e 12 `composite`.
 
-- parsing e contrato estrutural do CSV;
-- existência e elegibilidade dos documentos-gabarito no Knowledge governado;
-- balanceamento das categorias e rotas esperadas;
-- duplicidade interna;
-- novidade textual contra benchmarks anteriores;
-- hashes do benchmark e dos componentes congelados.
-
-Não são permitidos nesta fase:
-
-- `route_question`;
-- `plan_knowledge_retrieval`;
-- Retriever;
-- LLM;
-- SQL;
-- embeddings externos;
-- alteração do oráculo em resposta ao desempenho do sistema.
-
-## Desenho do benchmark
-
-O JH4 contém 48 perguntas, distribuídas igualmente entre:
-
-- 12 `normative`;
-- 12 `methodology`;
-- 12 `cross_source`;
-- 12 `control_external`.
-
-As rotas esperadas totalizam:
-
-- 24 `knowledge`;
-- 12 `methodology`;
-- 12 `composite`.
-
-Cada caso congela antes da medição:
-
-- rota esperada;
-- documentos-gabarito e de apoio;
-- escopos esperados;
-- temporalidades esperadas;
-- trilhas relacionadas, quando aplicável;
-- sensibilidade à atualização documental.
+Cada caso congelou antes da primeira medição a rota, documentos-gabarito e de apoio, escopos, temporalidades, trilhas relacionadas e sensibilidade à atualização documental.
 
 ## Novidade
 
-O critério foi tornado mais rigoroso que no JH3.
+O JH4 adotou limite prospectivo mais rigoroso que o JH3:
 
-Antes da primeira medição, o JH4 deve apresentar:
+- zero repetição exata após normalização;
+- zero duplicidade interna;
+- similaridade máxima por `SequenceMatcher` de 0,75 contra 278 perguntas anteriores.
 
-1. zero repetição exata após normalização;
-2. zero duplicidade interna após normalização;
-3. similaridade máxima por `SequenceMatcher` de 0,75 contra todos os 278 casos anteriores.
+O primeiro candidate preflight válido encontrou maior similaridade de 0,6648648648648648 (`JH4-033`) e nenhuma sobreposição exata. Nenhuma pergunta precisou ser reescrita depois desse preflight.
 
-O primeiro candidate preflight válido, reproduzido em Python 3.11 e 3.12, encontrou:
-
-- 48 casos válidos;
-- zero sobreposição exata;
-- maior similaridade: 0,6648648648648648;
-- caso de maior similaridade: `JH4-033`;
-- SHA-256 do benchmark: `a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a`.
-
-O JSON do preflight foi idêntico byte a byte nas duas versões, com SHA-256 `4a20074607c63631d0c08f378505470ad08740054abf15712a08041707943b21`.
+SHA-256 congelado do benchmark: `a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a`.
 
 ## Fluxo congelado
 
-A primeira medição deverá usar exatamente:
+A primeira medição usou exatamente:
 
 - Router 1.4.0 — blob `89150b97e9c87d9af0d0b0f888870dcc74ef86b1`;
 - Retrieval Planner 1.3.0 — blob `8fa1458c11eeabfdde155635b74a9b770e9960c1`;
 - Knowledge 1.2.0.
 
-Antes da primeira medição, o preflight falha se qualquer um desses componentes divergir do freeze.
+O preflight executado imediatamente antes da medição confirmou correspondência exata entre fluxo corrente e fluxo congelado.
 
-## Critérios prospectivos de interpretação
+## Critérios prospectivos
 
-Os critérios abaixo foram definidos antes da primeira medição. Eles são limites de governança do projeto, não testes de significância estatística:
+Antes da primeira medição foram registrados os seguintes limites de governança:
 
 - métrica primária: exatidão conjunta de rota + escopo + temporalidade;
 - alvo conjunto: pelo menos 70%;
@@ -93,22 +46,61 @@ Os critérios abaixo foram definidos antes da primeira medição. Eles são limi
 - piso de filtros conjuntos: 75%;
 - piso conjunto por categoria: 50%.
 
-O workflow de medição não poderá falhar simplesmente porque o desempenho ficar abaixo desses valores. O primeiro resultado válido deverá ser preservado integralmente, inclusive se for desfavorável.
+Esses limites não são testes de significância estatística e não determinam sucesso ou falha do workflow. O primeiro resultado válido deveria ser preservado mesmo se desfavorável.
 
-Se todos os critérios forem atendidos, o resultado sustenta apenas avançar para uma avaliação independente do Retriever. Não sustenta prontidão de produção e não desbloqueia LLM.
+## Primeira medição independente
 
-## Relação com os holdouts anteriores
+A primeira medição válida ocorreu no run `31977328529`, head `fc77fa2340b9e3cf1ffed1ffa438ef74d38370f8`.
 
-O JH2 teve primeira medição independente de 30% no critério conjunto. O JH3 teve primeira medição independente de 56,25%. Esses valores podem servir como contexto histórico, mas a comparação com o JH4 não é pareada porque as perguntas são diferentes.
+Resultados globais:
 
-Depois da primeira execução do JH4, suas 48 perguntas passam imediatamente a ser material conhecido. Qualquer tuning posterior baseado nelas exigirá um novo holdout independente para nova alegação de generalização.
+- rota exata: 20/48 = 41,67%;
+- escopo exato: 28/48 = 58,33%;
+- temporalidade exata: 25/48 = 52,08%;
+- filtros conjuntos: 24/48 = 50,00%;
+- rota + escopo + temporalidade: 18/48 = 37,50%.
 
-## Sequência operacional
+Resultados conjuntos por categoria:
 
-1. congelar JH4 neste PR;
-2. fazer merge sem executar Router ou Planner sobre o JH4;
-3. abrir PR separado de medição;
-4. revalidar o freeze imediatamente antes da execução;
-5. executar Router 1.4 + Planner 1.3 uma única primeira vez;
-6. congelar o resultado independentemente do desempenho;
-7. somente depois interpretar os critérios prospectivos e decidir entre diagnóstico adicional ou avaliação do Retriever.
+- `normative`: 7/12 = 58,33%;
+- `methodology`: 5/12 = 41,67%;
+- `control_external`: 5/12 = 41,67%;
+- `cross_source`: 1/12 = 8,33%.
+
+Python 3.11 e 3.12 produziram JSONs byte a byte idênticos. O SHA-256 comum do JSON de medição é `0004fd93146c36bd6218663b85ad3eb8604303cb46a7d83a1c093bd54458988e`.
+
+## Confronto com os critérios prospectivos
+
+Nenhum dos quatro critérios globais foi atendido:
+
+- alvo conjunto de 70%: não atendido (37,50%);
+- piso de rota de 80%: não atendido (41,67%);
+- piso de filtros de 75%: não atendido (50,00%);
+- piso de 50% em todas as categorias: não atendido.
+
+Somente a categoria `normative` superou individualmente o piso de 50%. O resultado, portanto, **não desbloqueia a avaliação independente do Retriever**, não sustenta prontidão de produção e não desbloqueia LLM.
+
+## Leitura metodológica
+
+O JH4 fornece nova evidência independente de generalização, mas a evidência é insuficiente para os critérios de avanço definidos prospectivamente. O contraste com JH2 (30%) e JH3 (56,25%) é apenas histórico e não pareado, pois os conjuntos são diferentes.
+
+O fato de Router 1.4 + Planner 1.3 alcançarem 48/48 nos conjuntos conhecidos e 18/48 no JH4 independente mostra por que resultados pós-tuning não devem ser confundidos com generalização para formulações novas.
+
+Uma decomposição observacional das 48 perguntas registra:
+
+- 18 passes;
+- 6 casos com rota errada e filtros exatos;
+- 2 casos com rota exata e filtros errados;
+- 22 casos com rota e filtros divergentes.
+
+Essa decomposição **não constitui atribuição causal**. Como no JH3, a próxima etapa deve usar contrafactual explícito, corrigindo apenas a rota para o gabarito e mantendo Planner e pergunta congelados.
+
+## Governança após a medição
+
+Após o run oficial, o JH4 passou imediatamente a ser material conhecido. O workflow de primeira medição ficou disponível apenas para reprodução manual. Nenhum tuning foi realizado neste PR, e `router.py` e `retrieval_planner.py` permanecem inalterados.
+
+Qualquer tuning futuro com base no JH4 exigirá um novo holdout independente para nova alegação de generalização.
+
+## Próximo passo
+
+O próximo PR deve executar diagnóstico contrafactual post-hoc do JH4 antes de qualquer ajuste operacional. O objetivo é separar, entre as 30 falhas conjuntas, a contribuição do Router, do Planner e da interação entre as duas camadas. Somente depois desse diagnóstico poderá ser definida uma nova sequência de tuning, seguida obrigatoriamente por outro holdout independente.
