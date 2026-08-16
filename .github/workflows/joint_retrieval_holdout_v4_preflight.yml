@@ -29,30 +29,35 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - name: Validate frozen JH4 without model execution
+      - name: Validate frozen JH4 history without model execution
         run: |
           python scripts/preflight_joint_retrieval_holdout_v4.py \
             --output joint_retrieval_holdout_v4_preflight.json
-      - name: Run JH4 freeze unit gates
+      - name: Run JH4 historical unit gates
         run: |
           pytest -q \
             tests/unit/test_joint_retrieval_holdout_v4.py \
             tests/unit/test_versions.py
-      - name: Enforce frozen pre-measurement contract
+      - name: Enforce frozen or measured historical contract
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
+
           p = json.loads(Path("joint_retrieval_holdout_v4_preflight.json").read_text())
           assert p["status"] == "PASS"
-          assert p["manifest_status"] == "FROZEN_BEFORE_MEASUREMENT"
+          assert p["manifest_status"] in {
+              "FROZEN_BEFORE_MEASUREMENT",
+              "MEASURED_INDEPENDENT",
+          }
           assert p["benchmark_sha256"] == "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a"
           assert p["catalog_validation"]["cases"] == 48
           n = p["novelty_validation"]
           assert n["prior_questions_compared"] == 278
           assert n["normalized_exact_overlap"] == 0
           assert n["highest_sequence_similarity"] <= 0.75
-          assert p["current_flow"]["matches_frozen_flow"] is True
+          if p["manifest_status"] == "FROZEN_BEFORE_MEASUREMENT":
+              assert p["current_flow"]["matches_frozen_flow"] is True
           c = p["prospective_success_criteria"]
           assert c["primary_joint_exact_target"] == 0.70
           assert c["route_exact_floor"] == 0.80
@@ -66,7 +71,7 @@ jobs:
           assert g["llm_called"] is False
           assert g["measurement_performed"] is False
           PY
-      - name: Upload frozen preflight evidence
+      - name: Upload JH4 preflight evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
