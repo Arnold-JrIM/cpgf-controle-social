@@ -1,0 +1,69 @@
+name: joint-retrieval-holdout-v2-preflight
+
+on:
+  pull_request:
+    paths:
+      - "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv"
+      - "data/manifests/joint_retrieval_holdout_2_0_0.json"
+      - "src/cpgf/benchmark/joint_retrieval.py"
+      - "src/cpgf/benchmark/__init__.py"
+      - "src/cpgf/version.py"
+      - "scripts/preflight_joint_retrieval_holdout_v2.py"
+      - "tests/unit/test_joint_retrieval_holdout_v2.py"
+      - "tests/unit/test_versions.py"
+      - ".github/workflows/joint_retrieval_holdout_v2_preflight.yml"
+  workflow_dispatch:
+
+jobs:
+  preflight:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Run structural and novelty preflight
+        run: |
+          python scripts/preflight_joint_retrieval_holdout_v2.py \
+            --output joint_retrieval_holdout_v2_preflight.json
+      - name: Run preflight unit tests
+        run: |
+          pytest -q \
+            tests/unit/test_joint_retrieval_holdout_v2.py \
+            tests/unit/test_versions.py
+      - name: Upload preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joint-retrieval-holdout-v2-preflight-py${{ matrix.python-version }}
+          path: joint_retrieval_holdout_v2_preflight.json
+          if-no-files-found: error
+      - name: Enforce no-measurement governance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(
+              Path("joint_retrieval_holdout_v2_preflight.json").read_text(encoding="utf-8")
+          )
+          assert payload["status"] == "PASS"
+          assert payload["benchmark_sha256"] == (
+              "47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7"
+          )
+          assert payload["catalog_validation"]["cases"] == 40
+          assert payload["novelty_validation"]["normalized_exact_overlap"] == 0
+          governance = payload["governance"]
+          assert governance["router_called"] is False
+          assert governance["retrieval_planner_called"] is False
+          assert governance["measurement_performed"] is False
+          assert governance["llm_called"] is False
+          assert governance["sql_executed"] is False
+          assert governance["external_embeddings_called"] is False
+          PY
