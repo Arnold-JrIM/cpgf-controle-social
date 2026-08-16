@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-
 MANIFEST = Path("data/manifests/knowledge_semantic_hybrid_eval_1_0_0.json")
 
 
