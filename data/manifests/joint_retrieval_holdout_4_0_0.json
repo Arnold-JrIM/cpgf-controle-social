@@ -1,0 +1,102 @@
+{
+  "artifact": "joint_retrieval_holdout",
+  "version": "4.0.0",
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "benchmark": {
+    "path": "data/benchmarks/joint_retrieval_holdout_v4_0_0.csv",
+    "sha256": "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a",
+    "semantic_freeze_candidate_commit": "10a848b937cfb9488fe7df47b465fb231fb5a303",
+    "cases": 48,
+    "category_counts": {
+      "normative": 12,
+      "methodology": 12,
+      "cross_source": 12,
+      "control_external": 12
+    },
+    "expected_route_counts": {
+      "knowledge": 24,
+      "methodology": 12,
+      "composite": 12
+    },
+    "freshness_sensitive_cases": 2,
+    "gold_documents": 33,
+    "referenced_documents": 35
+  },
+  "novelty": {
+    "prospective_max_similarity": 0.75,
+    "prior_questions_compared": 278,
+    "normalized_exact_overlap": 0,
+    "highest_sequence_similarity": 0.6648648648648648,
+    "highest_sequence_similarity_case": "JH4-033",
+    "top_5": [
+      {"id": "JH4-033", "similarity": 0.6648648648648648},
+      {"id": "JH4-016", "similarity": 0.6643835616438356},
+      {"id": "JH4-040", "similarity": 0.6640316205533597},
+      {"id": "JH4-032", "similarity": 0.6598639455782312},
+      {"id": "JH4-006", "similarity": 0.6506849315068494}
+    ],
+    "candidate_preflight": {
+      "run_id": 31976636561,
+      "head_sha": "10a848b937cfb9488fe7df47b465fb231fb5a303",
+      "python_3_11": {
+        "job_id": 95237014614,
+        "artifact_id": 9271230750,
+        "artifact_digest": "sha256:725855d94eb98df202e7223179d0a5dd9d746831251a8d68bacaeea3cad49c1e",
+        "conclusion": "success"
+      },
+      "python_3_12": {
+        "job_id": 95237014509,
+        "artifact_id": 9271232471,
+        "artifact_digest": "sha256:99557bf0b3ea01d50a16447334085f5aacf14fef08c862dfd888ad94ae924755",
+        "conclusion": "success"
+      },
+      "python_outputs_byte_identical": true,
+      "output_json_sha256_both": "4a20074607c63631d0c08f378505470ad08740054abf15712a08041707943b21",
+      "router_or_planner_called": false
+    }
+  },
+  "frozen_flow": {
+    "router_version": "1.4.0",
+    "router_source_git_blob_sha": "89150b97e9c87d9af0d0b0f888870dcc74ef86b1",
+    "retrieval_planner_version": "1.3.0",
+    "retrieval_planner_source_git_blob_sha": "8fa1458c11eeabfdde155635b74a9b770e9960c1",
+    "knowledge_version": "1.2.0"
+  },
+  "prospective_success_criteria": {
+    "defined_before_first_measurement": true,
+    "primary_metric": "joint_route_scope_temporal_exact_rate",
+    "primary_joint_exact_target": 0.70,
+    "route_exact_floor": 0.80,
+    "filter_joint_exact_floor": 0.75,
+    "per_category_joint_exact_floor": 0.50,
+    "criteria_are_project_governance_thresholds_not_statistical_significance_tests": true,
+    "performance_threshold_causes_measurement_workflow_failure": false,
+    "measurement_must_be_preserved_even_below_thresholds": true,
+    "comparison_with_prior_independent_holdouts_is_unpaired": true,
+    "meeting_criteria_supports_next_retriever_evaluation_only": true,
+    "meeting_criteria_does_not_support_production_readiness": true,
+    "meeting_criteria_does_not_unlock_llm": true
+  },
+  "measurement": {
+    "performed": false,
+    "first_valid_measurement": null,
+    "result": null
+  },
+  "governance": {
+    "benchmark_semantics_frozen": true,
+    "benchmark_changed_after_candidate_preflight": false,
+    "all_oracles_defined_before_model_execution": true,
+    "router_or_planner_called_during_candidate_preflight": false,
+    "router_or_planner_tuned_during_holdout_construction": false,
+    "retriever_called": false,
+    "llm_called": false,
+    "sql_executed": false,
+    "external_embeddings_called": false,
+    "measurement_allowed_in_this_pr": false,
+    "first_measurement_requires_separate_post_merge_pr": true,
+    "holdout_becomes_known_immediately_after_first_measurement": true,
+    "future_tuning_on_jh4_requires_new_independent_holdout": true,
+    "production_readiness_supported": false,
+    "llm_activation_allowed": false
+  }
+}
