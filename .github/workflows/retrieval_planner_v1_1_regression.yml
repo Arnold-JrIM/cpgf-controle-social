@@ -7,8 +7,10 @@ on:
       - "src/cpgf/version.py"
       - "scripts/evaluate_retrieval_planner_v1_1_regression.py"
       - "tests/unit/test_retrieval_planner_v1_1.py"
+      - "tests/unit/test_retrieval_planner_v1_1_manifest.py"
       - "data/benchmarks/knowledge_retrieval_v1_0_0.csv"
       - "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv"
+      - "data/manifests/retrieval_planner_1_1_0.json"
       - ".github/workflows/retrieval_planner_v1_1_regression.yml"
   workflow_dispatch:
 
@@ -31,7 +33,11 @@ jobs:
           python scripts/evaluate_retrieval_planner_v1_1_regression.py \
             --output retrieval_planner_v1_1_regression.json
       - name: Run Planner unit gate
-        run: pytest -q tests/unit/test_retrieval_planner_v1_1.py tests/unit/test_versions.py
+        run: |
+          pytest -q \
+            tests/unit/test_retrieval_planner_v1_1.py \
+            tests/unit/test_retrieval_planner_v1_1_manifest.py \
+            tests/unit/test_versions.py
       - name: Upload regression evidence
         if: always()
         uses: actions/upload-artifact@v4
