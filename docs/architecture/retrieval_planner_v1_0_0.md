@@ -16,6 +16,8 @@ O Retrieval Benchmark 1.0.0 possui `expected_scopes` e `expected_temporal_status
 
 Em produção, porém, esses campos não existem. O sistema deve inferir os filtros a partir da própria pergunta. O Planner 1.0.0 permite medir essa diferença sem modificar retroativamente o benchmark.
 
+O Retrieval Benchmark 1.0.0 já era conhecido durante o desenvolvimento desta primeira versão do planner. Por isso, a medição `runtime_governed` deste incremento é classificada como **diagnóstico de desenvolvimento/in-sample**. Ela não sustenta, isoladamente, uma alegação de generalização. O código do Planner 1.0.0 é congelado antes da primeira medição e não deve ser ajustado após a observação dos resultados. Um novo holdout, construído após esse congelamento, é requisito para selecionar a política de recuperação de produção.
+
 ## Entradas e saídas
 
 Entrada autorizada:
@@ -74,6 +76,10 @@ Além das métricas de recuperação, a execução registra, somente para avalia
 - detalhe por caso.
 
 Esses campos comparam a saída já produzida pelo planner com o oráculo. O oráculo não participa da geração do plano.
+
+## Congelamento pré-medição
+
+O manifesto `data/manifests/retrieval_planner_1_0_0.json` registra o blob Git do código do planner, os hashes do benchmark e do corpus de referência, a natureza in-sample da primeira avaliação e a proibição de alterar as regras após a primeira medição.
 
 ## Governança
 
