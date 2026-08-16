@@ -1,7 +1,7 @@
 {
   "artifact": "joint_retrieval_holdout",
   "version": "2.0.0",
-  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "status": "MEASURED_INDEPENDENT",
   "base_main_sha": "3add7d1127387d616abcc7b95a2a717c009a3d1f",
   "benchmark": {
     "path": "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv",
@@ -45,9 +45,126 @@
     "semantic_oracle_changed_during_serialization_correction": false
   },
   "measurement": {
-    "first_valid_measurement_run_id": null,
-    "first_valid_measurement_head_sha": null,
-    "first_valid_measurement_result": null
+    "first_valid_measurement_run_id": 31967548985,
+    "first_valid_measurement_head_sha": "662cdee4c54c04f082647e640b9e4822019e209a",
+    "first_valid_measurement_job_id": 95214916177,
+    "first_valid_measurement_python": "3.11",
+    "first_valid_measurement_artifact_id": 9268901430,
+    "first_valid_measurement_artifact_digest": "sha256:22c426db9f28cec1e07f13ef09b3a1c92992655fdc323565032e93cc2e7a2ea2",
+    "first_valid_measurement_result": {
+      "cases": 40,
+      "route_exact": 13,
+      "route_exact_rate": 0.325,
+      "scope_exact": 26,
+      "scope_exact_rate": 0.65,
+      "temporal_exact": 24,
+      "temporal_exact_rate": 0.6,
+      "joint_exact": 12,
+      "joint_exact_rate": 0.3,
+      "mean_scope_recall": 0.7625,
+      "mean_scope_precision": 0.8375,
+      "mean_temporal_recall": 0.7125,
+      "mean_temporal_precision": 0.825
+    },
+    "by_category": {
+      "normative": {
+        "cases": 10,
+        "route_exact": 7,
+        "scope_exact": 10,
+        "temporal_exact": 9,
+        "joint_exact": 7,
+        "joint_exact_rate": 0.7
+      },
+      "methodology": {
+        "cases": 10,
+        "route_exact": 2,
+        "scope_exact": 3,
+        "temporal_exact": 4,
+        "joint_exact": 2,
+        "joint_exact_rate": 0.2
+      },
+      "cross_source": {
+        "cases": 14,
+        "route_exact": 2,
+        "scope_exact": 7,
+        "temporal_exact": 5,
+        "joint_exact": 1,
+        "joint_exact_rate": 0.07142857142857142
+      },
+      "control_external": {
+        "cases": 6,
+        "route_exact": 2,
+        "scope_exact": 6,
+        "temporal_exact": 6,
+        "joint_exact": 2,
+        "joint_exact_rate": 0.3333333333333333
+      }
+    },
+    "route_confusion_matrix": {
+      "composite": {
+        "composite": 1,
+        "knowledge": 7,
+        "methodology": 1,
+        "overview": 1,
+        "trails": 1,
+        "unsupported": 2
+      },
+      "knowledge": {
+        "knowledge": 10,
+        "overview": 2,
+        "unsupported": 5
+      },
+      "methodology": {
+        "composite": 1,
+        "knowledge": 1,
+        "methodology": 2,
+        "overview": 2,
+        "trails": 1,
+        "unsupported": 3
+      }
+    },
+    "mismatch_ids": {
+      "route": [
+        "JH2-002", "JH2-003", "JH2-009", "JH2-013", "JH2-014", "JH2-015",
+        "JH2-016", "JH2-017", "JH2-018", "JH2-019", "JH2-020", "JH2-022",
+        "JH2-023", "JH2-025", "JH2-026", "JH2-027", "JH2-028", "JH2-029",
+        "JH2-030", "JH2-031", "JH2-032", "JH2-033", "JH2-034", "JH2-037",
+        "JH2-038", "JH2-039", "JH2-040"
+      ],
+      "scope": [
+        "JH2-013", "JH2-014", "JH2-015", "JH2-016", "JH2-017", "JH2-018",
+        "JH2-019", "JH2-027", "JH2-029", "JH2-030", "JH2-031", "JH2-032",
+        "JH2-033", "JH2-034"
+      ],
+      "temporal": [
+        "JH2-003", "JH2-013", "JH2-014", "JH2-015", "JH2-017", "JH2-018",
+        "JH2-019", "JH2-021", "JH2-023", "JH2-025", "JH2-027", "JH2-028",
+        "JH2-029", "JH2-030", "JH2-032", "JH2-034"
+      ],
+      "joint": [
+        "JH2-002", "JH2-003", "JH2-009", "JH2-013", "JH2-014", "JH2-015",
+        "JH2-016", "JH2-017", "JH2-018", "JH2-019", "JH2-020", "JH2-021",
+        "JH2-022", "JH2-023", "JH2-025", "JH2-026", "JH2-027", "JH2-028",
+        "JH2-029", "JH2-030", "JH2-031", "JH2-032", "JH2-033", "JH2-034",
+        "JH2-037", "JH2-038", "JH2-039", "JH2-040"
+      ]
+    },
+    "observed_layer_mismatch_decomposition": {
+      "interpretation": "descritiva; não é atribuição causal contrafactual",
+      "clean_passes": 12,
+      "route_only_mismatch": 9,
+      "planner_filter_only_mismatch": 1,
+      "route_and_planner_filter_mismatch": 18
+    },
+    "python_3_12_reproduction": {
+      "job_id": 95214997173,
+      "artifact_id": 9268909720,
+      "artifact_digest": "sha256:54daecc256c82f32065c0b926c5feeebc9b5ea8c2b6703c5b6eaacee9ef703eb",
+      "summary_exactly_matches_python_3_11": true,
+      "by_category_exactly_matches_python_3_11": true,
+      "route_confusion_exactly_matches_python_3_11": true,
+      "mismatch_ids_exactly_match_python_3_11": true
+    }
   },
   "governance": {
     "benchmark_authored_after_router_1_2_and_planner_1_1_were_frozen": true,
@@ -56,10 +173,16 @@
     "router_or_planner_may_change_after_first_measurement_in_this_increment": false,
     "prior_benchmarks_may_be_used_only_for_novelty_checks": true,
     "new_generalization_claim_requires_first_valid_measurement": true,
+    "new_generalization_evidence_observed": true,
+    "independent_measurement_preserved_without_tuning": true,
+    "holdout_becomes_known_after_first_measurement": true,
+    "production_readiness_supported_by_this_measurement": false,
+    "llm_activation_blocked": true,
     "llm_called": false,
     "sql_executed": false,
     "external_embeddings_called": false,
     "primary_joint_metric": "route + scope + temporal exact match",
-    "retrieval_gold_preserved_for_future_retriever_evaluation": true
+    "retrieval_gold_preserved_for_future_retriever_evaluation": true,
+    "next_gate": "diagnostico post-hoc separado das falhas observadas antes de qualquer tuning; nova alegacao de generalizacao apos tuning exigira outro holdout independente"
   }
 }
