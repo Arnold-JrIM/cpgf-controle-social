@@ -7,12 +7,14 @@ on:
       - "src/cpgf/version.py"
       - "scripts/evaluate_router_v1_3_regression.py"
       - "tests/unit/test_assistant_router_v1_3.py"
+      - "tests/unit/test_router_v1_3_manifest.py"
       - "data/benchmarks/assistant_v1_0_0.csv"
       - "data/benchmarks/assistant_router_holdout_v1_0_0.csv"
       - "data/benchmarks/assistant_router_holdout_v2_0_0.csv"
       - "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv"
       - "data/manifests/joint_retrieval_holdout_2_0_0.json"
       - "data/manifests/joint_retrieval_flow_attribution_1_0_0.json"
+      - "data/manifests/assistant_router_1_3_0.json"
       - ".github/workflows/router_v1_3_regression.yml"
   workflow_dispatch:
 
@@ -38,6 +40,7 @@ jobs:
         run: |
           pytest -q \
             tests/unit/test_assistant_router_v1_3.py \
+            tests/unit/test_router_v1_3_manifest.py \
             tests/unit/test_versions.py
       - name: Upload Router 1.3 evidence
         if: always()
@@ -71,6 +74,11 @@ jobs:
           assert joint["route_exact"] == 40, joint["route_error_ids"]
           assert joint["filter_joint_exact"] == 27, joint["filter_error_ids"]
           assert joint["joint_exact"] == 27, joint["joint_error_ids"]
+          assert joint["filter_error_ids"] == [
+              "JH2-003", "JH2-016", "JH2-021", "JH2-023", "JH2-025",
+              "JH2-027", "JH2-028", "JH2-029", "JH2-030", "JH2-031",
+              "JH2-032", "JH2-033", "JH2-034",
+          ]
 
           baseline = payload["frozen_independent_baseline"]
           assert baseline["first_measurement_joint_exact"] == 12, baseline
