@@ -1,4 +1,13 @@
 from .evaluation import evaluate_answer_contract, evaluate_retrieval, evaluate_routing
+from .joint_retrieval import (
+    JointRetrievalHoldoutCase,
+    JointRetrievalHoldoutSuite,
+    joint_holdout_sha256,
+    load_joint_retrieval_holdout,
+    normalize_question,
+    validate_joint_holdout_against_catalog,
+    validate_joint_holdout_novelty,
+)
 from .loader import load_benchmark, validate_benchmark_against_catalog
 from .models import BenchmarkCase, BenchmarkSuite, ExpectedRoute, QuestionFamily
 from .retrieval import (
@@ -23,6 +32,8 @@ __all__ = [
     "BenchmarkCase",
     "BenchmarkSuite",
     "ExpectedRoute",
+    "JointRetrievalHoldoutCase",
+    "JointRetrievalHoldoutSuite",
     "QuestionFamily",
     "RETRIEVAL_CAPABLE_ROUTES",
     "RetrievalBenchmarkCase",
@@ -36,9 +47,14 @@ __all__ = [
     "evaluate_retrieval_flow_attribution",
     "evaluate_retrieval_planner",
     "evaluate_routing",
+    "joint_holdout_sha256",
     "load_benchmark",
+    "load_joint_retrieval_holdout",
     "load_retrieval_benchmark",
+    "normalize_question",
     "validate_benchmark_against_catalog",
+    "validate_joint_holdout_against_catalog",
+    "validate_joint_holdout_novelty",
     "validate_retrieval_benchmark_against_catalog",
     "validate_retrieval_corpus_coverage",
     "validate_retrieval_reference",
