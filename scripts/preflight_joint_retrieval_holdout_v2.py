@@ -23,6 +23,7 @@ DEFAULT_PRIOR = (
     Path("data/benchmarks/assistant_router_holdout_v1_0_0.csv"),
     Path("data/benchmarks/assistant_router_holdout_v2_0_0.csv"),
 )
+_ALLOWED_STATES = {"FROZEN_BEFORE_MEASUREMENT", "MEASURED_INDEPENDENT"}
 
 
 def _git_blob_sha(path: Path) -> str:
@@ -51,8 +52,21 @@ def main() -> None:
     expected_sha = str(manifest["benchmark"]["sha256"])
     if actual_sha != expected_sha:
         raise ValueError(f"SHA do holdout divergiu do freeze: {actual_sha} != {expected_sha}")
-    if manifest["status"] != "FROZEN_BEFORE_MEASUREMENT":
-        raise ValueError("Manifesto não está no estado pré-medição esperado")
+    if manifest["status"] not in _ALLOWED_STATES:
+        raise ValueError(f"Estado inválido do manifesto: {manifest['status']}")
+
+    measurement = manifest["measurement"]
+    if manifest["status"] == "FROZEN_BEFORE_MEASUREMENT":
+        if measurement["first_valid_measurement_run_id"] is not None:
+            raise ValueError("Manifesto pré-medição já contém run de primeira medição")
+    else:
+        required = (
+            "first_valid_measurement_run_id",
+            "first_valid_measurement_head_sha",
+            "first_valid_measurement_result",
+        )
+        if any(measurement[field] is None for field in required):
+            raise ValueError("Manifesto medido não registra a primeira medição completa")
 
     frozen = manifest["frozen_flow"]
     if ROUTER_VERSION != frozen["router_version"]:
@@ -76,6 +90,7 @@ def main() -> None:
         "artifact": "joint_retrieval_holdout_preflight",
         "version": suite.version,
         "status": "PASS",
+        "manifest_state": manifest["status"],
         "benchmark_sha256": actual_sha,
         "frozen_commit": manifest["benchmark"]["frozen_commit"],
         "frozen_flow": {
@@ -93,7 +108,7 @@ def main() -> None:
             "llm_called": False,
             "sql_executed": False,
             "external_embeddings_called": False,
-            "measurement_performed": False,
+            "measurement_performed_by_this_preflight": False,
         },
     }
     text = json.dumps(payload, ensure_ascii=False, indent=2)
