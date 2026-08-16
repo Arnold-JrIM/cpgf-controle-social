@@ -1,0 +1,109 @@
+{
+  "artifact": "retrieval_planner_holdout_evaluation",
+  "version": "1.0.0",
+  "status": "FROZEN_FROM_FIRST_VALID_MEASUREMENT",
+  "planner_version": "1.0.0",
+  "router_version": "1.1.0",
+  "benchmark_schema_version": "1.0.0",
+  "holdout": {
+    "path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
+    "sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+    "frozen_before_valid_measurement_commit": "0b8fdb36f17a370ef3d47c979798936cc46c1ce4",
+    "cases": 30,
+    "category_counts": {
+      "normative": 13,
+      "cross_source": 8,
+      "methodology": 6,
+      "control_external": 3
+    },
+    "gold_documents": 24,
+    "referenced_documents": 25,
+    "freshness_sensitive_cases": 2,
+    "exact_question_overlap_with_development_benchmark": 0
+  },
+  "development_benchmark_sha256": "6633babe7e17f4c0fefb0523ea477a11257bad87d3c0bc258dea7db1c33c1777",
+  "preflight_history": [
+    {
+      "run_id": 31963293358,
+      "result": "HASH_REFERENCE_MISMATCH_BEFORE_PLANNER_EVALUATION",
+      "valid_measurement": false
+    },
+    {
+      "run_id": 31963454354,
+      "result": "CSV_SCHEMA_VALIDATION_FAILURE_BEFORE_PLANNER_EVALUATION",
+      "valid_measurement": false
+    }
+  ],
+  "first_valid_measurement": {
+    "workflow": "retrieval-planner-holdout-smoke",
+    "run_id": 31963655100,
+    "head_commit": "8e62070332314dc6b4b176ec82c216d9b3b943bc",
+    "job_id": 95205360724,
+    "conclusion": "success",
+    "artifact_id": 9267891103,
+    "artifact_zip_sha256": "4145718900ff3939b0158ccaac43c22571a3803a739d387ed36b553efa891d8b",
+    "artifact_size_bytes": 1662
+  },
+  "metrics": {
+    "cases": 30,
+    "scope_exact": 20,
+    "scope_exact_match_rate": 0.6666666666666666,
+    "temporal_exact": 14,
+    "temporal_exact_match_rate": 0.4666666666666667,
+    "joint_exact": 14,
+    "joint_exact_match_rate": 0.4666666666666667,
+    "mean_scope_recall": 0.7,
+    "mean_scope_precision": 0.7333333333333333,
+    "mean_temporal_recall": 0.5666666666666667,
+    "mean_temporal_precision": 0.6666666666666666,
+    "route_counts": {
+      "knowledge": 12,
+      "overview": 9,
+      "trails": 1,
+      "unsupported": 8
+    }
+  },
+  "mismatches": {
+    "count": 16,
+    "ids": [
+      "KRET-102",
+      "KRET-107",
+      "KRET-108",
+      "KRET-113",
+      "KRET-114",
+      "KRET-115",
+      "KRET-116",
+      "KRET-117",
+      "KRET-118",
+      "KRET-119",
+      "KRET-120",
+      "KRET-123",
+      "KRET-126",
+      "KRET-127",
+      "KRET-128",
+      "KRET-129"
+    ],
+    "observed_patterns": [
+      "Perguntas metodologicas frequentemente nao receberam scope methodology e temporalidade contextual.",
+      "Casos cross-source frequentemente perderam a camada contextual e, em dois casos, o scope methodology adicional.",
+      "Uma formulacao de controle externo foi roteada como overview e recebeu cpgf_core/current.",
+      "A distribuicao de rotas mostra contribuicao do Router 1.1.0 para parte dos erros observados; o resultado nao deve ser atribuido exclusivamente ao Planner 1.0.0."
+    ]
+  },
+  "ci_at_measurement_head": {
+    "run_id": 31963651033,
+    "python_3_11": "PASS",
+    "python_3_12": "PASS",
+    "ruff": "PASS",
+    "pytest": "PASS"
+  },
+  "governance": {
+    "planner_source_modified_in_increment": false,
+    "router_source_modified_in_increment": false,
+    "holdout_used_for_tuning_before_measurement": false,
+    "post_measurement_tuning_in_this_increment": false,
+    "llm_called": false,
+    "sql_executed": false,
+    "interpretation": "O resultado mede generalizacao interna do fluxo Router 1.1.0 -> Retrieval Planner 1.0.0 para novas formulacoes documentais. Nao mede qualidade final de resposta de LLM, relevancia documental absoluta nem acuracia de producao. Se os erros deste holdout forem usados para ajuste de versoes posteriores, o conjunto passa a ser regressao conhecida e nova alegacao de generalizacao exige outro holdout independente."
+  }
+}

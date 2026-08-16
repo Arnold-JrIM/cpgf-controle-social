@@ -1,0 +1,32 @@
+{
+  "artifact": "retrieval_planner_holdout",
+  "version": "1.0.0",
+  "planner_version": "1.0.0",
+  "router_version": "1.1.0",
+  "benchmark_schema_version": "1.0.0",
+  "holdout_path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
+  "holdout_sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+  "frozen_before_valid_measurement_commit": "0b8fdb36f17a370ef3d47c979798936cc46c1ce4",
+  "cases": 30,
+  "status": "SUPERSEDED_BY_FIRST_VALID_MEASUREMENT",
+  "preflight_history": [
+    {
+      "run_id": 31963293358,
+      "result": "HASH_REFERENCE_MISMATCH_BEFORE_PLANNER_EVALUATION",
+      "valid_measurement": false
+    },
+    {
+      "run_id": 31963454354,
+      "result": "CSV_SCHEMA_VALIDATION_FAILURE_BEFORE_PLANNER_EVALUATION",
+      "valid_measurement": false
+    }
+  ],
+  "first_valid_measurement_run_id": 31963655100,
+  "final_manifest": "data/manifests/retrieval_planner_holdout_1_0_0.json",
+  "governance": {
+    "planner_source_modified": false,
+    "exact_question_overlap_with_development_benchmark": 0,
+    "holdout_used_for_tuning_before_measurement": false,
+    "post_measurement_tuning_in_this_increment": false
+  }
+}
