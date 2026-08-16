@@ -57,8 +57,8 @@ def _joint_route_regression(path: Path) -> dict[str, object]:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Avalia dinamicamente apenas o Router 1.3.0 e preserva separadamente "
-            "a regressão histórica produzida com Planner 1.1.0."
+            "Preserva a evidência histórica do Router 1.3 e verifica se o Router corrente "
+            "continua compatível com seus conjuntos de regressão conhecidos."
         )
     )
     parser.add_argument("--development", type=Path, default=DEFAULT_DEVELOPMENT)
@@ -74,13 +74,17 @@ def main() -> None:
     history = router_manifest["historical_independent_evidence"]
 
     payload: dict[str, object] = {
-        "artifact": "router_v1_3_known_regression",
-        "router_version": ROUTER_VERSION,
+        "artifact": "router_v1_3_historical_evidence_with_current_regression",
+        "status": "HISTORICAL_EVIDENCE_WITH_CURRENT_ROUTER_REGRESSION",
+        "historical_router_version": router_manifest["router_version"],
+        "historical_router_source_git_blob_sha": router_manifest[
+            "router_source_git_blob_sha"
+        ],
+        "current_router_version": ROUTER_VERSION,
         "current_planner_version": RETRIEVAL_PLANNER_VERSION,
         "historical_planner_version_held_fixed": router_manifest[
             "planner_version_held_fixed"
         ],
-        "status": "KNOWN_REGRESSION_ONLY",
         "routing_sets": {
             "development": _routing_result(args.development),
             "router_holdout_v1": _routing_result(args.router_holdout_v1),
@@ -109,9 +113,10 @@ def main() -> None:
             ],
         },
         "governance": {
-            "router_regression_recomputed_with_current_router": True,
+            "current_router_regression_recomputed": True,
+            "historical_router_blob_preserved_from_manifest": True,
             "historical_joint_filters_recomputed_with_current_planner": False,
-            "historical_router_manifest_preserved": True,
+            "current_router_may_advance": True,
             "current_planner_may_advance": True,
             "new_generalization_claim": False,
             "llm_called": False,

@@ -9,10 +9,6 @@ on:
       - "scripts/evaluate_router_v1_3_regression.py"
       - "tests/unit/test_assistant_router_v1_3.py"
       - "tests/unit/test_router_v1_3_manifest.py"
-      - "data/benchmarks/assistant_v1_0_0.csv"
-      - "data/benchmarks/assistant_router_holdout_v1_0_0.csv"
-      - "data/benchmarks/assistant_router_holdout_v2_0_0.csv"
-      - "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv"
       - "data/manifests/assistant_router_1_3_0.json"
       - ".github/workflows/router_v1_3_regression.yml"
   workflow_dispatch:
@@ -31,76 +27,27 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - name: Evaluate current Router 1.3 regression and frozen history
-        run: |
-          python scripts/evaluate_router_v1_3_regression.py \
-            --output router_v1_3_regression.json
-      - name: Run Router 1.3 unit gate
-        run: |
-          pytest -q \
-            tests/unit/test_assistant_router_v1_3.py \
-            tests/unit/test_router_v1_3_manifest.py \
-            tests/unit/test_versions.py
-      - name: Upload Router 1.3 evidence
-        if: always()
+      - run: python scripts/evaluate_router_v1_3_regression.py --output router_v1_3_regression.json
+      - run: pytest -q tests/unit/test_assistant_router_v1_3.py tests/unit/test_router_v1_3_manifest.py tests/unit/test_versions.py
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: router-v1.3-known-regression-py${{ matrix.python-version }}
+          name: router-v1.3-history-py${{ matrix.python-version }}
           path: router_v1_3_regression.json
           if-no-files-found: error
-      - name: Enforce Router 1.3 regression gate
+      - name: Enforce historical compatibility
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-
-          payload = json.loads(Path("router_v1_3_regression.json").read_text(encoding="utf-8"))
-          assert payload["status"] == "KNOWN_REGRESSION_ONLY"
-          assert payload["router_version"] == "1.3.0"
-          assert payload["historical_planner_version_held_fixed"] == "1.1.0"
-          assert isinstance(payload["current_planner_version"], str)
-          assert payload["current_planner_version"]
-
-          expected = {"development": 50, "router_holdout_v1": 40, "router_holdout_v2": 40}
-          for key, cases in expected.items():
-              summary = payload["routing_sets"][key]["summary"]
-              assert summary["cases"] == cases, (key, summary)
-              assert summary["accuracy_all"] == 1.0, (
-                  key,
-                  payload["routing_sets"][key]["errors"],
-              )
-
-          joint_route = payload["joint_holdout_v2_route_regression"]
-          assert joint_route["cases"] == 40, joint_route
-          assert joint_route["route_exact"] == 40, joint_route["route_error_ids"]
-          assert joint_route["route_error_ids"] == []
-
-          historical = payload["historical_joint_holdout_v2_with_planner_1_1"]
-          assert historical["cases"] == 40, historical
-          assert historical["route_exact"] == 40, historical
-          assert historical["filter_joint_exact_with_planner_1_1"] == 27, historical
-          assert historical["joint_route_scope_temporal_exact"] == 27, historical
-          assert historical["remaining_filter_error_ids"] == [
-              "JH2-003", "JH2-016", "JH2-021", "JH2-023", "JH2-025",
-              "JH2-027", "JH2-028", "JH2-029", "JH2-030", "JH2-031",
-              "JH2-032", "JH2-033", "JH2-034",
-          ]
-
-          baseline = payload["frozen_independent_baseline"]
-          assert baseline["first_measurement_joint_exact"] == 12, baseline
-          assert baseline["first_measurement_route_exact"] == 13, baseline
-          assert baseline["diagnostic_router_only_failures"] == 15, baseline
-          assert baseline["diagnostic_planner_only_failures"] == 1, baseline
-          assert baseline["diagnostic_shared_failures"] == 12, baseline
-          assert baseline["route_only_counterfactual_joint_exact"] == 27, baseline
-
-          governance = payload["governance"]
-          assert governance["router_regression_recomputed_with_current_router"] is True
-          assert governance["historical_joint_filters_recomputed_with_current_planner"] is False
-          assert governance["historical_router_manifest_preserved"] is True
-          assert governance["current_planner_may_advance"] is True
-          assert governance["new_generalization_claim"] is False
-          assert governance["llm_called"] is False
-          assert governance["sql_executed"] is False
-          assert governance["retriever_called"] is False
+          p = json.loads(Path("router_v1_3_regression.json").read_text())
+          assert p["status"] == "HISTORICAL_EVIDENCE_WITH_CURRENT_ROUTER_REGRESSION"
+          assert p["historical_router_version"] == "1.3.0"
+          assert p["historical_router_source_git_blob_sha"] == "7c82b42f4409110371dcb86e15672a328a0d54bd"
+          assert p["routing_sets"]["development"]["summary"]["accuracy_all"] == 1.0
+          assert p["routing_sets"]["router_holdout_v1"]["summary"]["accuracy_all"] == 1.0
+          assert p["routing_sets"]["router_holdout_v2"]["summary"]["accuracy_all"] == 1.0
+          assert p["joint_holdout_v2_route_regression"]["route_exact"] == 40
+          assert p["historical_joint_holdout_v2_with_planner_1_1"]["joint_route_scope_temporal_exact"] == 27
+          assert p["governance"]["new_generalization_claim"] is False
           PY

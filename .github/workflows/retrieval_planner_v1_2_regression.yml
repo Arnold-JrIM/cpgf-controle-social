@@ -60,6 +60,8 @@ jobs:
           )
           assert payload["status"] == "KNOWN_REGRESSION_ONLY"
           assert payload["router_version_held_fixed"] == "1.3.0"
+          assert isinstance(payload["current_router_version"], str)
+          assert payload["current_router_version"]
           assert payload["planner_version"] == "1.2.0"
 
           for key in ("development", "known_holdout"):
@@ -96,7 +98,9 @@ jobs:
           governance = payload["governance"]
           assert governance["all_evaluation_sets_known_before_planner_1_2_tuning"] is True
           assert governance["joint_holdout_v2_is_known_regression"] is True
-          assert governance["router_modified"] is False
+          assert governance["router_modified_during_planner_1_2_tuning"] is False
+          assert governance["historical_router_1_3_context_preserved"] is True
+          assert governance["current_router_may_advance"] is True
           assert governance["case_id_specific_rules_added"] is False
           assert governance["new_generalization_claim"] is False
           assert governance["llm_called"] is False
