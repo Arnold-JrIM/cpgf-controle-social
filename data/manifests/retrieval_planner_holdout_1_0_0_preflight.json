@@ -5,10 +5,15 @@
   "router_version": "1.1.0",
   "benchmark_schema_version": "1.0.0",
   "holdout_path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
-  "holdout_sha256": "ccbc8b89cb81027b41a380eceaa3ed127663a1d34fc23cf1060e54d1ddcdc480",
+  "holdout_sha256": "4b7dce923ce148d22a9e254e95dafc305952e81938325388401a4b7f836b2f5f",
   "frozen_before_valid_measurement_commit": "e4b47b5376ff7b9b7f5768ab53f3ba5a6d464265",
   "cases": 30,
-  "status": "FROZEN_PENDING_FIRST_AUTOMATED_MEASUREMENT",
+  "status": "FROZEN_PENDING_FIRST_VALID_AUTOMATED_MEASUREMENT",
+  "preflight_history": {
+    "run_id": 31963293358,
+    "result": "HASH_REFERENCE_MISMATCH_BEFORE_PLANNER_EVALUATION",
+    "valid_measurement": false
+  },
   "governance": {
     "planner_source_modified": false,
     "exact_question_overlap_with_development_benchmark": 0,
