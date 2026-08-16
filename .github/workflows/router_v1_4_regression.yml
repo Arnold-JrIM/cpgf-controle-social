@@ -8,6 +8,7 @@ on:
       - "src/cpgf/version.py"
       - "scripts/evaluate_router_v1_4_regression.py"
       - "tests/unit/test_assistant_router_v1_4.py"
+      - "tests/unit/test_router_v1_4_manifest.py"
       - "tests/unit/test_versions.py"
       - "data/benchmarks/assistant_v1_0_0.csv"
       - "data/benchmarks/assistant_router_holdout_v1_0_0.csv"
@@ -16,6 +17,7 @@ on:
       - "data/benchmarks/joint_retrieval_holdout_v3_0_0.csv"
       - "data/manifests/joint_retrieval_holdout_3_0_0.json"
       - "data/manifests/joint_retrieval_flow_attribution_v3_1_0_0.json"
+      - "data/manifests/assistant_router_1_4_0.json"
       - ".github/workflows/router_v1_4_regression.yml"
   workflow_dispatch:
 
@@ -35,8 +37,12 @@ jobs:
       - run: python -m pip install -e ".[dev]"
       - name: Evaluate Router 1.4 known regressions
         run: python scripts/evaluate_router_v1_4_regression.py --output router_v1_4_regression.json
-      - name: Run Router 1.4 unit gate
-        run: pytest -q tests/unit/test_assistant_router_v1_4.py tests/unit/test_versions.py
+      - name: Run Router 1.4 unit and manifest gates
+        run: |
+          pytest -q \
+            tests/unit/test_assistant_router_v1_4.py \
+            tests/unit/test_router_v1_4_manifest.py \
+            tests/unit/test_versions.py
       - name: Upload Router 1.4 evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -50,8 +56,12 @@ jobs:
           import json
           from pathlib import Path
           p = json.loads(Path("router_v1_4_regression.json").read_text())
+          manifest = json.loads(
+              Path("data/manifests/assistant_router_1_4_0.json").read_text()
+          )
           assert p["status"] == "KNOWN_REGRESSION_ONLY"
           assert p["router_version"] == "1.4.0"
+          assert p["router_source_git_blob_sha"] == "89150b97e9c87d9af0d0b0f888870dcc74ef86b1"
           assert p["planner_version_held_fixed"] == "1.2.0"
           assert p["planner_source_git_blob_sha"] == "7ee30359cb4457b0bd1a12b43d14f73be410ddaa"
           for key, cases in {"development": 50, "router_holdout_v1": 40, "router_holdout_v2": 40}.items():
@@ -62,9 +72,15 @@ jobs:
           jh3 = p["joint_holdout_v3_known_regression"]
           assert jh3["cases"] == 48
           assert jh3["route_exact"] == 48, jh3["route_error_ids"]
+          assert jh3["scope_exact"] == 41
+          assert jh3["temporal_exact"] == 41
           assert jh3["joint_exact"] == 39, jh3["joint_error_ids"]
+          assert jh3["joint_error_ids"] == manifest["known_regression_sets"]["joint_holdout_v3"]["remaining_joint_error_ids"]
           assert p["frozen_jh3_independent_baseline"]["joint_exact"] == 27
           assert p["frozen_jh3_post_hoc_diagnostic"]["route_only_counterfactual_joint_exact"] == 39
+          assert manifest["status"] == "KNOWN_REGRESSION_FROZEN"
+          assert manifest["router_version"] == "1.4.0"
+          assert manifest["planner_version_held_fixed"] == "1.2.0"
           g = p["governance"]
           assert g["planner_modified_in_increment"] is False
           assert g["planner_blob_preserved"] is True
