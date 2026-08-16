@@ -1,0 +1,138 @@
+{
+  "artifact": "joint_retrieval_flow_attribution_diagnostic",
+  "version": "1.0.0",
+  "status": "POST_HOC_DIAGNOSTIC_FROZEN",
+  "source_independent_measurement": {
+    "joint_holdout_version": "2.0.0",
+    "holdout_path": "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv",
+    "holdout_sha256": "47d29dfaa0e71ea4b9c7c813b02d1001fa32a7605a241f95708686718a5b7ec7",
+    "measurement_run_id": 31967548985,
+    "measurement_head_sha": "662cdee4c54c04f082647e640b9e4822019e209a",
+    "joint_exact": 12,
+    "joint_failures": 28,
+    "holdout_already_known_before_this_diagnostic": true
+  },
+  "frozen_flow": {
+    "router_version": "1.2.0",
+    "router_source_git_blob_sha": "f4236a7352e9b8808a22cf7d27c0efb1d4123821",
+    "retrieval_planner_version": "1.1.0",
+    "retrieval_planner_source_git_blob_sha": "2f5765a9ba70730b1af7f84ff4fc288eb3a2b96a"
+  },
+  "method": {
+    "type": "expected_route_counterfactual_plus_documentary_route_sweep",
+    "documentary_routes": ["knowledge", "methodology", "composite"],
+    "question_held_fixed": true,
+    "oracle_held_fixed": true,
+    "router_rules_modified": false,
+    "planner_rules_modified": false,
+    "primary_counterfactual": "replace only the actual RouteDecision with the frozen expected_route",
+    "secondary_diagnostic": "sweep all three documentary routes for filter exactness",
+    "new_generalization_claim": false
+  },
+  "results": {
+    "cases": 40,
+    "actual_joint_exact": 12,
+    "actual_joint_failures": 28,
+    "router_only_failures": 15,
+    "planner_only_failures": 1,
+    "shared_router_planner_failures": 12,
+    "router_contribution_to_joint_failures": 27,
+    "planner_contribution_to_joint_failures": 13,
+    "best_case_joint_exact_with_expected_route_correction_only": 27,
+    "best_case_joint_exact_rate_with_expected_route_correction_only": 0.675,
+    "expected_route_filter_exact_cases": 27,
+    "any_documentary_route_filter_exact_cases": 27,
+    "attribution_counts": {
+      "pass": 12,
+      "planner_only": 1,
+      "router_and_planner": 12,
+      "router_only": 15
+    },
+    "ids_by_attribution": {
+      "pass": [
+        "JH2-001", "JH2-004", "JH2-005", "JH2-006", "JH2-007", "JH2-008",
+        "JH2-010", "JH2-011", "JH2-012", "JH2-024", "JH2-035", "JH2-036"
+      ],
+      "planner_only": ["JH2-021"],
+      "router_and_planner": [
+        "JH2-003", "JH2-016", "JH2-023", "JH2-025", "JH2-027", "JH2-028",
+        "JH2-029", "JH2-030", "JH2-031", "JH2-032", "JH2-033", "JH2-034"
+      ],
+      "router_only": [
+        "JH2-002", "JH2-009", "JH2-013", "JH2-014", "JH2-015", "JH2-017",
+        "JH2-018", "JH2-019", "JH2-020", "JH2-022", "JH2-026", "JH2-037",
+        "JH2-038", "JH2-039", "JH2-040"
+      ]
+    },
+    "attribution_by_category": {
+      "control_external": {
+        "pass": 2,
+        "router_only": 4
+      },
+      "cross_source": {
+        "pass": 1,
+        "planner_only": 1,
+        "router_and_planner": 10,
+        "router_only": 2
+      },
+      "methodology": {
+        "pass": 2,
+        "router_and_planner": 1,
+        "router_only": 7
+      },
+      "normative": {
+        "pass": 7,
+        "router_and_planner": 1,
+        "router_only": 2
+      }
+    },
+    "observed_layer_mismatch_reproduction": {
+      "route_wrong_filters_exact": 9,
+      "route_exact_filters_wrong": 1,
+      "route_wrong_filters_wrong": 18,
+      "clean_passes": 12
+    }
+  },
+  "validation": {
+    "workflow_run_id": 31968231927,
+    "head_sha": "e4f0cf66644fb6c021a292e660464632ea55b0a9",
+    "python_3_11": {
+      "job_id": 95216550651,
+      "status": "PASS",
+      "artifact_id": 9269070250,
+      "artifact_digest": "sha256:b7e4129eecaa6243a9fe96da848dc291bcf99a67e8f72f064711b99e4cb03d7f"
+    },
+    "python_3_12": {
+      "job_id": 95216550699,
+      "status": "PASS",
+      "artifact_id": 9269071719,
+      "artifact_digest": "sha256:ec979583df2c9820d2fe774ce3e7de1cc25f1b5cc412d567531e57aab8e06c79"
+    },
+    "diagnostic_json_sha256_both_pythons": "9fc67bb66dc2da3c43f75c11444799a9b95467124de47860bf0a0adbb7075bef",
+    "python_outputs_exactly_equal": true
+  },
+  "interpretation": {
+    "router_only_share_of_joint_failures": 0.5357142857142857,
+    "planner_only_share_of_joint_failures": 0.03571428571428571,
+    "shared_share_of_joint_failures": 0.42857142857142855,
+    "router_contribution_share_of_joint_failures": 0.9642857142857143,
+    "planner_contribution_share_of_joint_failures": 0.4642857142857143,
+    "note": "As contribuições de Router e Planner se sobrepõem nos 12 casos compartilhados e não devem ser somadas. Corrigir somente o Router para a rota esperada congelada recuperaria 15 falhas no holdout já conhecido, elevando o contrafactual diagnóstico de 12/40 para 27/40 (67,5%). Esse valor não prevê desempenho de uma futura versão do Router."
+  },
+  "governance": {
+    "diagnostic_is_post_hoc": true,
+    "joint_holdout_2_used_as_new_independent_test": false,
+    "first_independent_measurement_preserved": true,
+    "tuning_performed_in_increment": false,
+    "llm_called": false,
+    "sql_executed": false,
+    "retriever_called": false,
+    "external_embeddings_called": false,
+    "recommended_sequence": [
+      "Router 1.3.0 em incremento separado, priorizando as 15 falhas router_only e a contribuição de roteamento nos 12 casos compartilhados",
+      "Retrieval Planner 1.2.0 em incremento separado, priorizando o caso planner_only e os 12 casos compartilhados, especialmente cross_source",
+      "Joint Holdout 3.0 independente congelado antes da primeira medição conjunta após tuning"
+    ],
+    "llm_activation_remains_blocked": true
+  }
+}
