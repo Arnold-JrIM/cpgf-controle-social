@@ -1,0 +1,73 @@
+name: router-v1.2-regression
+
+on:
+  pull_request:
+    paths:
+      - "src/cpgf/ai/router.py"
+      - "src/cpgf/version.py"
+      - "scripts/evaluate_router_v1_2_regression.py"
+      - "tests/unit/test_assistant_router_v1_2.py"
+      - "tests/unit/test_retrieval_flow_attribution.py"
+      - "data/benchmarks/assistant_v1_0_0.csv"
+      - "data/benchmarks/assistant_router_holdout_v1_0_0.csv"
+      - "data/benchmarks/assistant_router_holdout_v2_0_0.csv"
+      - "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv"
+      - ".github/workflows/router_v1_2_regression.yml"
+  workflow_dispatch:
+
+jobs:
+  regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Evaluate known regression sets
+        run: |
+          python scripts/evaluate_router_v1_2_regression.py \
+            --output router_v1_2_regression.json
+      - name: Run full pytest diagnostics
+        id: pytest_diagnostics
+        continue-on-error: true
+        run: pytest -q --junitxml=pytest-results.xml
+      - name: Upload regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: router-v1.2.0-regression-py${{ matrix.python-version }}
+          path: |
+            router_v1_2_regression.json
+            pytest-results.xml
+          if-no-files-found: error
+      - name: Enforce regression gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path("router_v1_2_regression.json").read_text(encoding="utf-8"))
+          routing = payload["routing_sets"]
+          expected = {"development": 50, "router_holdout_v1": 40, "router_holdout_v2": 40}
+          for key, cases in expected.items():
+              summary = routing[key]["summary"]
+              assert summary["cases"] == cases, (key, summary)
+              assert summary["accuracy_all"] == 1.0, (key, summary, routing[key]["errors"])
+
+          flow = payload["retrieval_flow"]
+          assert flow["cases"] == 30, flow
+          assert flow["joint_filter_failures"] == 9, flow
+          assert flow["clean_passes"] == 21, flow
+          assert flow["router_contribution_to_joint_failures"] == 0, flow
+          assert flow["latent_router_issues_with_exact_filters"] == 0, flow
+          assert flow["attribution_counts"] == {"pass": 21, "planner": 9}, flow
+          PY
+      - name: Enforce full pytest
+        if: steps.pytest_diagnostics.outcome != 'success'
+        run: exit 1

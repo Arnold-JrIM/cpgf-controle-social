@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import unicodedata
 from collections import Counter
 from pathlib import Path
 
 from cpgf.benchmark import QuestionFamily, load_benchmark
-from cpgf.version import ROUTER_HOLDOUT_V2_VERSION, ROUTER_VERSION
+from cpgf.version import ROUTER_HOLDOUT_V2_VERSION
 
 DEVELOPMENT = Path("data/benchmarks/assistant_v1_0_0.csv")
 HOLDOUT_V1 = Path("data/benchmarks/assistant_router_holdout_v1_0_0.csv")
 HOLDOUT_V2 = Path("data/benchmarks/assistant_router_holdout_v2_0_0.csv")
+MANIFEST = Path("data/manifests/assistant_router_holdout_2_0_0.json")
 
 
 def _normalize(text: str) -> str:
@@ -24,13 +26,16 @@ def test_holdout_v2_is_frozen_balanced_and_disjoint_before_measurement():
     development = load_benchmark(DEVELOPMENT)
     holdout_v1 = load_benchmark(HOLDOUT_V1)
     holdout_v2 = load_benchmark(HOLDOUT_V2)
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
-    assert ROUTER_VERSION == "1.1.0"
     assert ROUTER_HOLDOUT_V2_VERSION == "2.0.0"
+    assert manifest["holdout_version"] == "2.0.0"
+    assert manifest["router_version"] == "1.1.0"
     assert len(holdout_v2.cases) == 40
 
     digest = hashlib.sha256(HOLDOUT_V2.read_bytes()).hexdigest()
     assert digest == "df48a03af598e86e84bac797f122404db8135c8b77caf19b7024ca52079a298b"
+    assert manifest["holdout_sha256"] == digest
 
     family_counts = Counter(case.family for case in holdout_v2.cases)
     assert family_counts == Counter({family: 8 for family in QuestionFamily})

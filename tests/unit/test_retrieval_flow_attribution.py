@@ -1,38 +1,35 @@
 import json
 from pathlib import Path
 
-from cpgf.benchmark import (
-    benchmark_sha256,
-    evaluate_retrieval_flow_attribution,
-    load_retrieval_benchmark,
-)
+from cpgf.benchmark import benchmark_sha256
 
 HOLDOUT = Path("data/benchmarks/retrieval_planner_holdout_v1_0_0.csv")
 MANIFEST = Path("data/manifests/retrieval_flow_attribution_1_0_0.json")
 
 
-def test_retrieval_flow_attribution_decomposes_known_holdout_without_tuning() -> None:
-    suite = load_retrieval_benchmark(HOLDOUT)
-    result = evaluate_retrieval_flow_attribution(suite)
+def test_frozen_attribution_manifest_preserves_router_v1_1_history() -> None:
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
-    assert result["cases"] == 30
-    assert result["retrieval_capable_routes"] == ["knowledge", "methodology", "composite"]
-    assert result["joint_filter_failures"] == 16
-    assert result["attribution_counts"] == {
-        "pass": 7,
-        "planner": 4,
-        "router_and_planner": 5,
-        "router_blocking": 6,
-        "router_latent": 7,
-        "router_selection": 1,
-    }
-    assert result["router_contribution_to_joint_failures"] == 12
-    assert result["planner_contribution_to_joint_failures"] == 9
-    assert result["shared_router_planner_failures"] == 5
-    assert result["latent_router_issues_with_exact_filters"] == 7
-    assert result["clean_passes"] == 7
+    assert manifest["version"] == "1.0.0"
+    assert manifest["status"] == "POST_HOC_DIAGNOSTIC_FROZEN"
+    assert manifest["router_version"] == "1.1.0"
+    assert manifest["planner_version"] == "1.0.0"
+    assert manifest["holdout"]["sha256"] == benchmark_sha256(HOLDOUT)
+    assert manifest["holdout"]["already_known_before_diagnostic"] is True
 
-    assert result["ids_by_attribution"] == {
+    results = manifest["results"]
+    assert results["cases"] == 30
+    assert results["actual_joint_filter_failures"] == 16
+    assert results["clean_passes"] == 7
+    assert results["latent_router_issues_with_exact_filters"] == 7
+    assert results["router_only_joint_failures"] == 7
+    assert results["planner_only_joint_failures"] == 4
+    assert results["shared_router_planner_joint_failures"] == 5
+    assert results["router_contribution_to_joint_failures"] == 12
+    assert results["planner_contribution_to_joint_failures"] == 9
+    assert results["best_case_joint_exact_with_route_correction_only"] == 21
+
+    assert results["ids_by_attribution"] == {
         "pass": [
             "KRET-103",
             "KRET-104",
@@ -70,32 +67,5 @@ def test_retrieval_flow_attribution_decomposes_known_holdout_without_tuning() ->
         "router_selection": ["KRET-114"],
     }
 
-    assert result["governance"] == {
-        "diagnostic_is_post_hoc": True,
-        "holdout_is_already_known": True,
-        "router_rules_modified": False,
-        "planner_rules_modified": False,
-        "counterfactual_changes_only_route_decision": True,
-        "question_and_oracle_held_fixed": True,
-        "not_a_new_generalization_claim": True,
-    }
-
-
-def test_frozen_attribution_manifest_matches_reproducible_diagnostic() -> None:
-    suite = load_retrieval_benchmark(HOLDOUT)
-    result = evaluate_retrieval_flow_attribution(suite)
-    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-
-    assert manifest["version"] == "1.0.0"
-    assert manifest["holdout"]["sha256"] == benchmark_sha256(HOLDOUT)
-    assert manifest["results"]["attribution_counts"] == result["attribution_counts"]
-    assert manifest["results"]["ids_by_attribution"] == result["ids_by_attribution"]
-    assert manifest["results"]["actual_joint_filter_failures"] == result[
-        "joint_filter_failures"
-    ]
-    assert manifest["results"]["router_contribution_to_joint_failures"] == result[
-        "router_contribution_to_joint_failures"
-    ]
-    assert manifest["results"]["planner_contribution_to_joint_failures"] == result[
-        "planner_contribution_to_joint_failures"
-    ]
+    assert manifest["governance"]["tuning_performed_in_increment"] is False
+    assert manifest["governance"]["holdout_used_as_new_independent_test"] is False
