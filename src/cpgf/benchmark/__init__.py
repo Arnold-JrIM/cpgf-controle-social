@@ -11,6 +11,7 @@ from .retrieval import (
     validate_retrieval_benchmark_against_catalog,
 )
 from .retrieval_corpus import validate_retrieval_corpus_coverage
+from .retrieval_planner import evaluate_retrieval_planner
 from .retrieval_reference import validate_retrieval_reference
 
 __all__ = [
@@ -25,6 +26,7 @@ __all__ = [
     "evaluate_answer_contract",
     "evaluate_retrieval",
     "evaluate_retrieval_benchmark",
+    "evaluate_retrieval_planner",
     "evaluate_routing",
     "load_benchmark",
     "load_retrieval_benchmark",
