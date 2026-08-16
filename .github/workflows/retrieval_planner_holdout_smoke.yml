@@ -1,7 +1,7 @@
 name: retrieval-planner-holdout-smoke
 
 on:
-  workflow_dispatch:
+  pull_request:
 
 permissions:
   contents: read
