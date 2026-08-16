@@ -1,0 +1,118 @@
+{
+  "artifact": "retrieval_flow_attribution_diagnostic",
+  "version": "1.0.0",
+  "status": "POST_HOC_DIAGNOSTIC_FROZEN",
+  "router_version": "1.1.0",
+  "planner_version": "1.0.0",
+  "holdout_version": "1.0.0",
+  "holdout": {
+    "path": "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv",
+    "sha256": "ec17f7b2c4c93ae862f0796bfd7a1380b64409fa5270c67b7f00625f1f88a667",
+    "already_known_before_diagnostic": true,
+    "cases": 30
+  },
+  "method": {
+    "type": "counterfactual_route_sweep",
+    "retrieval_capable_routes": [
+      "knowledge",
+      "methodology",
+      "composite"
+    ],
+    "question_held_fixed": true,
+    "oracle_held_fixed": true,
+    "router_rules_modified": false,
+    "planner_rules_modified": false,
+    "new_generalization_claim": false
+  },
+  "results": {
+    "cases": 30,
+    "actual_joint_filter_exact": 14,
+    "actual_joint_filter_failures": 16,
+    "clean_passes": 7,
+    "latent_router_issues_with_exact_filters": 7,
+    "router_only_joint_failures": 7,
+    "planner_only_joint_failures": 4,
+    "shared_router_planner_joint_failures": 5,
+    "router_contribution_to_joint_failures": 12,
+    "planner_contribution_to_joint_failures": 9,
+    "router_issue_cases_total_including_latent": 19,
+    "best_case_joint_exact_with_route_correction_only": 21,
+    "best_case_joint_exact_rate_with_route_correction_only": 0.7,
+    "attribution_counts": {
+      "pass": 7,
+      "planner": 4,
+      "router_and_planner": 5,
+      "router_blocking": 6,
+      "router_latent": 7,
+      "router_selection": 1
+    },
+    "ids_by_attribution": {
+      "pass": [
+        "KRET-103",
+        "KRET-104",
+        "KRET-106",
+        "KRET-111",
+        "KRET-121",
+        "KRET-122",
+        "KRET-124"
+      ],
+      "planner": [
+        "KRET-102",
+        "KRET-108",
+        "KRET-120",
+        "KRET-129"
+      ],
+      "router_and_planner": [
+        "KRET-107",
+        "KRET-119",
+        "KRET-123",
+        "KRET-127",
+        "KRET-128"
+      ],
+      "router_blocking": [
+        "KRET-113",
+        "KRET-115",
+        "KRET-116",
+        "KRET-117",
+        "KRET-118",
+        "KRET-126"
+      ],
+      "router_latent": [
+        "KRET-101",
+        "KRET-105",
+        "KRET-109",
+        "KRET-110",
+        "KRET-112",
+        "KRET-125",
+        "KRET-130"
+      ],
+      "router_selection": [
+        "KRET-114"
+      ]
+    }
+  },
+  "validation": {
+    "ci_run_id": 31964468682,
+    "python_3_11_job_id": 95207385425,
+    "python_3_12_job_id": 95207385494,
+    "python_3_11": "PASS",
+    "python_3_12": "PASS",
+    "ruff": "PASS",
+    "pytest": "PASS"
+  },
+  "interpretation": {
+    "router_only_share_of_joint_failures": 0.4375,
+    "planner_only_share_of_joint_failures": 0.25,
+    "shared_share_of_joint_failures": 0.3125,
+    "router_contribution_share_of_joint_failures": 0.75,
+    "planner_contribution_share_of_joint_failures": 0.5625,
+    "note": "As parcelas de contribuição de Router e Planner se sobrepõem nos cinco casos compartilhados e, por isso, não devem ser somadas. O limite de 21/30 representa somente um contrafactual diagnóstico no holdout conhecido: sete falhas podem ser recuperadas pela seleção de uma rota documental capaz sem alterar as regras do Planner 1.0.0."
+  },
+  "governance": {
+    "llm_called": false,
+    "sql_executed": false,
+    "holdout_used_as_new_independent_test": false,
+    "tuning_performed_in_increment": false,
+    "recommended_next_gate": "Router 1.2.0 em incremento separado, seguido de Planner 1.1.0 e novo holdout conjunto independente antes de qualquer alegação de generalização."
+  }
+}
