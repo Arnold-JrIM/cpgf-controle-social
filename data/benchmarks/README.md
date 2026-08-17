@@ -74,9 +74,9 @@ qualquer execução das suas perguntas com `gpt-4o-mini`. Seu universo históric
 novidade também é congelado: 10 benchmarks anteriores, 430 perguntas e inclusão
 explícita do OH1, que já é conhecido.
 
-SHA-256 dos bytes do arquivo gzip: `a3d1a126c7526d8be53fbeabff075792aa6734d399d03c60bd30693fdc9aa9d3`.
+SHA-256 dos bytes do arquivo gzip: `2861255c0967cbf4d91648e790043fc72579a3e13f1a77c1d529089bb8dc24b0`.
 
-SHA-256 do conteúdo CSV descomprimido: `2cc6300db90622ce35cf458aad29168a56b58a371b290abdf5de84fe76e9cc6c`.
+SHA-256 do conteúdo CSV descomprimido: `1f59395337a08daf309f2482908a897ea0d2fa9b00cdb3dc718c5fc058d656ae`.
 
 O preflight é totalmente offline. A primeira medição independente deve ocorrer somente
 depois do merge do freeze e ser preservada mesmo se o gate prospectivo falhar.

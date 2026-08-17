@@ -22,9 +22,9 @@ from cpgf.benchmark.orchestration_holdout_v2 import (
 )
 
 BENCHMARK = Path("data/benchmarks/orchestration_holdout_v2_0_0.csv.gz")
-EXPECTED_SHA256 = "a3d1a126c7526d8be53fbeabff075792aa6734d399d03c60bd30693fdc9aa9d3"
+EXPECTED_SHA256 = "2861255c0967cbf4d91648e790043fc72579a3e13f1a77c1d529089bb8dc24b0"
 EXPECTED_UNCOMPRESSED_SHA256 = (
-    "2cc6300db90622ce35cf458aad29168a56b58a371b290abdf5de84fe76e9cc6c"
+    "1f59395337a08daf309f2482908a897ea0d2fa9b00cdb3dc718c5fc058d656ae"
 )
 
 
