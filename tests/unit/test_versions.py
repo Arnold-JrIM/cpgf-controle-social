@@ -1,4 +1,6 @@
 from cpgf.version import (
+    ANSWER_PIPELINE_VERSION,
+    ANSWER_POLICY_VERSION,
     APP_VERSION,
     BENCHMARK_VERSION,
     EVIDENCE_CONTRACT_VERSION,
@@ -38,7 +40,7 @@ from cpgf.version import (
 
 
 def test_methodology_versions():
-    assert APP_VERSION == "0.32.0-dev"
+    assert APP_VERSION == "0.33.0-dev"
     assert PREPARATION_BASELINE_VERSION == "1.0.0"
     assert PREPARATION_VERSION == "1.1.0"
     assert RULES_VERSION == "1.2.0"
@@ -68,6 +70,8 @@ def test_methodology_versions():
     assert WEB_EVIDENCE_WORKER_VERSION == "1.0.0"
     assert WEB_EVIDENCE_POLICY_VERSION == "1.0.0"
     assert ORCHESTRATION_GRAPH_VERSION == "1.2.0"
+    assert ANSWER_PIPELINE_VERSION == "1.0.0"
+    assert ANSWER_POLICY_VERSION == "1.0.0"
     assert LLM_MODEL_POLICY_VERSION == "1.0.0"
     assert RETRIEVAL_FLOW_DIAGNOSTIC_VERSION == "1.0.0"
     assert ROUTER_VERSION == "1.4.0"
