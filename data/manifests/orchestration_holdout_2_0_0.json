@@ -1,0 +1,143 @@
+{
+  "artifact": "orchestration_holdout_v2",
+  "benchmark": {
+    "cases": 56,
+    "category_balance": {
+      "all_three": 8,
+      "data_knowledge": 8,
+      "data_only": 8,
+      "data_web": 8,
+      "knowledge_only": 8,
+      "knowledge_web": 8,
+      "web_only": 8
+    },
+    "compression": "gzip",
+    "oracles_defined_before_candidate_execution": true,
+    "path": "data/benchmarks/orchestration_holdout_v2_0_0.csv.gz",
+    "sha256": "47fb56ab7e4479ddfd68668c5cbb9f221090ea94bb40edd5dce12cb23d700b9e",
+    "source_presence_balance": {
+      "data": 32,
+      "knowledge": 32,
+      "web": 32
+    },
+    "uncompressed_sha256": "2655a478ddd6e8e1cd9f370f5c03cbdbd2a17f58d9737ece08e9db4229be1940"
+  },
+  "candidate_freeze": {
+    "ai_contract_source_git_blob_sha": "07a0d111667adc311dc345aea9a998d9e4df5d7f",
+    "candidate_executed_during_authoring": false,
+    "candidate_executed_during_preflight": false,
+    "evidence_contract_source_git_blob_sha": "fca0e2903d4b5a97a0680aa2470ee10e60b7b44e",
+    "evidence_contract_version": "1.0.0",
+    "evidence_worker_source_git_blob_sha": "176fb632cdb34eb4ee4bd65d2d5e5c812fbdb641",
+    "evidence_worker_version": "1.0.0",
+    "freeze_base_main_sha": "b3db0407c7c57ad9be76d631f0b32dd960efadbb",
+    "knowledge_models_source_git_blob_sha": "f0629e19f669ed2996e03c649021151376ad5ccf",
+    "llm_repetitions": 3,
+    "model": "gpt-4o-mini",
+    "model_policy_source_git_blob_sha": "92f836a26da8d2f6655357523763929bae13de35",
+    "model_policy_version": "1.0.0",
+    "name": "semantic_evidence_orchestrator_v1_1_normalized",
+    "openai_sdk_version": "3.1.0",
+    "orchestrator_normalization_source_git_blob_sha": "ef8466ff95de617556094e9ebc703aa4d5449ae2",
+    "orchestrator_normalization_version": "1.0.0",
+    "orchestrator_policy_version": "1.1.0",
+    "orchestrator_source_git_blob_sha": "0d34ec82cb15405e6f3f5a085c0290dfcc5b772a",
+    "orchestrator_system_prompt_sha256": "9255a15213b96a9ba219fd43fb402e8d797842064c73d5a9e629d73f0b3269c2",
+    "orchestrator_version": "1.1.0",
+    "pyproject_source_git_blob_sha": "e8a22b98a587be5b9c0619861864a31e01518587",
+    "tool_registry_source_git_blob_sha": "82fc8ff35452ac2a0bb44aea8349fd0f8be4c6dd",
+    "web_evidence_policy_version": "1.0.0",
+    "web_evidence_source_git_blob_sha": "5a590536d4445b269dd5887a43567fb5e4524d50",
+    "web_evidence_worker_version": "1.0.0"
+  },
+  "design": {
+    "cases_per_category": 8,
+    "categories": [
+      "data_only",
+      "knowledge_only",
+      "web_only",
+      "data_knowledge",
+      "knowledge_web",
+      "data_web",
+      "all_three"
+    ],
+    "data_arguments_include_governed_defaults": true,
+    "data_tools_covered": [
+      "overview",
+      "trail_prevalence",
+      "top_ugs",
+      "top_suppliers",
+      "territorial_metric",
+      "territorial_ug_context"
+    ],
+    "knowledge_requires_scope_temporal_and_source_class": true,
+    "parameter_entanglement_cases_included": true,
+    "source_presence_each": 32,
+    "web_requires_explicit_freshness": true,
+    "web_requires_official_only": true
+  },
+  "governance": {
+    "benchmark_authored_without_candidate_outputs": true,
+    "candidate_specification_frozen_before_benchmark_authoring": true,
+    "first_measurement_must_run_only_after_this_freeze_is_merged": true,
+    "llm_called_during_preflight": false,
+    "model_change_after_authoring_started_allowed": false,
+    "normalization_policy_change_after_authoring_started_allowed": false,
+    "oh1_is_known_and_not_independent": true,
+    "orchestrator_policy_change_after_authoring_started_allowed": false,
+    "plan_evidence_called_during_preflight": false,
+    "production_activation": false,
+    "prompt_tuning_after_authoring_started_allowed": false,
+    "retriever_called_during_preflight": false,
+    "sql_executed_during_preflight": false,
+    "tool_contract_change_after_authoring_started_allowed": false,
+    "web_called_during_preflight": false,
+    "workers_called_during_preflight": false
+  },
+  "measurement": {
+    "first_valid_measurement": null,
+    "performed": false,
+    "result": null
+  },
+  "novelty": {
+    "comparison_scope": "explicit frozen prior benchmark list including OH1",
+    "normalized_exact_overlap_allowed": 0,
+    "observed_preflight": null,
+    "prior_benchmark_paths": [
+      "data/benchmarks/assistant_router_holdout_v1_0_0.csv",
+      "data/benchmarks/assistant_router_holdout_v2_0_0.csv",
+      "data/benchmarks/assistant_v1_0_0.csv",
+      "data/benchmarks/joint_retrieval_holdout_v2_0_0.csv",
+      "data/benchmarks/joint_retrieval_holdout_v3_0_0.csv",
+      "data/benchmarks/joint_retrieval_holdout_v4_0_0.csv",
+      "data/benchmarks/joint_retrieval_holdout_v5_0_0.csv",
+      "data/benchmarks/knowledge_retrieval_v1_0_0.csv",
+      "data/benchmarks/orchestration_holdout_v1_0_0.csv.gz",
+      "data/benchmarks/retrieval_planner_holdout_v1_0_0.csv"
+    ],
+    "prior_benchmarks_expected": 10,
+    "prior_questions_expected": 430,
+    "prospective_max_similarity": 0.7
+  },
+  "prospective_acceptance_gate": {
+    "all_criteria_required_for_broad_generalization_gate": true,
+    "all_three_llm_repetitions_must_complete": true,
+    "defined_before_first_measurement": true,
+    "measurement_must_be_preserved_even_below_thresholds": true,
+    "minimum_data_arguments_exact_rate": 0.6,
+    "minimum_data_tool_exact_rate": 0.7,
+    "minimum_each_category_source_set_exact_rate": 0.5,
+    "minimum_knowledge_filters_joint_exact_rate": 0.5,
+    "minimum_mean_evidence_source_set_exact_rate": 0.65,
+    "minimum_mean_modal_stability": 0.9,
+    "minimum_mean_source_precision": 0.8,
+    "minimum_mean_source_recall": 0.8,
+    "minimum_web_parameters_exact_rate": 0.7,
+    "passing_gate_does_not_imply_production_readiness": true,
+    "performance_threshold_causes_measurement_workflow_failure": false,
+    "schema_violations_allowed": 0,
+    "thresholds_are_project_governance_not_significance_tests": true
+  },
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "version": "2.0.0"
+}

@@ -62,3 +62,19 @@ python scripts/evaluate_assistant_benchmark.py \
 ```
 
 Os resultados locais permanecem fora do Git até serem revisados e congelados em manifesto próprio.
+
+## Orchestration Holdout 2.0.0
+
+`orchestration_holdout_v2_0_0.csv.gz` é o segundo holdout prospectivo do Semantic
+Evidence Orchestrator. Ele contém 56 casos novos, balanceados entre as sete combinações
+não vazias de `DATA`, `KNOWLEDGE` e `WEB`.
+
+O OH2 foi congelado depois da normalização governada do Orchestrator 1.1.0 e antes de
+qualquer execução das suas perguntas com `gpt-4o-mini`. Seu universo histórico de
+novidade também é congelado: 10 benchmarks anteriores, 430 perguntas e inclusão
+explícita do OH1, que já é conhecido.
+
+Hash SHA-256 do arquivo gzip: `47fb56ab7e4479ddfd68668c5cbb9f221090ea94bb40edd5dce12cb23d700b9e`.
+
+O preflight é totalmente offline. A primeira medição independente deve ocorrer somente
+depois do merge do freeze e ser preservada mesmo se o gate prospectivo falhar.
