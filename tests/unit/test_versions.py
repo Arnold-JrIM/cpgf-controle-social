@@ -11,7 +11,9 @@ from cpgf.version import (
     JOINT_RETRIEVAL_HOLDOUT_V5_VERSION,
     JOINT_RETRIEVAL_HOLDOUT_VERSION,
     KNOWLEDGE_VERSION,
+    LLM_MODEL_POLICY_VERSION,
     MOTOR_VERSION,
+    ORCHESTRATION_GRAPH_VERSION,
     PREPARATION_BASELINE_VERSION,
     PREPARATION_VERSION,
     RETRIEVAL_BENCHMARK_VERSION,
@@ -33,7 +35,7 @@ from cpgf.version import (
 
 
 def test_methodology_versions():
-    assert APP_VERSION == "0.29.0-dev"
+    assert APP_VERSION == "0.30.0-dev"
     assert PREPARATION_BASELINE_VERSION == "1.0.0"
     assert PREPARATION_VERSION == "1.1.0"
     assert RULES_VERSION == "1.2.0"
@@ -59,6 +61,8 @@ def test_methodology_versions():
     assert SEMANTIC_CANDIDATE_JH5_RESULT_VERSION == "1.0.0"
     assert SEMANTIC_CANDIDATE_JH5_DIAGNOSTIC_VERSION == "1.0.0"
     assert EVIDENCE_CONTRACT_VERSION == "1.0.0"
+    assert ORCHESTRATION_GRAPH_VERSION == "1.0.0"
+    assert LLM_MODEL_POLICY_VERSION == "1.0.0"
     assert RETRIEVAL_FLOW_DIAGNOSTIC_VERSION == "1.0.0"
     assert ROUTER_VERSION == "1.4.0"
     assert ROUTER_HOLDOUT_VERSION == "1.0.0"
