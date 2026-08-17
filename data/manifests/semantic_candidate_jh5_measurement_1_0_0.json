@@ -1,0 +1,102 @@
+{
+  "artifact": "semantic_candidate_jh5_measurement_protocol",
+  "version": "1.0.0",
+  "status": "MEASUREMENT_HARNESS_FROZEN_BEFORE_FIRST_JH5_LLM_RUN",
+  "provenance": {
+    "jh5_freeze_pr": 57,
+    "jh5_freeze_merge_commit": "009e577256acb380af31aa4423bcec81c441ced5",
+    "jh5_manifest_path": "data/manifests/joint_retrieval_holdout_5_0_0.json",
+    "jh5_manifest_git_blob_sha": "477bff0d40f031ec2062199a2e4868879c49b1bb",
+    "candidate_freeze_pr": 56,
+    "candidate_selected_before_jh5_authoring": true
+  },
+  "benchmark": {
+    "version": "5.0.0",
+    "path": "data/benchmarks/joint_retrieval_holdout_v5_0_0.csv",
+    "sha256": "2695be52ff403043c394f0ca7f9f0a47f209fd2016172586146c69adf5595354",
+    "cases": 48,
+    "category_balance": {
+      "normative": 12,
+      "methodology": 12,
+      "cross_source": 12,
+      "control_external": 12
+    },
+    "independent_for_candidate_B_before_first_official_dispatch": true
+  },
+  "candidate_freeze": {
+    "name": "B_llm_route",
+    "version": "1.0.0",
+    "manifest_path": "data/manifests/semantic_candidate_b_1_0_0.json",
+    "manifest_git_blob_sha": "88c042cadd584497d1075dae4bc41536040c1065",
+    "model": "gpt-4o-mini-2024-07-18",
+    "provider_source_path": "src/cpgf/ai/semantic_experiment.py",
+    "provider_source_git_blob_sha": "961d5f7532f89bbba4c05b844601c9d0407ed5bd",
+    "planner_version": "1.3.0",
+    "planner_source_path": "src/cpgf/ai/retrieval_planner.py",
+    "planner_source_git_blob_sha": "8fa1458c11eeabfdde155635b74a9b770e9960c1",
+    "router_version": "1.4.0",
+    "router_source_path": "src/cpgf/ai/router.py",
+    "router_source_git_blob_sha": "89150b97e9c87d9af0d0b0f888870dcc74ef86b1"
+  },
+  "harness_freeze": {
+    "evaluator_source_path": "src/cpgf/benchmark/semantic_candidate_jh5.py",
+    "evaluator_source_git_blob_sha": "4411fb8057264432e0fd0898390074ba4e963369",
+    "runner_source_path": "scripts/run_semantic_candidate_jh5.py",
+    "runner_source_git_blob_sha": "f1c02a87087fafdd3fc35a977e5ea1924664ca3a",
+    "workflow_path": ".github/workflows/semantic_candidate_jh5_measurement.yml",
+    "production_graph_modified": false
+  },
+  "execution": {
+    "provider": "OpenAI Responses API",
+    "model": "gpt-4o-mini-2024-07-18",
+    "model_is_snapshot": true,
+    "openai_sdk_version": "3.1.0",
+    "python_version": "3.12",
+    "llm_repetitions": 3,
+    "cases_per_repetition": 48,
+    "expected_llm_calls": 144,
+    "baseline_A_repetitions": 1,
+    "structured_outputs_strict": true,
+    "store": false,
+    "external_tools_enabled": false,
+    "retriever_enabled": false,
+    "sql_enabled": false,
+    "final_answer_llm_enabled": false,
+    "workflow_dispatch_has_model_or_repeat_overrides": false,
+    "official_execution_requires_github_actions": true,
+    "official_execution_requires_main": true
+  },
+  "prospective_acceptance_gate": {
+    "defined_before_first_measurement": true,
+    "all_three_llm_repetitions_must_complete": true,
+    "schema_violations_allowed": 0,
+    "minimum_B_mean_joint_exact_rate": 0.50,
+    "minimum_B_absolute_joint_gain_over_A": 0.10,
+    "minimum_B_mean_route_exact_rate": 0.75,
+    "minimum_B_mean_modal_stability": 0.90,
+    "minimum_each_category_B_mean_joint_exact_rate": 0.25,
+    "all_criteria_required_for_broad_generalization_gate": true,
+    "performance_threshold_causes_measurement_workflow_failure": false,
+    "measurement_must_be_preserved_even_below_thresholds": true,
+    "thresholds_are_project_governance_not_significance_tests": true,
+    "passing_gate_does_not_imply_production_readiness": true
+  },
+  "measurement": {
+    "performed": false,
+    "first_official_run_id": null,
+    "result_artifact_id": null,
+    "result_sha256": null,
+    "gate_passed": null
+  },
+  "governance": {
+    "no_llm_call_allowed_on_pull_request": true,
+    "first_completed_main_dispatch_is_official_measurement": true,
+    "reruns_are_not_independent_measurements": true,
+    "result_must_be_preserved_regardless_of_gate": true,
+    "prompt_tuning_after_result_allowed": false,
+    "model_change_after_result_allowed_for_same_jh5_independence_claim": false,
+    "planner_change_after_result_allowed_for_same_jh5_independence_claim": false,
+    "retriever_evaluation_before_jh5_gate_allowed": false,
+    "production_activation": false
+  }
+}
