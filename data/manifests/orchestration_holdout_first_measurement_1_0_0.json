@@ -1,0 +1,155 @@
+{
+  "artifact": "orchestration_holdout_first_measurement_result",
+  "benchmark": {
+    "cases": 56,
+    "independent_for_orchestrator_before_this_run": true,
+    "sha256": "9ef3d9ac59dc16eb6762f2ae2fd7672a2305c4854614f1e5a71ef893e5d525ef",
+    "uncompressed_sha256": "e5b512677325529101a6c670e5411013c6410b241aafe83231bd8981f9783d55",
+    "version": "1.0.0"
+  },
+  "candidate": {
+    "model_requested": "gpt-4o-mini",
+    "name": "semantic_evidence_orchestrator_v1",
+    "openai_sdk_version": "3.1.0",
+    "orchestrator_policy_version": "1.0.0",
+    "orchestrator_version": "1.0.0",
+    "response_models_observed": {
+      "gpt-4o-mini-2024-07-18": 161
+    }
+  },
+  "governance": {
+    "final_answer_llm_called": false,
+    "first_measurement_is_official_independent_measurement": true,
+    "gate_not_relaxed_post_hoc": true,
+    "model_change_before_result_freeze": false,
+    "oh1_is_known_after_official_measurement": true,
+    "orchestrator_change_before_result_freeze": false,
+    "post_hoc_analysis_allowed_only_after_this_result_is_frozen": true,
+    "production_activation": false,
+    "prompt_tuning_before_result_freeze": false,
+    "reruns_are_not_new_independent_measurements": true,
+    "result_frozen_before_post_hoc_tuning": true,
+    "retriever_called": false,
+    "same_oh1_cannot_support_new_independence_claim_after_tuning": true,
+    "sql_executed": false,
+    "web_search_called": false,
+    "workers_called": false
+  },
+  "observed": {
+    "all_repetitions_identical_cases": 9,
+    "category_mean_source_set_exact_rate": {
+      "all_three": 0.9583333333333334,
+      "data_knowledge": 0.875,
+      "data_only": 0.9166666666666666,
+      "data_web": 0.4583333333333333,
+      "knowledge_only": 1.0,
+      "knowledge_web": 1.0,
+      "web_only": 0.6666666666666666
+    },
+    "input_tokens": 377013,
+    "llm_attempts": 168,
+    "mean_data_arguments_exact_rate": 0.9375,
+    "mean_data_tool_exact_rate": 0.9375,
+    "mean_evidence_source_set_exact_rate": 0.8392857142857143,
+    "mean_full_plan_exact_rate": 0.2261904761904762,
+    "mean_knowledge_filters_joint_exact_rate": 0.0,
+    "mean_latency_ms": 3172.3414096963966,
+    "mean_modal_stability": 0.494047619047619,
+    "mean_source_precision": 0.9047619047619048,
+    "mean_source_recall": 0.9434523809523809,
+    "mean_web_parameters_exact_rate": 0.53125,
+    "output_tokens": 33972,
+    "plan_failures": 2,
+    "provider_failures": 7,
+    "schema_violations": 9
+  },
+  "official_measurement": {
+    "artifact": {
+      "id": 9293493819,
+      "name": "orchestration-holdout-v1-first-measurement-v1.0.0",
+      "raw_json_sha256": "d2213529f505e9d566ab64f1f27aa412e14a348abf997dfdb3d868edbab8c4c5",
+      "raw_json_size_in_bytes": 476264,
+      "repository_gzip_path": "data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz",
+      "repository_gzip_sha256": "ee960b344f5c0cfe796300983bdebd0d1552cf7ee8dc7b7aa400b9573128a54b",
+      "repository_gzip_size_in_bytes": 33697,
+      "size_in_bytes": 35340,
+      "zip_digest": "sha256:9626908d1c5ca5060a9067a85735d770cdc9c85003943b89b9d08f068e150222"
+    },
+    "conclusion": "success",
+    "event": "push",
+    "job_id": 95437042301,
+    "main_sha": "ec87579fe285ddaf29b64bd05e3055ec3cb95736",
+    "run_attempt": 1,
+    "run_id": 32046979526,
+    "workflow": "orchestration-holdout-v1-measurement"
+  },
+  "prospective_gate": {
+    "category_checks": {
+      "all_three": true,
+      "data_knowledge": true,
+      "data_only": true,
+      "data_web": false,
+      "knowledge_only": true,
+      "knowledge_web": true,
+      "web_only": true
+    },
+    "checks": {
+      "all_three_repetitions_completed": true,
+      "minimum_data_arguments_exact_rate": true,
+      "minimum_data_tool_exact_rate": true,
+      "minimum_each_category_source_set_exact_rate": false,
+      "minimum_knowledge_filters_joint_exact_rate": false,
+      "minimum_mean_evidence_source_set_exact_rate": true,
+      "minimum_mean_modal_stability": false,
+      "minimum_mean_source_precision": true,
+      "minimum_mean_source_recall": true,
+      "minimum_web_parameters_exact_rate": false,
+      "zero_schema_violations": false
+    },
+    "interpretation": "FAIL no gate prospectivo; preservar resultado sem tuning retrospectivo no OH1",
+    "observed": {
+      "category_mean_source_set_exact_rate": {
+        "all_three": 0.9583333333333334,
+        "data_knowledge": 0.875,
+        "data_only": 0.9166666666666666,
+        "data_web": 0.4583333333333333,
+        "knowledge_only": 1.0,
+        "knowledge_web": 1.0,
+        "web_only": 0.6666666666666666
+      },
+      "mean_data_arguments_exact_rate": 0.9375,
+      "mean_data_tool_exact_rate": 0.9375,
+      "mean_evidence_source_set_exact_rate": 0.8392857142857143,
+      "mean_knowledge_filters_joint_exact_rate": 0.0,
+      "mean_modal_stability": 0.494047619047619,
+      "mean_source_precision": 0.9047619047619048,
+      "mean_source_recall": 0.9434523809523809,
+      "mean_web_parameters_exact_rate": 0.53125,
+      "plan_failures": 2,
+      "provider_failures": 7,
+      "schema_violations": 9
+    },
+    "passed": false,
+    "rules": {
+      "all_criteria_required_for_broad_generalization_gate": true,
+      "all_three_llm_repetitions_must_complete": true,
+      "defined_before_first_measurement": true,
+      "measurement_must_be_preserved_even_below_thresholds": true,
+      "minimum_data_arguments_exact_rate": 0.6,
+      "minimum_data_tool_exact_rate": 0.7,
+      "minimum_each_category_source_set_exact_rate": 0.5,
+      "minimum_knowledge_filters_joint_exact_rate": 0.5,
+      "minimum_mean_evidence_source_set_exact_rate": 0.65,
+      "minimum_mean_modal_stability": 0.9,
+      "minimum_mean_source_precision": 0.8,
+      "minimum_mean_source_recall": 0.8,
+      "minimum_web_parameters_exact_rate": 0.7,
+      "passing_gate_does_not_imply_production_readiness": true,
+      "performance_threshold_causes_measurement_workflow_failure": false,
+      "schema_violations_allowed": 0,
+      "thresholds_are_project_governance_not_significance_tests": true
+    }
+  },
+  "status": "MEASURED_INDEPENDENT_GATE_FAIL",
+  "version": "1.0.0"
+}
