@@ -1,0 +1,132 @@
+{
+  "artifact": "orchestration_holdout_v2",
+  "version": "2.0.1",
+  "status": "FROZEN_CORRECTED_BEFORE_MEASUREMENT",
+  "benchmark": {
+    "path": "data/benchmarks/orchestration_holdout_v2_0_1.csv.gz",
+    "sha256": "427174c3d6217bd4ae2770779d38e83e1f9366d39f7ac4a3fc5d41afe64dbcb6",
+    "uncompressed_sha256": "574a46a330a1783494d7b7cbe39e9f7d62f29d33f84754fcbef9b934343af6e6",
+    "git_blob_sha": "c8098808ca4e2ce225e90d07f7b97c4c75f87558",
+    "cases": 56,
+    "compression": "gzip",
+    "category_balance": {
+      "all_three": 8,
+      "data_knowledge": 8,
+      "data_only": 8,
+      "data_web": 8,
+      "knowledge_only": 8,
+      "knowledge_web": 8,
+      "web_only": 8
+    },
+    "source_presence_balance": {
+      "data": 32,
+      "knowledge": 32,
+      "web": 32
+    }
+  },
+  "supersedes": {
+    "version": "2.0.0",
+    "path": "data/benchmarks/orchestration_holdout_v2_0_0.csv.gz",
+    "sha256": "2861255c0967cbf4d91648e790043fc72579a3e13f1a77c1d529089bb8dc24b0",
+    "uncompressed_sha256": "1f59395337a08daf309f2482908a897ea0d2fa9b00cdb3dc718c5fc058d656ae",
+    "invalidation_manifest": "data/manifests/orchestration_holdout_2_0_0_invalidation.json"
+  },
+  "correction": {
+    "reason": "Five gold plans were structurally unreachable after the frozen deterministic normalization, detected by a static oracle before any candidate LLM call.",
+    "changed_case_ids": [
+      "OH2-017",
+      "OH2-038",
+      "OH2-052",
+      "OH2-053",
+      "OH2-054"
+    ],
+    "changed_field": "question",
+    "oracles_changed": false,
+    "categories_changed": false,
+    "data_tools_or_arguments_changed": false,
+    "knowledge_filters_changed": false,
+    "web_parameters_changed": false,
+    "patch_contract_git_blob_sha": "046cde330c0b16a8db278c15c3ca0f2fedffdc5a",
+    "static_reachability_required": true
+  },
+  "detection_evidence": {
+    "first_offline_harness_run_id": 32061829759,
+    "knowledge_diagnostic_run_id": 32062156437,
+    "knowledge_diagnostic_python_3_11_job_id": 95485662489,
+    "knowledge_diagnostic_python_3_12_job_id": 95485662398,
+    "web_parameter_diagnostic_run_id": 32064972987,
+    "web_parameter_diagnostic_python_3_11_job_id": 95494749942,
+    "candidate_llm_calls": 0
+  },
+  "candidate_freeze": {
+    "ai_contract_source_git_blob_sha": "07a0d111667adc311dc345aea9a998d9e4df5d7f",
+    "candidate_executed_during_authoring": false,
+    "candidate_executed_during_preflight": false,
+    "evidence_contract_source_git_blob_sha": "fca0e2903d4b5a97a0680aa2470ee10e60b7b44e",
+    "evidence_contract_version": "1.0.0",
+    "evidence_worker_source_git_blob_sha": "176fb632cdb34eb4ee4bd65d2d5e5c812fbdb641",
+    "evidence_worker_version": "1.0.0",
+    "freeze_base_main_sha": "b3db0407c7c57ad9be76d631f0b32dd960efadbb",
+    "knowledge_models_source_git_blob_sha": "f0629e19f669ed2996e03c649021151376ad5ccf",
+    "llm_repetitions": 3,
+    "model": "gpt-4o-mini",
+    "model_policy_source_git_blob_sha": "92f836a26da8d2f6655357523763929bae13de35",
+    "model_policy_version": "1.0.0",
+    "name": "semantic_evidence_orchestrator_v1_1_normalized",
+    "openai_sdk_version": "3.1.0",
+    "orchestrator_normalization_source_git_blob_sha": "ef8466ff95de617556094e9ebc703aa4d5449ae2",
+    "orchestrator_normalization_version": "1.0.0",
+    "orchestrator_policy_version": "1.1.0",
+    "orchestrator_source_git_blob_sha": "0d34ec82cb15405e6f3f5a085c0290dfcc5b772a",
+    "orchestrator_system_prompt_sha256": "9255a15213b96a9ba219fd43fb402e8d797842064c73d5a9e629d73f0b3269c2",
+    "orchestrator_version": "1.1.0",
+    "pyproject_source_git_blob_sha": "e8a22b98a587be5b9c0619861864a31e01518587",
+    "tool_registry_source_git_blob_sha": "82fc8ff35452ac2a0bb44aea8349fd0f8be4c6dd",
+    "web_evidence_policy_version": "1.0.0",
+    "web_evidence_source_git_blob_sha": "5a590536d4445b269dd5887a43567fb5e4524d50",
+    "web_evidence_worker_version": "1.0.0"
+  },
+  "novelty": {
+    "comparison_scope": "same explicit frozen prior benchmark list used by OH2.0.0",
+    "prior_benchmarks_expected": 10,
+    "prior_questions_expected": 430,
+    "prospective_max_similarity": 0.7,
+    "normalized_exact_overlap_allowed": 0
+  },
+  "prospective_acceptance_gate": {
+    "all_criteria_required_for_broad_generalization_gate": true,
+    "all_three_llm_repetitions_must_complete": true,
+    "defined_before_first_measurement": true,
+    "measurement_must_be_preserved_even_below_thresholds": true,
+    "minimum_data_arguments_exact_rate": 0.6,
+    "minimum_data_tool_exact_rate": 0.7,
+    "minimum_each_category_source_set_exact_rate": 0.5,
+    "minimum_knowledge_filters_joint_exact_rate": 0.5,
+    "minimum_mean_evidence_source_set_exact_rate": 0.65,
+    "minimum_mean_modal_stability": 0.9,
+    "minimum_mean_source_precision": 0.8,
+    "minimum_mean_source_recall": 0.8,
+    "minimum_web_parameters_exact_rate": 0.7,
+    "passing_gate_does_not_imply_production_readiness": true,
+    "performance_threshold_causes_measurement_workflow_failure": false,
+    "schema_violations_allowed": 0,
+    "thresholds_are_project_governance_not_significance_tests": true
+  },
+  "measurement": {
+    "performed": false,
+    "first_valid_measurement": null,
+    "result": null
+  },
+  "governance": {
+    "correction_authored_without_candidate_outputs": true,
+    "only_question_text_changed": true,
+    "oracles_preserved_exactly": true,
+    "original_invalidated_before_measurement": true,
+    "first_measurement_requires_corrected_freeze_merged": true,
+    "candidate_model_changed": false,
+    "candidate_prompt_changed": false,
+    "normalization_policy_changed": false,
+    "acceptance_thresholds_changed": false,
+    "production_activation": false
+  }
+}
