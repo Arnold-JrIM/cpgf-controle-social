@@ -1,0 +1,269 @@
+{
+  "architectural_reading": {
+    "composite_route_recall_across_repetitions": 1.0,
+    "control_external_issue": "all 36 control_external route decisions are exact, but 12/36 joint rows fail on filters",
+    "cross_source_issue": "all 36 cross_source route decisions are exact, but 24/36 joint rows fail because filters do not encode the required evidence combination",
+    "design_implication": "replace exclusive documentary route as the primary semantic contract with multi-label evidence needs; keep deterministic execution boundaries",
+    "route_errors_direction": "all 19 route errors are over-routing from knowledge/methodology to composite",
+    "route_layer_result": "semantic routing is strong but not sufficient"
+  },
+  "artifact": "semantic_candidate_jh5_post_hoc_diagnostic",
+  "category_modal_summary": {
+    "control_external": {
+      "cases": 12,
+      "class_counts": {
+        "filters_only": 4,
+        "pass": 8
+      },
+      "modal_filter_exact": 8,
+      "modal_joint_pass": 8,
+      "modal_route_exact": 12
+    },
+    "cross_source": {
+      "cases": 12,
+      "class_counts": {
+        "filters_only": 8,
+        "pass": 4
+      },
+      "modal_filter_exact": 4,
+      "modal_joint_pass": 4,
+      "modal_route_exact": 12
+    },
+    "methodology": {
+      "cases": 12,
+      "class_counts": {
+        "pass": 9,
+        "route_and_filters": 3
+      },
+      "modal_filter_exact": 9,
+      "modal_joint_pass": 9,
+      "modal_route_exact": 9
+    },
+    "normative": {
+      "cases": 12,
+      "class_counts": {
+        "pass": 9,
+        "route_only": 3
+      },
+      "modal_filter_exact": 12,
+      "modal_joint_pass": 9,
+      "modal_route_exact": 9
+    }
+  },
+  "governance": {
+    "jh5_is_known": true,
+    "next_independent_evidence_requires_new_prospective_holdout": true,
+    "no_llm_call": true,
+    "no_new_generalization_claim": true,
+    "no_production_activation": true,
+    "no_retriever_execution": true,
+    "no_retuning_on_jh5_for_independence_claim": true
+  },
+  "modal_case_level": {
+    "cases": 48,
+    "class_case_ids": {
+      "filters_only": [
+        "JH5-026",
+        "JH5-027",
+        "JH5-029",
+        "JH5-030",
+        "JH5-033",
+        "JH5-034",
+        "JH5-035",
+        "JH5-036",
+        "JH5-042",
+        "JH5-043",
+        "JH5-045",
+        "JH5-048"
+      ],
+      "route_and_filters": [
+        "JH5-018",
+        "JH5-020",
+        "JH5-021"
+      ],
+      "route_only": [
+        "JH5-010",
+        "JH5-011",
+        "JH5-012"
+      ]
+    },
+    "class_counts": {
+      "filters_only": 12,
+      "pass": 30,
+      "route_and_filters": 3,
+      "route_only": 3
+    },
+    "filter_exact": 33,
+    "joint_passes": 30,
+    "route_exact": 42,
+    "unstable_case_ids": [
+      "JH5-003",
+      "JH5-012",
+      "JH5-023"
+    ]
+  },
+  "observed_repetition_level": {
+    "exactness_patterns": {
+      "RST": 89,
+      "RSt": 6,
+      "RsT": 6,
+      "Rst": 24,
+      "rST": 9,
+      "rst": 10
+    },
+    "filter_failures": 46,
+    "joint_failures": 55,
+    "joint_passes": 89,
+    "route_failures": 19,
+    "rows": 144,
+    "scope_failures": 40,
+    "temporal_failures": 40
+  },
+  "route_confusion": [
+    {
+      "count": 36,
+      "expected": "composite",
+      "predicted": "composite"
+    },
+    {
+      "count": 9,
+      "expected": "knowledge",
+      "predicted": "composite"
+    },
+    {
+      "count": 63,
+      "expected": "knowledge",
+      "predicted": "knowledge"
+    },
+    {
+      "count": 10,
+      "expected": "methodology",
+      "predicted": "composite"
+    },
+    {
+      "count": 26,
+      "expected": "methodology",
+      "predicted": "methodology"
+    }
+  ],
+  "scope_mismatch_patterns": [
+    {
+      "count": 10,
+      "expected": [
+        "methodology"
+      ],
+      "predicted": [
+        "cpgf_core"
+      ]
+    },
+    {
+      "count": 9,
+      "expected": [
+        "control_external"
+      ],
+      "predicted": [
+        "cpgf_core"
+      ]
+    },
+    {
+      "count": 9,
+      "expected": [
+        "cpgf_core",
+        "methodology"
+      ],
+      "predicted": [
+        "cpgf_core"
+      ]
+    },
+    {
+      "count": 3,
+      "expected": [
+        "control_external"
+      ],
+      "predicted": [
+        "control_external",
+        "cpgf_core"
+      ]
+    },
+    {
+      "count": 3,
+      "expected": [
+        "control_external",
+        "cpgf_core"
+      ],
+      "predicted": [
+        "control_external"
+      ]
+    },
+    {
+      "count": 3,
+      "expected": [
+        "control_external",
+        "methodology"
+      ],
+      "predicted": [
+        "control_external"
+      ]
+    },
+    {
+      "count": 3,
+      "expected": [
+        "cpgf_core",
+        "methodology"
+      ],
+      "predicted": [
+        "methodology"
+      ]
+    }
+  ],
+  "source": {
+    "benchmark_sha256": "2695be52ff403043c394f0ca7f9f0a47f209fd2016172586146c69adf5595354",
+    "benchmark_version": "5.0.0",
+    "candidate": "B_llm_route",
+    "measurement_result_status": "MEASURED_INDEPENDENT_GATE_FAIL",
+    "raw_measurement_sha256": "b935b69b545c1e7536ac3da84e857ad9bc968932f586202b954433c369a8bcc2"
+  },
+  "status": "POST_HOC_DIAGNOSTIC_ONLY",
+  "temporal_mismatch_patterns": [
+    {
+      "count": 19,
+      "expected": [
+        "contextual"
+      ],
+      "predicted": [
+        "current"
+      ]
+    },
+    {
+      "count": 12,
+      "expected": [
+        "contextual",
+        "current"
+      ],
+      "predicted": [
+        "current"
+      ]
+    },
+    {
+      "count": 6,
+      "expected": [
+        "contextual",
+        "current"
+      ],
+      "predicted": [
+        "contextual"
+      ]
+    },
+    {
+      "count": 3,
+      "expected": [
+        "contextual"
+      ],
+      "predicted": [
+        "contextual",
+        "current"
+      ]
+    }
+  ],
+  "version": "1.0.0"
+}
