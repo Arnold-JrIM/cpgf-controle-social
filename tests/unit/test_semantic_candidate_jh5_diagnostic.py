@@ -48,13 +48,21 @@ def test_jh5_post_hoc_diagnostic_has_expected_error_structure():
         "filters_only": 12,
         "route_and_filters": 3,
     }
-    assert report["category_modal_summary"]["cross_source"]["modal_route_exact"] == 12
-    assert report["category_modal_summary"]["cross_source"]["modal_joint_pass"] == 4
-    assert report["category_modal_summary"]["control_external"]["modal_route_exact"] == 12
-    assert report["architectural_reading"]["composite_route_recall_across_repetitions"] == 1.0
+    cross_source = report["category_modal_summary"]["cross_source"]
+    control_external = report["category_modal_summary"]["control_external"]
+    assert cross_source["modal_route_exact"] == 12
+    assert cross_source["modal_joint_pass"] == 4
+    assert control_external["modal_route_exact"] == 12
+    assert (
+        report["architectural_reading"]["composite_route_recall_across_repetitions"]
+        == 1.0
+    )
     assert report["governance"]["no_llm_call"] is True
     assert report["governance"]["no_retriever_execution"] is True
-    assert report["governance"]["next_independent_evidence_requires_new_prospective_holdout"] is True
+    assert (
+        report["governance"]["next_independent_evidence_requires_new_prospective_holdout"]
+        is True
+    )
 
 
 def test_diagnostic_serialization_is_deterministic():
