@@ -1,0 +1,136 @@
+{
+  "artifact": "semantic_architecture_experiment_measurement",
+  "version": "1.0.1",
+  "status": "MEASURED_ON_KNOWN_JH4",
+  "official_run": {
+    "run_id": 31981818344,
+    "head_sha": "78cb64a4f0ded0e1e429d2990ef67cc55fee4fab",
+    "artifact_id": 9272652427,
+    "artifact_name": "semantic-architecture-experiment-v1.0.1",
+    "artifact_zip_digest": "sha256:f4d9f97e7377b2672c374b6a9b041464bd2e005536600f2f430b9a2751ea43c4",
+    "result_json_sha256": "eab4001e46707e208dd76527f175d2a796e306bd10c8a79aba6c86b89f6e11a1",
+    "result_json_bytes": 357647,
+    "completed_at": "2026-08-17T00:28:22Z"
+  },
+  "protocol": {
+    "version": "1.0.1",
+    "model": "gpt-4o-mini-2024-07-18",
+    "repeats": 3,
+    "jh4_sha256": "a90867717d73407b586cee02ec2eeb8c075db2f86c345bb9985193e0ca31700a",
+    "router_version": "1.4.0",
+    "planner_version": "1.3.0",
+    "known_material": true
+  },
+  "aggregate": {
+    "A_deterministic": {
+      "mean_joint_exact_rate": 0.375,
+      "mean_route_exact_rate": 0.4166666666666667,
+      "mean_filter_joint_exact_rate": 0.5,
+      "worst_joint_exact_rate": 0.375,
+      "schema_violations": 0,
+      "llm_calls": 0
+    },
+    "B_llm_route": {
+      "mean_joint_exact_rate": 0.548611111111111,
+      "mean_route_exact_rate": 0.8819444444444444,
+      "mean_filter_joint_exact_rate": 0.6180555555555556,
+      "worst_joint_exact_rate": 0.5416666666666666,
+      "schema_violations": 0,
+      "llm_calls": 144,
+      "input_tokens": 30987,
+      "output_tokens": 5570
+    },
+    "C_hybrid_adjudicated": {
+      "mean_joint_exact_rate": 0.4166666666666667,
+      "mean_route_exact_rate": 0.923611111111111,
+      "mean_filter_joint_exact_rate": 0.4166666666666667,
+      "worst_joint_exact_rate": 0.3958333333333333,
+      "schema_violations": 0,
+      "llm_calls": 144,
+      "input_tokens": 66105,
+      "output_tokens": 6802
+    }
+  },
+  "per_repetition_joint_exact": {
+    "A_deterministic": [0.375],
+    "B_llm_route": [0.5416666666666666, 0.5416666666666666, 0.5625],
+    "C_hybrid_adjudicated": [0.3958333333333333, 0.4375, 0.4166666666666667]
+  },
+  "per_category_joint_exact": {
+    "A_deterministic": {
+      "normative": 0.5833333333333334,
+      "methodology": 0.4166666666666667,
+      "cross_source": 0.08333333333333333,
+      "control_external": 0.4166666666666667
+    },
+    "B_llm_route": {
+      "normative": 0.6666666666666666,
+      "methodology": 0.8888888888888888,
+      "cross_source": 0.2222222222222222,
+      "control_external": 0.4166666666666667
+    },
+    "C_hybrid_adjudicated": {
+      "normative": 0.7222222222222222,
+      "methodology": 0.4166666666666667,
+      "cross_source": 0.1111111111111111,
+      "control_external": 0.4166666666666667
+    }
+  },
+  "stability": {
+    "B_llm_route": {
+      "mean_modal_share": 0.9861111111111112,
+      "all_repetitions_identical_cases": 46,
+      "cases": 48,
+      "unstable_ids": ["JH4-023", "JH4-033"]
+    },
+    "C_hybrid_adjudicated": {
+      "mean_modal_share": 0.8680555555555556,
+      "all_repetitions_identical_cases": 31,
+      "cases": 48,
+      "unstable_ids": ["JH4-003", "JH4-006", "JH4-010", "JH4-011", "JH4-014", "JH4-022", "JH4-025", "JH4-026", "JH4-028", "JH4-029", "JH4-031", "JH4-033", "JH4-034", "JH4-038", "JH4-039", "JH4-046", "JH4-047"]
+    }
+  },
+  "selection": {
+    "baseline_A_joint_exact_rate": 0.375,
+    "B_llm_route": {
+      "eligible": true,
+      "minimum_absolute_gain_met": true,
+      "minimum_stability_met": true,
+      "zero_schema_violations": true
+    },
+    "C_hybrid_adjudicated": {
+      "eligible": false,
+      "minimum_absolute_gain_met": false,
+      "minimum_stability_met": false,
+      "zero_schema_violations": true
+    },
+    "selected_for_future_jh5_candidate": "B_llm_route",
+    "selection_is_on_known_development_material": true,
+    "selection_is_not_generalization_evidence": true
+  },
+  "diagnostic": {
+    "B_joint_gain_pp": 17.361111111111104,
+    "B_gap_to_perfect_route_ceiling_pp": 9.722222222222232,
+    "C_joint_gain_pp": 4.166666666666669,
+    "B_temporal_contextual_to_current_mismatch_occurrences": 28,
+    "C_temporal_contextual_to_current_mismatch_occurrences": 44,
+    "interpretation": "B concentrou o LLM na decisão semântica de rota e preservou o Planner determinístico; C aumentou route exact, mas degradou filtros, sobretudo temporalidade, e ficou menos estável."
+  },
+  "usage": {
+    "llm_calls_total": 288,
+    "input_tokens_total": 97092,
+    "output_tokens_total": 12372,
+    "returned_model": "gpt-4o-mini-2024-07-18",
+    "mean_latency_ms_B": 1114.5131419999993,
+    "mean_latency_ms_C": 1116.7029969236096
+  },
+  "governance": {
+    "selected_candidate_for_future_jh5": "B_llm_route",
+    "no_prompt_or_architecture_tuning_in_measurement_freeze": true,
+    "selection_not_generalization_evidence": true,
+    "production_activation": false,
+    "retriever_called": false,
+    "external_tools_enabled": false,
+    "next_step": "freeze B route-only architecture and then freeze a new JH5 before first execution on JH5"
+  }
+}
