@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-LLM_MODEL_POLICY_VERSION = "1.1.0"
+LLM_MODEL_POLICY_VERSION = "1.0.0"
 DEFAULT_LLM_MODEL = "gpt-4o-mini"
 
 
