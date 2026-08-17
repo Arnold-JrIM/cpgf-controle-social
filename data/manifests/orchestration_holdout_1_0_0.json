@@ -31,7 +31,7 @@
     "freeze_base_main_sha": "cb28b826697edb8cee9bc6f5f26075136f7a61b0",
     "llm_repetitions": 3,
     "model": "gpt-4o-mini",
-    "model_policy_source_git_blob_sha": "6d25ca31895d162e9ae13013072ff004f49ad72c",
+    "model_policy_source_git_blob_sha": "92f836a26da8d2f6655357523763929bae13de35",
     "model_policy_version": "1.0.0",
     "name": "semantic_evidence_orchestrator_v1",
     "openai_sdk_version": "3.1.0",
