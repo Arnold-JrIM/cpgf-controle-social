@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import gzip
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -20,7 +22,10 @@ from cpgf.benchmark.orchestration_holdout_v2 import (
 )
 
 BENCHMARK = Path("data/benchmarks/orchestration_holdout_v2_0_0.csv.gz")
-EXPECTED_SHA256 = "0a5c6eda6ffa2bd9cd6bbcf8ae983e4906f564b0c1884fab0c8f28c5e3244c3b"
+EXPECTED_SHA256 = "a3d1a126c7526d8be53fbeabff075792aa6734d399d03c60bd30693fdc9aa9d3"
+EXPECTED_UNCOMPRESSED_SHA256 = (
+    "2cc6300db90622ce35cf458aad29168a56b58a371b290abdf5de84fe76e9cc6c"
+)
 
 
 def test_loads_balanced_prospective_oh2_suite():
@@ -98,8 +103,10 @@ def test_data_knowledge_and_web_contracts_are_explicit():
             assert 1 <= params["limit"] <= 10
 
 
-def test_frozen_artifact_hash():
+def test_frozen_artifact_hashes():
     assert orchestration_holdout_v2_sha256(BENCHMARK) == EXPECTED_SHA256
+    with gzip.open(BENCHMARK, "rb") as handle:
+        assert hashlib.sha256(handle.read()).hexdigest() == EXPECTED_UNCOMPRESSED_SHA256
 
 
 def test_novelty_universe_is_frozen_and_includes_known_oh1():
