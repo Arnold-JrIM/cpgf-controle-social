@@ -4,7 +4,6 @@ import hashlib
 import json
 from pathlib import Path
 
-from cpgf.ai.router import Route
 from cpgf.ai.semantic_experiment import (
     SemanticCallMetadata,
     SemanticRouteCall,
