@@ -1,0 +1,150 @@
+name: orchestration-holdout-v2-preflight
+
+on:
+  pull_request:
+    paths:
+      - "data/benchmarks/orchestration_holdout_v2_0_0.csv.gz"
+      - "data/manifests/orchestration_holdout_2_0_0.json"
+      - "src/cpgf/benchmark/orchestration_holdout_v2.py"
+      - "scripts/preflight_orchestration_holdout_v2.py"
+      - "tests/unit/test_orchestration_holdout_v2.py"
+      - "docs/architecture/orchestration_holdout_v2_0_0.md"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - "src/cpgf/ai/semantic_orchestrator.py"
+      - "src/cpgf/ai/orchestrator_normalization.py"
+      - "src/cpgf/ai/model_policy.py"
+      - "src/cpgf/ai/evidence_contracts.py"
+      - "src/cpgf/ai/evidence_workers.py"
+      - "src/cpgf/ai/contracts.py"
+      - "src/cpgf/ai/tools/registry.py"
+      - "src/cpgf/ai/web_evidence.py"
+      - "src/cpgf/knowledge/models.py"
+      - "pyproject.toml"
+      - ".github/workflows/orchestration_holdout_v2_preflight.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/benchmarks/orchestration_holdout_v2_0_0.csv.gz"
+      - "data/manifests/orchestration_holdout_2_0_0.json"
+      - "src/cpgf/benchmark/orchestration_holdout_v2.py"
+      - "scripts/preflight_orchestration_holdout_v2.py"
+      - "tests/unit/test_orchestration_holdout_v2.py"
+      - "docs/architecture/orchestration_holdout_v2_0_0.md"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - "src/cpgf/ai/semantic_orchestrator.py"
+      - "src/cpgf/ai/orchestrator_normalization.py"
+      - "src/cpgf/ai/model_policy.py"
+      - "src/cpgf/ai/evidence_contracts.py"
+      - "src/cpgf/ai/evidence_workers.py"
+      - "src/cpgf/ai/contracts.py"
+      - "src/cpgf/ai/tools/registry.py"
+      - "src/cpgf/ai/web_evidence.py"
+      - "src/cpgf/knowledge/models.py"
+      - "pyproject.toml"
+      - ".github/workflows/orchestration_holdout_v2_preflight.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+
+      - name: Lint OH2 prospective freeze boundary
+        run: >-
+          ruff check
+          src/cpgf/benchmark/orchestration_holdout_v2.py
+          scripts/preflight_orchestration_holdout_v2.py
+          tests/unit/test_orchestration_holdout_v2.py
+
+      - name: Validate OH2 freeze without candidate execution
+        run: |
+          python scripts/preflight_orchestration_holdout_v2.py \
+            --output orchestration_holdout_v2_preflight.json
+
+      - name: Run OH2 freeze unit gates
+        run: >-
+          pytest -q
+          tests/unit/test_orchestration_holdout_v2.py
+          tests/unit/test_versions.py
+
+      - name: Enforce prospective isolation and frozen candidate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(Path("orchestration_holdout_v2_preflight.json").read_text())
+          assert p["status"] == "PASS"
+          assert p["manifest_status"] == "FROZEN_BEFORE_MEASUREMENT"
+          assert p["benchmark_sha256"] == "2861255c0967cbf4d91648e790043fc72579a3e13f1a77c1d529089bb8dc24b0"
+          assert p["benchmark_uncompressed_sha256"] == "1f59395337a08daf309f2482908a897ea0d2fa9b00cdb3dc718c5fc058d656ae"
+          assert p["current_candidate"]["matches_frozen_candidate"] is True
+          assert p["current_candidate"]["model"] == "gpt-4o-mini"
+          assert p["current_candidate"]["orchestrator_version"] == "1.1.0"
+          assert p["current_candidate"]["orchestrator_normalization_version"] == "1.0.0"
+          assert p["frozen_prior_validation"]["benchmarks"] == 10
+          assert p["frozen_prior_validation"]["questions"] == 430
+          assert p["frozen_prior_validation"]["includes_oh1"] is True
+          assert p["novelty_validation"]["normalized_exact_overlap"] == 0
+          assert p["novelty_validation"]["highest_sequence_similarity"] <= 0.70
+          assert p["capability_validation"]["source_presence_counts"] == {
+              "data": 32,
+              "knowledge": 32,
+              "web": 32,
+          }
+          for key in (
+              "llm_called",
+              "plan_evidence_called",
+              "workers_called",
+              "retriever_called",
+              "web_called",
+              "sql_executed",
+              "measurement_performed",
+          ):
+              assert p["governance"][key] is False, key
+          PY
+
+      - name: Enforce no live execution in OH2 preflight code
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          source = Path("scripts/preflight_orchestration_holdout_v2.py").read_text()
+          forbidden = (
+              "OpenAI(",
+              "responses.create",
+              "plan_evidence(",
+              "execute_tool(",
+              "run_evidence_orchestration(",
+              "retrieve_knowledge_need(",
+              "retrieve_web_need(",
+              "requests.",
+              "httpx.",
+              "duckdb.connect",
+              "SELECT ",
+          )
+          for token in forbidden:
+              assert token not in source, token
+          PY
+
+      - name: Upload OH2 prospective preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orchestration-holdout-v2-preflight-py${{ matrix.python-version }}
+          path: orchestration_holdout_v2_preflight.json
+          if-no-files-found: error
