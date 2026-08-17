@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import importlib.metadata
 import json
@@ -52,6 +53,11 @@ def _git_blob_sha(path: Path) -> str:
     return hashlib.sha1(f"blob {len(content)}\0".encode() + content).hexdigest()
 
 
+def _uncompressed_sha256(path: Path) -> str:
+    with gzip.open(path, "rb") as handle:
+        return hashlib.sha256(handle.read()).hexdigest()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
@@ -73,6 +79,13 @@ def main() -> None:
     actual_sha = orchestration_holdout_v2_sha256(BENCHMARK)
     if actual_sha != manifest["benchmark"]["sha256"]:
         raise ValueError(f"Benchmark OH2 divergiu do manifesto: {actual_sha}")
+
+    actual_uncompressed_sha = _uncompressed_sha256(BENCHMARK)
+    if actual_uncompressed_sha != manifest["benchmark"]["uncompressed_sha256"]:
+        raise ValueError(
+            "Conteúdo descomprimido do OH2 divergiu do manifesto: "
+            f"{actual_uncompressed_sha}"
+        )
 
     suite = load_orchestration_holdout_v2(BENCHMARK)
     capabilities = validate_orchestration_holdout_v2_capabilities(suite)
@@ -142,7 +155,7 @@ def main() -> None:
         "status": "PASS",
         "manifest_status": manifest["status"],
         "benchmark_sha256": actual_sha,
-        "benchmark_uncompressed_sha256": manifest["benchmark"]["uncompressed_sha256"],
+        "benchmark_uncompressed_sha256": actual_uncompressed_sha,
         "capability_validation": capabilities,
         "frozen_prior_validation": frozen_prior,
         "novelty_validation": novelty,
