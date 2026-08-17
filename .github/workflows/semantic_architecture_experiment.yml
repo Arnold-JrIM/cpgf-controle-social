@@ -7,6 +7,7 @@ on:
       - "src/cpgf/benchmark/semantic_architecture_experiment.py"
       - "scripts/run_semantic_architecture_experiment.py"
       - "data/manifests/semantic_architecture_experiment_1_0_0.json"
+      - "data/manifests/semantic_architecture_experiment_1_0_1.json"
       - "tests/unit/test_semantic_architecture_experiment.py"
       - "src/cpgf/version.py"
       - "tests/unit/test_versions.py"
@@ -14,9 +15,9 @@ on:
   workflow_dispatch:
     inputs:
       model:
-        description: "Modelo congelado no protocolo"
+        description: "Snapshot de modelo congelado no protocolo"
         required: true
-        default: "gpt-5.6"
+        default: "gpt-4o-mini-2024-07-18"
         type: string
       repeats:
         description: "Repetições LLM congeladas no protocolo"
@@ -51,15 +52,19 @@ jobs:
           from pathlib import Path
 
           p = json.loads(
-              Path("data/manifests/semantic_architecture_experiment_1_0_0.json").read_text(
+              Path("data/manifests/semantic_architecture_experiment_1_0_1.json").read_text(
                   encoding="utf-8"
               )
           )
           assert p["status"] == "PROTOCOL_FROZEN_BEFORE_LLM_RUN"
+          assert p["version"] == "1.0.1"
           assert p["measurement"]["performed"] is False
+          assert p["execution"]["model"] == "gpt-4o-mini-2024-07-18"
+          assert p["execution"]["model_is_snapshot"] is True
           assert p["execution"]["llm_repetitions"] == 3
           assert p["execution"]["structured_outputs_strict"] is True
           assert p["execution"]["external_tools_enabled"] is False
+          assert p["pre_measurement_amendment"]["workflow_dispatch_runs_observed_before_amendment"] == 0
           assert p["governance"]["production_llm_activation_allowed"] is False
           assert p["governance"]["new_independent_jh5_required_after_architecture_selection"] is True
           PY
@@ -98,6 +103,8 @@ jobs:
 
           p = json.loads(Path("semantic_architecture_experiment_result.json").read_text())
           assert p["status"] == "KNOWN_MATERIAL_ARCHITECTURE_SELECTION"
+          assert p["version"] == "1.0.1"
+          assert p["provider"]["requested_model"] == "gpt-4o-mini-2024-07-18"
           assert p["benchmark"]["already_known_before_llm_experiment"] is True
           assert p["governance"]["production_llm_activation"] is False
           assert p["governance"]["future_generalization_claim_requires_new_jh5"] is True
@@ -107,6 +114,6 @@ jobs:
       - name: Upload governed experiment evidence
         uses: actions/upload-artifact@v4
         with:
-          name: semantic-architecture-experiment-v1
+          name: semantic-architecture-experiment-v1.0.1
           path: semantic_architecture_experiment_result.json
           if-no-files-found: error

@@ -12,6 +12,7 @@ from cpgf.ai.router import Route, RouteDecision
 from cpgf.knowledge.models import CorpusScope, TemporalStatus
 
 DOCUMENTARY_ROUTES = (Route.KNOWLEDGE, Route.METHODOLOGY, Route.COMPOSITE)
+DEFAULT_SEMANTIC_MODEL = "gpt-4o-mini-2024-07-18"
 
 ROUTE_ONLY_SYSTEM_PROMPT = """
 Você é um classificador semântico experimental do projeto CPGF — Controle Social.
@@ -149,7 +150,12 @@ class SemanticProvider(Protocol):
 class OpenAIResponsesSemanticProvider:
     """Provider experimental. Não é usado pelo grafo de produção do assistente."""
 
-    def __init__(self, *, model: str = "gpt-5.6", client: object | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        model: str = DEFAULT_SEMANTIC_MODEL,
+        client: object | None = None,
+    ) -> None:
         if client is None:
             from openai import OpenAI
 

@@ -6,7 +6,10 @@ import importlib.metadata
 import json
 from pathlib import Path
 
-from cpgf.ai.semantic_experiment import OpenAIResponsesSemanticProvider
+from cpgf.ai.semantic_experiment import (
+    DEFAULT_SEMANTIC_MODEL,
+    OpenAIResponsesSemanticProvider,
+)
 from cpgf.benchmark.joint_retrieval_v4 import (
     joint_holdout_v4_sha256,
     load_joint_retrieval_holdout_v4,
@@ -23,7 +26,7 @@ from cpgf.version import (
 
 DEFAULT_BENCHMARK = Path("data/benchmarks/joint_retrieval_holdout_v4_0_0.csv")
 DEFAULT_JH4_MANIFEST = Path("data/manifests/joint_retrieval_holdout_4_0_0.json")
-DEFAULT_PROTOCOL = Path("data/manifests/semantic_architecture_experiment_1_0_0.json")
+DEFAULT_PROTOCOL = Path("data/manifests/semantic_architecture_experiment_1_0_1.json")
 ROUTER_SOURCE = Path("src/cpgf/ai/router.py")
 PLANNER_SOURCE = Path("src/cpgf/ai/retrieval_planner.py")
 
@@ -97,7 +100,7 @@ def main() -> None:
     parser.add_argument("--benchmark", type=Path, default=DEFAULT_BENCHMARK)
     parser.add_argument("--jh4-manifest", type=Path, default=DEFAULT_JH4_MANIFEST)
     parser.add_argument("--protocol", type=Path, default=DEFAULT_PROTOCOL)
-    parser.add_argument("--model", default="gpt-5.6")
+    parser.add_argument("--model", default=DEFAULT_SEMANTIC_MODEL)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -124,8 +127,8 @@ def main() -> None:
         raise ValueError("blob do Planner divergiu do fluxo congelado do JH4")
     if args.repeats != int(protocol["execution"]["llm_repetitions"]):
         raise ValueError("número de repetições precisa coincidir com o protocolo congelado")
-    if args.model != protocol["execution"]["model_alias"]:
-        raise ValueError("modelo precisa coincidir com o alias congelado no protocolo")
+    if args.model != protocol["execution"]["model"]:
+        raise ValueError("modelo precisa coincidir com o snapshot congelado no protocolo")
 
     suite = load_joint_retrieval_holdout_v4(args.benchmark)
     provider = OpenAIResponsesSemanticProvider(model=args.model)
