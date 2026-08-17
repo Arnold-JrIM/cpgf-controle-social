@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Protocol
 from dataclasses import dataclass
+from typing import Protocol
 
 from cpgf.ai.contracts import ToolName, ToolRequest
 from cpgf.ai.evidence_contracts import (
