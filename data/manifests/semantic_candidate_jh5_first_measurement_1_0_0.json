@@ -5,7 +5,10 @@
     "artifact_name": "semantic-candidate-jh5-first-measurement-v1.0.0",
     "artifact_zip_digest": "sha256:46ac047f414946f3097feadfb1006efa3bfb89632e0dd41a955dc7f9b5699349",
     "raw_result_bytes": 214866,
-    "raw_result_path": "data/evidence/semantic_candidate_jh5_first_measurement_1_0_0.json",
+    "raw_result_gzip_bytes": 12247,
+    "raw_result_gzip_path": "data/evidence/semantic_candidate_jh5_first_measurement_1_0_0.json.gz",
+    "raw_result_gzip_sha256": "d8e8b0ebc2cf90891a4b2b923ff4ce78ae7e244ce675c5696ff4a9576836204c",
+    "raw_result_logical_filename": "semantic_candidate_jh5_first_measurement_1_0_0.json",
     "raw_result_sha256": "b935b69b545c1e7536ac3da84e857ad9bc968932f586202b954433c369a8bcc2"
   },
   "benchmark": {
@@ -78,7 +81,6 @@
     "broad_generalization_gate_passed": false,
     "criteria_met_count": 6,
     "criteria_total": 7,
-    "new_retriever_evaluation_unblocked": false,
     "next_step": "post_hoc_diagnostic_only_without_retuning_on_jh5",
     "observed_absolute_gain": 0.09722222222222221,
     "only_failed_criterion": "minimum_B_absolute_joint_gain_over_A",
@@ -86,6 +88,7 @@
     "required_absolute_gain": 0.1,
     "result_does_not_support_broad_generalization_claim_under_frozen_gate": true,
     "result_is_independent_generalization_evidence": true,
+    "retriever_evaluation_unblocked": false,
     "shortfall_to_gain_threshold": 0.0027777777777777957
   },
   "observed": {
