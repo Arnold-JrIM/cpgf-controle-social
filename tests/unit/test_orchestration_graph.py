@@ -51,12 +51,12 @@ def test_project_model_policy_is_gpt_4o_mini():
 
 
 def test_orchestration_graph_versions():
-    assert ORCHESTRATION_GRAPH_VERSION == "1.0.0"
+    assert ORCHESTRATION_GRAPH_VERSION == "1.1.0"
 
 
 def test_three_source_plan_fans_out_and_fans_in_to_complete_bundle():
     plan = _three_source_plan()
-    graph = build_evidence_orchestration_graph()
+    graph = build_evidence_orchestration_graph(simulation_mode=True)
     result = graph.invoke({"plan": plan})
 
     assert result["dispatched_need_ids"] == (
@@ -107,7 +107,7 @@ def test_zero_need_plan_skips_workers_and_builds_empty_complete_bundle():
         reason="Valida caminho sem fan-out.",
         needs=(),
     )
-    result = build_evidence_orchestration_graph().invoke({"plan": plan})
+    result = build_evidence_orchestration_graph(simulation_mode=True).invoke({"plan": plan})
 
     assert result["dispatched_need_ids"] == ()
     assert result["worker_items"] == []
@@ -128,7 +128,7 @@ def test_single_source_plan_only_dispatches_planned_need():
             ),
         ),
     )
-    result = build_evidence_orchestration_graph().invoke({"plan": plan})
+    result = build_evidence_orchestration_graph(simulation_mode=True).invoke({"plan": plan})
 
     assert result["dispatched_need_ids"] == ("need-data-only",)
     assert len(result["bundle"].items) == 1
