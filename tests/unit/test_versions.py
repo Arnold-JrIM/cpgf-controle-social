@@ -32,11 +32,13 @@ from cpgf.version import (
     SEMANTIC_CANDIDATE_JH5_RESULT_VERSION,
     SEMANTIC_CANDIDATE_VERSION,
     SERVING_VERSION,
+    WEB_EVIDENCE_POLICY_VERSION,
+    WEB_EVIDENCE_WORKER_VERSION,
 )
 
 
 def test_methodology_versions():
-    assert APP_VERSION == "0.31.0-dev"
+    assert APP_VERSION == "0.32.0-dev"
     assert PREPARATION_BASELINE_VERSION == "1.0.0"
     assert PREPARATION_VERSION == "1.1.0"
     assert RULES_VERSION == "1.2.0"
@@ -63,7 +65,9 @@ def test_methodology_versions():
     assert SEMANTIC_CANDIDATE_JH5_DIAGNOSTIC_VERSION == "1.0.0"
     assert EVIDENCE_CONTRACT_VERSION == "1.0.0"
     assert EVIDENCE_WORKER_VERSION == "1.0.0"
-    assert ORCHESTRATION_GRAPH_VERSION == "1.1.0"
+    assert WEB_EVIDENCE_WORKER_VERSION == "1.0.0"
+    assert WEB_EVIDENCE_POLICY_VERSION == "1.0.0"
+    assert ORCHESTRATION_GRAPH_VERSION == "1.2.0"
     assert LLM_MODEL_POLICY_VERSION == "1.0.0"
     assert RETRIEVAL_FLOW_DIAGNOSTIC_VERSION == "1.0.0"
     assert ROUTER_VERSION == "1.4.0"

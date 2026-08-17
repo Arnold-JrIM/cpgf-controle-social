@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import operator
+from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import Annotated, TypedDict
 
@@ -22,6 +23,7 @@ from cpgf.ai.evidence_workers import (
     execute_data_need,
     retrieve_knowledge_need,
 )
+from cpgf.ai.web_evidence import WebSearcher, retrieve_web_need
 from cpgf.dashboard.data import DashboardDataContext
 from cpgf.knowledge.models import (
     AuthorityLevel,
@@ -30,7 +32,7 @@ from cpgf.knowledge.models import (
     TemporalStatus,
 )
 
-ORCHESTRATION_GRAPH_VERSION = "1.1.0"
+ORCHESTRATION_GRAPH_VERSION = "1.2.0"
 _SIMULATION_WARNING = (
     "SIMULATION_ONLY: nenhuma fonte real foi consultada; os itens existem apenas para validar "
     "fan-out/fan-in, estado e contratos da arquitetura 2.0."
@@ -128,6 +130,8 @@ def _worker_factory(
     *,
     data_context: DashboardDataContext | None,
     knowledge_retriever: KnowledgeSearcher | None,
+    web_searcher: WebSearcher | None,
+    web_clock: Callable[[], datetime] | None,
     simulation_mode: bool,
 ):
     def _worker(state: OrchestrationState) -> dict[str, object]:
@@ -144,8 +148,15 @@ def _worker_factory(
                 need=need,
                 retriever=knowledge_retriever,
             )
-        else:
+        elif web_searcher is None:
             outcome = disabled_web_need(need=need)
+        else:
+            outcome = retrieve_web_need(
+                plan=plan,
+                need=need,
+                searcher=web_searcher,
+                clock=web_clock,
+            )
 
         return {
             "worker_items": list(outcome.items),
@@ -175,9 +186,11 @@ def build_evidence_orchestration_graph(
     *,
     data_context: DashboardDataContext | None = None,
     knowledge_retriever: KnowledgeSearcher | None = None,
+    web_searcher: WebSearcher | None = None,
+    web_clock: Callable[[], datetime] | None = None,
     simulation_mode: bool = False,
 ):
-    """Compila o grafo 2.0; DATA/KNOWLEDGE são reais e WEB falha fechado por padrão."""
+    """Compila o grafo 2.0; WEB só executa por adapter explicitamente injetado."""
     builder = StateGraph(OrchestrationState)
     builder.add_node("prepare", _prepare_factory(simulation_mode=simulation_mode))
     builder.add_node(
@@ -185,6 +198,8 @@ def build_evidence_orchestration_graph(
         _worker_factory(
             data_context=data_context,
             knowledge_retriever=knowledge_retriever,
+            web_searcher=web_searcher,
+            web_clock=web_clock,
             simulation_mode=simulation_mode,
         ),
     )
@@ -202,11 +217,15 @@ def run_evidence_orchestration(
     *,
     data_context: DashboardDataContext | None = None,
     knowledge_retriever: KnowledgeSearcher | None = None,
+    web_searcher: WebSearcher | None = None,
+    web_clock: Callable[[], datetime] | None = None,
 ) -> EvidenceBundle:
-    """Executa DATA/KNOWLEDGE governados; WEB permanece desabilitado neste estágio."""
+    """Executa somente as fontes planejadas; WEB exige adapter explícito."""
     result = build_evidence_orchestration_graph(
         data_context=data_context,
         knowledge_retriever=knowledge_retriever,
+        web_searcher=web_searcher,
+        web_clock=web_clock,
     ).invoke({"plan": plan})
     return result["bundle"]
 

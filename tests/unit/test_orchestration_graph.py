@@ -51,7 +51,7 @@ def test_project_model_policy_is_gpt_4o_mini():
 
 
 def test_orchestration_graph_versions():
-    assert ORCHESTRATION_GRAPH_VERSION == "1.1.0"
+    assert ORCHESTRATION_GRAPH_VERSION == "1.2.0"
 
 
 def test_three_source_plan_fans_out_and_fans_in_to_complete_bundle():
