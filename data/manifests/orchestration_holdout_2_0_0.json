@@ -14,13 +14,13 @@
     "compression": "gzip",
     "oracles_defined_before_candidate_execution": true,
     "path": "data/benchmarks/orchestration_holdout_v2_0_0.csv.gz",
-    "sha256": "47fb56ab7e4479ddfd68668c5cbb9f221090ea94bb40edd5dce12cb23d700b9e",
+    "sha256": "0a5c6eda6ffa2bd9cd6bbcf8ae983e4906f564b0c1884fab0c8f28c5e3244c3b",
     "source_presence_balance": {
       "data": 32,
       "knowledge": 32,
       "web": 32
     },
-    "uncompressed_sha256": "2655a478ddd6e8e1cd9f370f5c03cbdbd2a17f58d9737ece08e9db4229be1940"
+    "uncompressed_sha256": "2cc6300db90622ce35cf458aad29168a56b58a371b290abdf5de84fe76e9cc6c"
   },
   "candidate_freeze": {
     "ai_contract_source_git_blob_sha": "07a0d111667adc311dc345aea9a998d9e4df5d7f",

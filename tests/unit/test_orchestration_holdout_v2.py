@@ -20,7 +20,7 @@ from cpgf.benchmark.orchestration_holdout_v2 import (
 )
 
 BENCHMARK = Path("data/benchmarks/orchestration_holdout_v2_0_0.csv.gz")
-EXPECTED_SHA256 = "47fb56ab7e4479ddfd68668c5cbb9f221090ea94bb40edd5dce12cb23d700b9e"
+EXPECTED_SHA256 = "0a5c6eda6ffa2bd9cd6bbcf8ae983e4906f564b0c1884fab0c8f28c5e3244c3b"
 
 
 def test_loads_balanced_prospective_oh2_suite():
