@@ -13,7 +13,7 @@ on:
       - "docs/architecture/evidence_workers_1_0_0.md"
       - ".github/workflows/evidence_workers_v1.yml"
   push:
-    branches: [main, agent/evidence-workers-v1]
+    branches: [main]
     paths:
       - "src/cpgf/ai/evidence_workers.py"
       - "src/cpgf/ai/orchestration_graph.py"
@@ -44,18 +44,6 @@ jobs:
       - run: python -m pip install -e ".[dev]"
       - name: Lint worker boundary
         run: ruff check src/cpgf/ai/evidence_workers.py src/cpgf/ai/orchestration_graph.py tests/unit/test_evidence_workers.py
-      - name: Diagnose pytest collection
-        run: |
-          set +e
-          output=$(pytest --collect-only -q tests/unit/test_evidence_workers.py tests/unit/test_orchestration_graph.py tests/unit/test_versions.py 2>&1)
-          status=$?
-          set -e
-          if [ "$status" -ne 0 ]; then
-            compact=$(printf '%s\n' "$output" | tail -n 30 | tr '\n' ' ' | sed 's/%/%25/g; s/\r/%0D/g')
-            echo "::error title=Pytest collection failed::$compact"
-            printf '%s\n' "$output"
-            exit "$status"
-          fi
       - name: Validate workers and graph
         run: pytest -q tests/unit/test_evidence_workers.py tests/unit/test_orchestration_graph.py tests/unit/test_versions.py
       - name: Enforce least privilege and model policy
