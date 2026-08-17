@@ -1,0 +1,105 @@
+{
+  "artifact": "joint_retrieval_holdout",
+  "version": "5.0.0",
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "benchmark": {
+    "path": "data/benchmarks/joint_retrieval_holdout_v5_0_0.csv",
+    "sha256": "2695be52ff403043c394f0ca7f9f0a47f209fd2016172586146c69adf5595354",
+    "cases": 48,
+    "category_balance": {
+      "normative": 12,
+      "methodology": 12,
+      "cross_source": 12,
+      "control_external": 12
+    },
+    "expected_route_balance": {
+      "knowledge": 24,
+      "methodology": 12,
+      "composite": 12
+    },
+    "freshness_sensitive_cases": 2,
+    "oracles_defined_before_candidate_execution": true
+  },
+  "candidate_freeze": {
+    "name": "B_llm_route",
+    "candidate_version": "1.0.0",
+    "manifest_path": "data/manifests/semantic_candidate_b_1_0_0.json",
+    "manifest_git_blob_sha": "88c042cadd584497d1075dae4bc41536040c1065",
+    "model": "gpt-4o-mini-2024-07-18",
+    "openai_sdk_version": "3.1.0",
+    "python_version": "3.12",
+    "llm_repetitions": 3,
+    "provider_source_git_blob_sha": "961d5f7532f89bbba4c05b844601c9d0407ed5bd",
+    "retrieval_planner_version": "1.3.0",
+    "retrieval_planner_source_git_blob_sha": "8fa1458c11eeabfdde155635b74a9b770e9960c1",
+    "route_type_dependency_router_version": "1.4.0",
+    "route_type_dependency_router_blob_sha": "89150b97e9c87d9af0d0b0f888870dcc74ef86b1",
+    "candidate_executed_during_authoring": false,
+    "candidate_executed_during_preflight": false
+  },
+  "novelty": {
+    "comparison_scope": "all prior CSV benchmarks with a question column",
+    "prior_questions_expected": 326,
+    "normalized_exact_overlap_allowed": 0,
+    "prospective_max_similarity": 0.70,
+    "observed_preflight": {
+      "run_id": 31983949246,
+      "evidence_head_sha": "f014aa62ad8793bdaeae50be13db2b7c22f410e5",
+      "python_3_11_job_id": 95255571480,
+      "python_3_12_job_id": 95255571479,
+      "python_3_11_artifact_id": 9273192096,
+      "python_3_12_artifact_id": 9273201495,
+      "python_3_11_artifact_zip_digest": "sha256:54d78dc90c4d8cf779c15e3f5b419f9cb3081130da9bd5b6ac67464758e66cd4",
+      "python_3_12_artifact_zip_digest": "sha256:fd584de1d6458873d02b80787fd422f303287f58f94813f4ed51f59bd5440d76",
+      "preflight_json_bytes": 3849,
+      "preflight_json_sha256": "4a1ac8eb94682c03bcfb7f40e8e2ff1281ebbe768cf6ff7510c22aaaa6c69c66",
+      "python_outputs_byte_identical": true,
+      "prior_benchmarks_compared": 8,
+      "prior_questions_compared": 326,
+      "normalized_exact_overlap": 0,
+      "highest_sequence_similarity": 0.6801346801346801,
+      "highest_sequence_similarity_case": "JH5-014",
+      "top_5_sequence_similarity": [
+        {"id": "JH5-014", "similarity": 0.6801346801346801},
+        {"id": "JH5-023", "similarity": 0.6666666666666666},
+        {"id": "JH5-048", "similarity": 0.6460674157303371},
+        {"id": "JH5-047", "similarity": 0.644927536231884},
+        {"id": "JH5-046", "similarity": 0.6311475409836066}
+      ],
+      "status": "PASS"
+    }
+  },
+  "prospective_acceptance_gate": {
+    "defined_before_first_measurement": true,
+    "all_three_llm_repetitions_must_complete": true,
+    "schema_violations_allowed": 0,
+    "minimum_B_mean_joint_exact_rate": 0.50,
+    "minimum_B_absolute_joint_gain_over_A": 0.10,
+    "minimum_B_mean_route_exact_rate": 0.75,
+    "minimum_B_mean_modal_stability": 0.90,
+    "minimum_each_category_B_mean_joint_exact_rate": 0.25,
+    "all_criteria_required_for_broad_generalization_gate": true,
+    "performance_threshold_causes_measurement_workflow_failure": false,
+    "measurement_must_be_preserved_even_below_thresholds": true,
+    "thresholds_are_project_governance_not_significance_tests": true,
+    "passing_gate_does_not_imply_production_readiness": true
+  },
+  "measurement": {
+    "performed": false,
+    "first_valid_measurement": null,
+    "result": null
+  },
+  "governance": {
+    "benchmark_authored_without_candidate_outputs": true,
+    "candidate_specification_frozen_before_benchmark_authoring": true,
+    "prompt_tuning_after_authoring_started_allowed": false,
+    "model_change_after_authoring_started_allowed": false,
+    "planner_change_after_authoring_started_allowed": false,
+    "retriever_called_during_preflight": false,
+    "llm_called_during_preflight": false,
+    "sql_executed_during_preflight": false,
+    "production_activation": false,
+    "jh5_failure_must_be_preserved": true,
+    "first_measurement_must_run_only_after_this_freeze_is_merged": true
+  }
+}
