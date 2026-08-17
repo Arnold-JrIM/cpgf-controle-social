@@ -1,0 +1,92 @@
+{
+  "artifact": "semantic_candidate_b",
+  "version": "1.0.0",
+  "status": "CANDIDATE_FROZEN_BEFORE_JH5_AUTHORING",
+  "selection_provenance": {
+    "source_measurement_manifest": "data/manifests/semantic_architecture_experiment_measurement_1_0_1.json",
+    "source_measurement_manifest_git_blob_sha": "cbd7ade01b7befb42ef12927c98b1af7d7180668",
+    "official_run_id": 31981818344,
+    "selected_architecture": "B_llm_route",
+    "selection_on_known_material": true,
+    "selection_is_not_generalization_evidence": true
+  },
+  "candidate": {
+    "name": "B_llm_route",
+    "description": "LLM classifica somente a rota documental em vocabulario fechado; Retrieval Planner 1.3 deriva deterministicamente escopos e temporalidades.",
+    "model": "gpt-4o-mini-2024-07-18",
+    "model_is_snapshot": true,
+    "provider": "OpenAI Responses API",
+    "openai_sdk_version": "3.1.0",
+    "python_version": "3.12",
+    "llm_repetitions": 3,
+    "store": false,
+    "structured_outputs_strict": true,
+    "external_tools_enabled": false,
+    "retriever_enabled": false,
+    "sql_enabled": false,
+    "llm_decides_route": true,
+    "llm_decides_filters": false,
+    "llm_produces_final_answer": false,
+    "llm_is_audit_engine": false
+  },
+  "route_contract": {
+    "allowed_routes": ["knowledge", "methodology", "composite"],
+    "schema_name": "cpgf_semantic_route_v1",
+    "required_fields": ["route", "reason"],
+    "additional_properties": false,
+    "reason_max_length": 280,
+    "provider_source_path": "src/cpgf/ai/semantic_experiment.py",
+    "provider_source_git_blob_sha": "961d5f7532f89bbba4c05b844601c9d0407ed5bd"
+  },
+  "deterministic_planner": {
+    "version": "1.3.0",
+    "source_path": "src/cpgf/ai/retrieval_planner.py",
+    "source_git_blob_sha": "8fa1458c11eeabfdde155635b74a9b770e9960c1",
+    "filters_decided_by_llm": false
+  },
+  "route_type_dependency": {
+    "router_version": "1.4.0",
+    "router_source_git_blob_sha": "89150b97e9c87d9af0d0b0f888870dcc74ef86b1",
+    "deterministic_router_called_by_candidate": false
+  },
+  "prospective_jh5_design": {
+    "cases": 48,
+    "category_balance": {
+      "normative": 12,
+      "methodology": 12,
+      "cross_source": 12,
+      "control_external": 12
+    },
+    "expected_route_balance": {
+      "knowledge": 24,
+      "methodology": 12,
+      "composite": 12
+    },
+    "exact_question_overlap_with_all_prior_benchmarks_allowed": 0,
+    "maximum_sequence_matcher_similarity_to_any_prior_question": 0.70,
+    "gold_route_scope_temporal_fixed_before_candidate_execution": true,
+    "candidate_outputs_may_not_be_used_during_question_authoring": true,
+    "candidate_may_not_execute_until_jh5_freeze_and_preflight_pass": true
+  },
+  "prospective_jh5_acceptance_gate": {
+    "all_three_llm_repetitions_must_complete": true,
+    "schema_violations_allowed": 0,
+    "minimum_B_mean_joint_exact_rate": 0.50,
+    "minimum_B_absolute_joint_gain_over_A": 0.10,
+    "minimum_B_mean_route_exact_rate": 0.75,
+    "minimum_B_mean_modal_stability": 0.90,
+    "minimum_each_category_B_mean_joint_exact_rate": 0.25,
+    "all_criteria_required_for_broad_generalization_gate": true,
+    "thresholds_are_project_governance_not_significance_tests": true
+  },
+  "governance": {
+    "production_activation": false,
+    "candidate_specification_must_not_change_after_jh5_authoring_starts": true,
+    "no_prompt_tuning_after_jh5_authoring_starts": true,
+    "no_model_change_after_jh5_authoring_starts": true,
+    "no_planner_change_after_jh5_authoring_starts": true,
+    "no_retriever_evaluation_before_jh5_candidate_gate": true,
+    "jh5_failure_must_be_preserved": true,
+    "partial_success_may_be_reported_descriptively_but_does_not_override_gate": true
+  }
+}
