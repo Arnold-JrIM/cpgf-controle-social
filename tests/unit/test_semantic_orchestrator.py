@@ -78,8 +78,8 @@ class _FailingProvider:
 
 
 def test_orchestrator_versions_and_governed_model():
-    assert SEMANTIC_ORCHESTRATOR_VERSION == "1.0.0"
-    assert SEMANTIC_ORCHESTRATOR_POLICY_VERSION == "1.0.0"
+    assert SEMANTIC_ORCHESTRATOR_VERSION == "1.1.0"
+    assert SEMANTIC_ORCHESTRATOR_POLICY_VERSION == "1.1.0"
     provider = OpenAIResponsesOrchestratorProvider(client=object())
     assert provider.model == "gpt-4o-mini"
 
