@@ -15,6 +15,14 @@ from cpgf.ai.evidence_contracts import (
     EvidencePlan,
     EvidenceSource,
 )
+from cpgf.ai.evidence_workers import (
+    KnowledgeSearcher,
+    WorkerOutcome,
+    disabled_web_need,
+    execute_data_need,
+    retrieve_knowledge_need,
+)
+from cpgf.dashboard.data import DashboardDataContext
 from cpgf.knowledge.models import (
     AuthorityLevel,
     CorpusScope,
@@ -22,7 +30,7 @@ from cpgf.knowledge.models import (
     TemporalStatus,
 )
 
-ORCHESTRATION_GRAPH_VERSION = "1.0.0"
+ORCHESTRATION_GRAPH_VERSION = "1.1.0"
 _SIMULATION_WARNING = (
     "SIMULATION_ONLY: nenhuma fonte real foi consultada; os itens existem apenas para validar "
     "fan-out/fan-in, estado e contratos da arquitetura 2.0."
@@ -31,25 +39,30 @@ _SIMULATION_OBSERVED_AT = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
 
 class OrchestrationState(TypedDict, total=False):
-    """Estado mínimo do primeiro StateGraph governado da arquitetura 2.0."""
+    """Estado serializável do StateGraph governado da arquitetura 2.0."""
 
     plan: EvidencePlan
     current_need: EvidenceNeed
     worker_items: Annotated[list[EvidenceItem], operator.add]
+    worker_warnings: Annotated[list[str], operator.add]
     dispatched_need_ids: tuple[str, ...]
     bundle: EvidenceBundle
     simulation_only: bool
     llm_called: bool
 
 
-def _prepare(state: OrchestrationState) -> dict[str, object]:
-    plan = state["plan"]
-    return {
-        "worker_items": [],
-        "dispatched_need_ids": tuple(need.need_id for need in plan.needs),
-        "simulation_only": True,
-        "llm_called": False,
-    }
+def _prepare_factory(*, simulation_mode: bool):
+    def _prepare(state: OrchestrationState) -> dict[str, object]:
+        plan = state["plan"]
+        return {
+            "worker_items": [],
+            "worker_warnings": [],
+            "dispatched_need_ids": tuple(need.need_id for need in plan.needs),
+            "simulation_only": simulation_mode,
+            "llm_called": False,
+        }
+
+    return _prepare
 
 
 def _dispatch(state: OrchestrationState) -> str | list[Send]:
@@ -58,7 +71,7 @@ def _dispatch(state: OrchestrationState) -> str | list[Send]:
         return "fan_in"
     return [
         Send(
-            "simulated_worker",
+            "evidence_worker",
             {
                 "plan": plan,
                 "current_need": need,
@@ -111,8 +124,35 @@ def _simulated_item(need: EvidenceNeed) -> EvidenceItem:
     )
 
 
-def _simulated_worker(state: OrchestrationState) -> dict[str, object]:
-    return {"worker_items": [_simulated_item(state["current_need"])]}
+def _worker_factory(
+    *,
+    data_context: DashboardDataContext | None,
+    knowledge_retriever: KnowledgeSearcher | None,
+    simulation_mode: bool,
+):
+    def _worker(state: OrchestrationState) -> dict[str, object]:
+        plan = state["plan"]
+        need = state["current_need"]
+
+        if simulation_mode:
+            outcome = WorkerOutcome(items=(_simulated_item(need),))
+        elif need.source is EvidenceSource.DATA:
+            outcome = execute_data_need(plan=plan, need=need, context=data_context)
+        elif need.source is EvidenceSource.KNOWLEDGE:
+            outcome = retrieve_knowledge_need(
+                plan=plan,
+                need=need,
+                retriever=knowledge_retriever,
+            )
+        else:
+            outcome = disabled_web_need(need=need)
+
+        return {
+            "worker_items": list(outcome.items),
+            "worker_warnings": list(outcome.warnings),
+        }
+
+    return _worker
 
 
 def _fan_in(state: OrchestrationState) -> dict[str, object]:
@@ -124,25 +164,54 @@ def _fan_in(state: OrchestrationState) -> dict[str, object]:
             key=lambda item: (order.get(item.need_id, 10_000), item.evidence_id),
         )
     )
-    bundle = EvidenceBundle(plan=plan, items=items, warnings=(_SIMULATION_WARNING,))
+    warnings = tuple(state.get("worker_warnings", []))
+    if state.get("simulation_only", False):
+        warnings = (_SIMULATION_WARNING, *warnings)
+    bundle = EvidenceBundle(plan=plan, items=items, warnings=warnings)
     return {"bundle": bundle}
 
 
-def build_evidence_orchestration_graph():
-    """Compila o primeiro grafo 2.0; workers são deliberadamente simulados."""
+def build_evidence_orchestration_graph(
+    *,
+    data_context: DashboardDataContext | None = None,
+    knowledge_retriever: KnowledgeSearcher | None = None,
+    simulation_mode: bool = False,
+):
+    """Compila o grafo 2.0; DATA/KNOWLEDGE são reais e WEB falha fechado por padrão."""
     builder = StateGraph(OrchestrationState)
-    builder.add_node("prepare", _prepare)
-    builder.add_node("simulated_worker", _simulated_worker)
+    builder.add_node("prepare", _prepare_factory(simulation_mode=simulation_mode))
+    builder.add_node(
+        "evidence_worker",
+        _worker_factory(
+            data_context=data_context,
+            knowledge_retriever=knowledge_retriever,
+            simulation_mode=simulation_mode,
+        ),
+    )
     builder.add_node("fan_in", _fan_in)
 
     builder.add_edge(START, "prepare")
-    builder.add_conditional_edges("prepare", _dispatch, ["simulated_worker", "fan_in"])
-    builder.add_edge("simulated_worker", "fan_in")
+    builder.add_conditional_edges("prepare", _dispatch, ["evidence_worker", "fan_in"])
+    builder.add_edge("evidence_worker", "fan_in")
     builder.add_edge("fan_in", END)
     return builder.compile()
 
 
+def run_evidence_orchestration(
+    plan: EvidencePlan,
+    *,
+    data_context: DashboardDataContext | None = None,
+    knowledge_retriever: KnowledgeSearcher | None = None,
+) -> EvidenceBundle:
+    """Executa DATA/KNOWLEDGE governados; WEB permanece desabilitado neste estágio."""
+    result = build_evidence_orchestration_graph(
+        data_context=data_context,
+        knowledge_retriever=knowledge_retriever,
+    ).invoke({"plan": plan})
+    return result["bundle"]
+
+
 def run_simulated_orchestration(plan: EvidencePlan) -> EvidenceBundle:
-    """Executa somente a simulação estrutural e devolve o EvidenceBundle validado."""
-    result = build_evidence_orchestration_graph().invoke({"plan": plan})
+    """Mantém o harness estrutural do PR #62 sem acessar fontes reais."""
+    result = build_evidence_orchestration_graph(simulation_mode=True).invoke({"plan": plan})
     return result["bundle"]
