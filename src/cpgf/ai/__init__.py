@@ -9,12 +9,23 @@ from .evidence_contracts import (
     EvidenceSource,
     EvidenceVersion,
 )
+from .evidence_workers import (
+    DATA_EVIDENCE_TOOLS,
+    DEFAULT_KNOWLEDGE_LIMIT,
+    EVIDENCE_WORKER_VERSION,
+    KnowledgeSearcher,
+    WorkerOutcome,
+    disabled_web_need,
+    execute_data_need,
+    retrieve_knowledge_need,
+)
 from .graph import prepare_assistant_state
 from .model_policy import DEFAULT_LLM_MODEL, LLM_MODEL_POLICY_VERSION, project_llm_model
 from .orchestration_graph import (
     ORCHESTRATION_GRAPH_VERSION,
     OrchestrationState,
     build_evidence_orchestration_graph,
+    run_evidence_orchestration,
     run_simulated_orchestration,
 )
 from .retrieval_planner import (
@@ -26,8 +37,11 @@ from .router import EvidenceLayer, Route, RouteDecision, route_question
 from .tools import execute_tool, tool_catalog
 
 __all__ = [
+    "DATA_EVIDENCE_TOOLS",
+    "DEFAULT_KNOWLEDGE_LIMIT",
     "DEFAULT_LLM_MODEL",
     "EVIDENCE_CONTRACT_VERSION",
+    "EVIDENCE_WORKER_VERSION",
     "LLM_MODEL_POLICY_VERSION",
     "ORCHESTRATION_GRAPH_VERSION",
     "EvidenceBundle",
@@ -38,6 +52,7 @@ __all__ = [
     "EvidencePlan",
     "EvidenceSource",
     "EvidenceVersion",
+    "KnowledgeSearcher",
     "OrchestrationState",
     "PlannedKnowledgeRetriever",
     "RetrievalPlan",
@@ -46,12 +61,17 @@ __all__ = [
     "ToolName",
     "ToolRequest",
     "ToolResult",
+    "WorkerOutcome",
     "build_evidence_orchestration_graph",
+    "disabled_web_need",
+    "execute_data_need",
     "execute_tool",
     "plan_knowledge_retrieval",
     "prepare_assistant_state",
     "project_llm_model",
+    "retrieve_knowledge_need",
     "route_question",
+    "run_evidence_orchestration",
     "run_simulated_orchestration",
     "tool_catalog",
 ]
