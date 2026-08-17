@@ -90,7 +90,8 @@ jobs:
           p = json.loads(Path("orchestration_holdout_v2_preflight.json").read_text())
           assert p["status"] == "PASS"
           assert p["manifest_status"] == "FROZEN_BEFORE_MEASUREMENT"
-          assert p["benchmark_sha256"] == "0a5c6eda6ffa2bd9cd6bbcf8ae983e4906f564b0c1884fab0c8f28c5e3244c3b"
+          assert p["benchmark_sha256"] == "a3d1a126c7526d8be53fbeabff075792aa6734d399d03c60bd30693fdc9aa9d3"
+          assert p["benchmark_uncompressed_sha256"] == "2cc6300db90622ce35cf458aad29168a56b58a371b290abdf5de84fe76e9cc6c"
           assert p["current_candidate"]["matches_frozen_candidate"] is True
           assert p["current_candidate"]["model"] == "gpt-4o-mini"
           assert p["current_candidate"]["orchestrator_version"] == "1.1.0"
