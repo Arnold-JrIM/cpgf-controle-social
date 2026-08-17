@@ -1,0 +1,81 @@
+name: joint-retrieval-holdout-v5-preflight
+
+on:
+  pull_request:
+    paths:
+      - "data/benchmarks/joint_retrieval_holdout_v5_0_0.csv"
+      - "data/manifests/joint_retrieval_holdout_5_0_0.json"
+      - "data/manifests/semantic_candidate_b_1_0_0.json"
+      - "src/cpgf/benchmark/joint_retrieval_v5.py"
+      - "scripts/preflight_joint_retrieval_holdout_v5.py"
+      - "tests/unit/test_joint_retrieval_holdout_v5.py"
+      - "src/cpgf/ai/semantic_experiment.py"
+      - "src/cpgf/ai/router.py"
+      - "src/cpgf/ai/retrieval_planner.py"
+      - "src/cpgf/version.py"
+      - "data/knowledge/**"
+      - "data/benchmarks/*.csv"
+      - ".github/workflows/joint_retrieval_holdout_v5_preflight.yml"
+  workflow_dispatch:
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Validate prospective JH5 freeze without candidate execution
+        run: |
+          python scripts/preflight_joint_retrieval_holdout_v5.py \
+            --output joint_retrieval_holdout_v5_preflight.json
+      - name: Run JH5 freeze unit gates
+        run: |
+          pytest -q \
+            tests/unit/test_joint_retrieval_holdout_v5.py \
+            tests/unit/test_semantic_candidate_freeze.py \
+            tests/unit/test_versions.py
+      - name: Enforce pre-measurement independence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(Path("joint_retrieval_holdout_v5_preflight.json").read_text())
+          assert p["status"] == "PASS"
+          assert p["manifest_status"] == "FROZEN_BEFORE_MEASUREMENT"
+          assert p["benchmark_sha256"] == "c960df6710438805ec16279852775b16b81a970e7e556ed574c075f2eab73901"
+          assert p["catalog_validation"]["cases"] == 48
+          n = p["novelty_validation"]
+          assert n["prior_questions_compared"] == 326
+          assert n["normalized_exact_overlap"] == 0
+          assert n["highest_sequence_similarity"] <= 0.70
+          assert p["current_candidate"]["matches_frozen_candidate"] is True
+          c = p["prospective_acceptance_gate"]
+          assert c["minimum_B_mean_joint_exact_rate"] == 0.50
+          assert c["minimum_B_absolute_joint_gain_over_A"] == 0.10
+          assert c["minimum_B_mean_route_exact_rate"] == 0.75
+          assert c["minimum_B_mean_modal_stability"] == 0.90
+          assert c["minimum_each_category_B_mean_joint_exact_rate"] == 0.25
+          g = p["governance"]
+          assert g["candidate_llm_called"] is False
+          assert g["deterministic_router_called"] is False
+          assert g["retrieval_planner_called"] is False
+          assert g["retriever_called"] is False
+          assert g["measurement_performed"] is False
+          assert g["candidate_outputs_used_during_authoring"] is False
+          PY
+      - name: Upload JH5 preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joint-retrieval-holdout-v5-preflight-py${{ matrix.python-version }}
+          path: joint_retrieval_holdout_v5_preflight.json
+          if-no-files-found: error
