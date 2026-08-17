@@ -42,7 +42,32 @@
     "prior_questions_expected": 326,
     "normalized_exact_overlap_allowed": 0,
     "prospective_max_similarity": 0.70,
-    "observed_preflight": null
+    "observed_preflight": {
+      "run_id": 31983949246,
+      "evidence_head_sha": "f014aa62ad8793bdaeae50be13db2b7c22f410e5",
+      "python_3_11_job_id": 95255571480,
+      "python_3_12_job_id": 95255571479,
+      "python_3_11_artifact_id": 9273192096,
+      "python_3_12_artifact_id": 9273201495,
+      "python_3_11_artifact_zip_digest": "sha256:54d78dc90c4d8cf779c15e3f5b419f9cb3081130da9bd5b6ac67464758e66cd4",
+      "python_3_12_artifact_zip_digest": "sha256:fd584de1d6458873d02b80787fd422f303287f58f94813f4ed51f59bd5440d76",
+      "preflight_json_bytes": 3849,
+      "preflight_json_sha256": "4a1ac8eb94682c03bcfb7f40e8e2ff1281ebbe768cf6ff7510c22aaaa6c69c66",
+      "python_outputs_byte_identical": true,
+      "prior_benchmarks_compared": 8,
+      "prior_questions_compared": 326,
+      "normalized_exact_overlap": 0,
+      "highest_sequence_similarity": 0.6801346801346801,
+      "highest_sequence_similarity_case": "JH5-014",
+      "top_5_sequence_similarity": [
+        {"id": "JH5-014", "similarity": 0.6801346801346801},
+        {"id": "JH5-023", "similarity": 0.6666666666666666},
+        {"id": "JH5-048", "similarity": 0.6460674157303371},
+        {"id": "JH5-047", "similarity": 0.644927536231884},
+        {"id": "JH5-046", "similarity": 0.6311475409836066}
+      ],
+      "status": "PASS"
+    }
   },
   "prospective_acceptance_gate": {
     "defined_before_first_measurement": true,
