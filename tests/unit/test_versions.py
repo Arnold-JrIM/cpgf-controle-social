@@ -22,12 +22,13 @@ from cpgf.version import (
     ROUTER_VERSION,
     RULES_VERSION,
     SEMANTIC_ARCHITECTURE_EXPERIMENT_VERSION,
+    SEMANTIC_CANDIDATE_VERSION,
     SERVING_VERSION,
 )
 
 
 def test_methodology_versions():
-    assert APP_VERSION == "0.23.1-dev"
+    assert APP_VERSION == "0.24.0-dev"
     assert PREPARATION_BASELINE_VERSION == "1.0.0"
     assert PREPARATION_VERSION == "1.1.0"
     assert RULES_VERSION == "1.2.0"
@@ -47,6 +48,7 @@ def test_methodology_versions():
     assert JOINT_RETRIEVAL_FLOW_DIAGNOSTIC_V3_VERSION == "1.0.0"
     assert JOINT_RETRIEVAL_FLOW_DIAGNOSTIC_V4_VERSION == "1.0.0"
     assert SEMANTIC_ARCHITECTURE_EXPERIMENT_VERSION == "1.0.1"
+    assert SEMANTIC_CANDIDATE_VERSION == "1.0.0"
     assert RETRIEVAL_FLOW_DIAGNOSTIC_VERSION == "1.0.0"
     assert ROUTER_VERSION == "1.4.0"
     assert ROUTER_HOLDOUT_VERSION == "1.0.0"
