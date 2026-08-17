@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import gzip
 import hashlib
 import json
@@ -10,9 +11,11 @@ import pytest
 from cpgf.version import ORCHESTRATION_HOLDOUT_RESULT_VERSION
 
 RESULT = Path("data/manifests/orchestration_holdout_first_measurement_1_0_0.json")
-EVIDENCE = Path("data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz")
+EVIDENCE_PREFIX = "orchestration_holdout_v1_first_measurement_1_0_0.json.gz.b64."
+EVIDENCE_DIR = Path("data/evidence")
 
 RAW_SHA256 = "d2213529f505e9d566ab64f1f27aa412e14a348abf997dfdb3d868edbab8c4c5"
+BASE64_SHA256 = "c3e76cb64232de40c79b52467d26d3ecb3fbbc48a9798074b9a09ce401ece381"
 GZIP_SHA256 = "ee960b344f5c0cfe796300983bdebd0d1552cf7ee8dc7b7aa400b9573128a54b"
 
 
@@ -20,8 +23,21 @@ def _load_result() -> dict[str, object]:
     return json.loads(RESULT.read_text(encoding="utf-8"))
 
 
+def _encoded_evidence() -> tuple[bytes, list[Path]]:
+    parts = sorted(EVIDENCE_DIR.glob(f"{EVIDENCE_PREFIX}*"))
+    assert [path.name for path in parts] == [
+        f"{EVIDENCE_PREFIX}{index:02d}" for index in range(8)
+    ]
+    encoded = "".join(path.read_text(encoding="utf-8") for path in parts).encode("ascii")
+    assert len(encoded) == 44932
+    assert hashlib.sha256(encoded).hexdigest() == BASE64_SHA256
+    return encoded, parts
+
+
 def _raw_payload() -> tuple[bytes, dict[str, object]]:
-    compressed = EVIDENCE.read_bytes()
+    encoded, _ = _encoded_evidence()
+    compressed = base64.b64decode(encoded, validate=True)
+    assert len(compressed) == 33697
     assert hashlib.sha256(compressed).hexdigest() == GZIP_SHA256
     raw = gzip.decompress(compressed)
     assert hashlib.sha256(raw).hexdigest() == RAW_SHA256
@@ -33,7 +49,6 @@ def test_first_measurement_evidence_is_exactly_preserved():
     result = _load_result()
 
     assert len(raw) == 476264
-    assert EVIDENCE.stat().st_size == 33697
     assert payload["status"] == "INDEPENDENT_OH1_FIRST_MEASUREMENT"
     assert payload["run_context"] == {
         "github_event_name": "push",
@@ -45,7 +60,10 @@ def test_first_measurement_evidence_is_exactly_preserved():
     }
     artifact = result["official_measurement"]["artifact"]
     assert artifact["raw_json_sha256"] == RAW_SHA256
-    assert artifact["repository_gzip_sha256"] == GZIP_SHA256
+    assert artifact["repository_encoding"] == "base64_parts_of_deterministic_gzip"
+    assert artifact["repository_base64_sha256"] == BASE64_SHA256
+    assert artifact["repository_decoded_gzip_sha256"] == GZIP_SHA256
+    assert len(artifact["repository_base64_parts"]) == 8
     assert artifact["zip_digest"] == (
         "sha256:9626908d1c5ca5060a9067a85735d770cdc9c85003943b89b9d08f068e150222"
     )
