@@ -33,6 +33,8 @@ from cpgf.version import (
     SEMANTIC_CANDIDATE_JH5_MEASUREMENT_VERSION,
     SEMANTIC_CANDIDATE_JH5_RESULT_VERSION,
     SEMANTIC_CANDIDATE_VERSION,
+    SEMANTIC_ORCHESTRATOR_POLICY_VERSION,
+    SEMANTIC_ORCHESTRATOR_VERSION,
     SERVING_VERSION,
     WEB_EVIDENCE_POLICY_VERSION,
     WEB_EVIDENCE_WORKER_VERSION,
@@ -40,7 +42,7 @@ from cpgf.version import (
 
 
 def test_methodology_versions():
-    assert APP_VERSION == "0.33.0-dev"
+    assert APP_VERSION == "0.34.0-dev"
     assert PREPARATION_BASELINE_VERSION == "1.0.0"
     assert PREPARATION_VERSION == "1.1.0"
     assert RULES_VERSION == "1.2.0"
@@ -72,6 +74,8 @@ def test_methodology_versions():
     assert ORCHESTRATION_GRAPH_VERSION == "1.2.0"
     assert ANSWER_PIPELINE_VERSION == "1.0.0"
     assert ANSWER_POLICY_VERSION == "1.0.0"
+    assert SEMANTIC_ORCHESTRATOR_VERSION == "1.0.0"
+    assert SEMANTIC_ORCHESTRATOR_POLICY_VERSION == "1.0.0"
     assert LLM_MODEL_POLICY_VERSION == "1.0.0"
     assert RETRIEVAL_FLOW_DIAGNOSTIC_VERSION == "1.0.0"
     assert ROUTER_VERSION == "1.4.0"
