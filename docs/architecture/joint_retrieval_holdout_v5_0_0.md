@@ -4,7 +4,7 @@
 
 O JH5 é o primeiro holdout criado **depois** da seleção da arquitetura semântica `B_llm_route`. Sua função é produzir evidência independente sobre a capacidade de generalização da candidata, sem reutilizar o JH4 como teste de validação.
 
-A candidata foi congelada no PR #56 antes do início da autoria deste benchmark. Durante a construção e o preflight do JH5, nenhuma saída da candidata é consultada e nenhuma chamada ao GPT-4o mini é realizada.
+A candidata foi congelada no PR #56 antes do início da autoria deste benchmark. Durante a construção e o preflight do JH5, nenhuma saída da candidata foi consultada e nenhuma chamada ao GPT-4o mini foi realizada.
 
 ## Desenho
 
@@ -30,6 +30,8 @@ Cada caso fixa antes da primeira medição:
 - trilhas relacionadas, quando pertinentes;
 - sensibilidade temporal.
 
+O arquivo congelado possui SHA-256 `2695be52ff403043c394f0ca7f9f0a47f209fd2016172586146c69adf5595354`, contém 33 documentos-gabarito, 35 documentos referenciados e dois casos deliberadamente sensíveis a atualização normativa.
+
 ## Independência e novidade
 
 A autoria foi feita a partir do corpus governado e dos objetivos temáticos do projeto, sem usar previsões da candidata B. O preflight compara o texto normalizado das 48 perguntas com todos os CSVs históricos do diretório `data/benchmarks` que contenham a coluna `question`.
@@ -41,6 +43,16 @@ Foram definidos antes da medição:
 - universo histórico esperado: 326 perguntas anteriores.
 
 O limite é mais estrito que o utilizado no JH4 (0,75).
+
+O preflight limpo `31983949246`, executado sobre o head de evidência `f014aa62ad8793bdaeae50be13db2b7c22f410e5`, passou em Python 3.11 e 3.12. Foram comparados oito benchmarks e 326 perguntas históricas, sem sobreposição exata normalizada. A maior similaridade foi `0.6801346801346801`, no caso `JH5-014`, portanto abaixo do limite prospectivo de 0,70. Os cinco maiores valores foram:
+
+1. `JH5-014`: 0.6801346801346801;
+2. `JH5-023`: 0.6666666666666666;
+3. `JH5-048`: 0.6460674157303371;
+4. `JH5-047`: 0.644927536231884;
+5. `JH5-046`: 0.6311475409836066.
+
+Os artifacts ZIP dos dois ambientes possuem metadados de empacotamento distintos, mas os arquivos `joint_retrieval_holdout_v5_preflight.json` internos são byte a byte idênticos, com 3.849 bytes e SHA-256 `4a1ac8eb94682c03bcfb7f40e8e2ff1281ebbe768cf6ff7510c22aaaa6c69c66`.
 
 ## Candidata congelada
 
