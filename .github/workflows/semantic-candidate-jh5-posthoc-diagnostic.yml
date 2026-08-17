@@ -1,0 +1,63 @@
+name: semantic-candidate-jh5-posthoc-diagnostic
+
+on:
+  pull_request:
+    paths:
+      - "src/cpgf/benchmark/semantic_candidate_jh5_diagnostic.py"
+      - "scripts/diagnose_semantic_candidate_jh5.py"
+      - "data/manifests/semantic_candidate_jh5_diagnostic_1_0_0.json"
+      - "data/evidence/semantic_candidate_jh5_first_measurement_1_0_0.json.gz"
+      - "tests/unit/test_semantic_candidate_jh5_diagnostic.py"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - ".github/workflows/semantic-candidate-jh5-posthoc-diagnostic.yml"
+      - "docs/architecture/semantic_candidate_jh5_post_hoc_diagnostic.md"
+      - "docs/architecture/evidence_orchestrated_assistant_2_0_adr.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic-contract:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Recompute frozen post-hoc diagnostic
+        run: |
+          pytest -q \
+            tests/unit/test_semantic_candidate_jh5_diagnostic.py \
+            tests/unit/test_versions.py
+          python scripts/diagnose_semantic_candidate_jh5.py --output /tmp/jh5-diagnostic.json
+          diff -u data/manifests/semantic_candidate_jh5_diagnostic_1_0_0.json /tmp/jh5-diagnostic.json
+      - name: Enforce post-hoc governance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path("data/manifests/semantic_candidate_jh5_diagnostic_1_0_0.json")
+              .read_text(encoding="utf-8")
+          )
+          assert report["status"] == "POST_HOC_DIAGNOSTIC_ONLY"
+          assert report["governance"]["jh5_is_known"] is True
+          assert report["governance"]["no_llm_call"] is True
+          assert report["governance"]["no_retriever_execution"] is True
+          assert report["governance"]["no_new_generalization_claim"] is True
+          assert report["governance"]["no_production_activation"] is True
+          assert report["governance"]["no_retuning_on_jh5_for_independence_claim"] is True
+          assert (
+              report["governance"]
+              ["next_independent_evidence_requires_new_prospective_holdout"]
+              is True
+          )
+          PY
