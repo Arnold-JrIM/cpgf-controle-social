@@ -30,7 +30,13 @@ Artifact oficial: ID `9293493819`, nome `orchestration-holdout-v1-first-measurem
 
 O JSON original possui `476.264` bytes e SHA-256 `d2213529f505e9d566ab64f1f27aa412e14a348abf997dfdb3d868edbab8c4c5`.
 
-Para preservação permanente, ele foi armazenado como gzip determinístico em `data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz`, com `33.697` bytes e SHA-256 `ee960b344f5c0cfe796300983bdebd0d1552cf7ee8dc7b7aa400b9573128a54b`. Os testes recompõem o JSON original e verificam ambos os hashes.
+Para preservação permanente, o JSON foi compactado deterministicamente em gzip. Os bytes gzip possuem `33.697` bytes e SHA-256 `ee960b344f5c0cfe796300983bdebd0d1552cf7ee8dc7b7aa400b9573128a54b`.
+
+Como a fronteira de escrita utilizada neste freeze trabalha com arquivos textuais, os bytes gzip são versionados sem perda como **oito partes base64** sob o prefixo:
+
+`data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz.b64.*`
+
+A concatenação das oito partes possui `44.932` bytes e SHA-256 `c3e76cb64232de40c79b52467d26d3ecb3fbbc48a9798074b9a09ce401ece381`. Os testes concatenam as partes, validam esse hash, decodificam o base64, validam o hash do gzip e finalmente descompactam o JSON para validar o SHA-256 original. Portanto, a representação textual é reversível byte a byte e preserva exatamente o artifact bruto medido.
 
 ## Resultado agregado
 
