@@ -121,18 +121,20 @@ def _requested_result_limit(text: str, *, maximum: int, default: int) -> int:
 
 def _official_only_requested(text: str) -> bool:
     normalized = _ascii_text(text)
-    return _contains_any(
+    negated = _contains_any(
         normalized,
         (
-            "fonte oficial",
-            "fontes oficiais",
-            "pagina oficial",
-            "paginas oficiais",
-            "publicacao oficial",
-            "comunicado oficial",
-            "orientacao oficial",
-            "disponibilizada oficialmente",
-            "anunciada oficialmente",
+            "nao oficial",
+            "nao oficiais",
+            "fontes nao oficiais",
+            "fonte nao oficial",
+        ),
+    )
+    if negated:
+        return False
+    return bool(re.search(r"\boficia(?:l|is|lmente)\b", normalized)) or _contains_any(
+        normalized,
+        (
             "governo federal",
             "tcu",
             "cgu",
@@ -331,12 +333,56 @@ def _knowledge_temporal_statuses(
     inferred: set[str] = set()
     classes = set(source_classes)
 
-    if _contains_any(normalized, ("historico", "historica", "vigencia anterior", "a epoca")):
-        inferred.add(TemporalStatus.HISTORICAL.value)
+    historical_cue = _contains_any(
+        normalized,
+        ("historico", "historica", "vigencia anterior", "a epoca"),
+    )
+    current_cue = _contains_any(
+        normalized,
+        (
+            "norma",
+            "normativ",
+            "fundamento jurid",
+            "juridic",
+            "orientacao institucional",
+            "guia institucional",
+            "manual",
+            "vigente",
+            "atual",
+            "responsabilidades",
+            "ciclo operacional",
+            "regime",
+        ),
+    )
+    contextual_cue = _contains_any(
+        normalized,
+        (
+            "literatura",
+            "estudo",
+            "referenc",
+            "metodolog",
+            "lei de benford",
+            "transparencia",
+            "competencia informacional",
+            "testes digitais",
+            "controle externo",
+            "tcu",
+            "acordao",
+            "leitura territorial",
+            "interpretacao geografica",
+            "contextual",
+            "cautela",
+            "triagem",
+            "interpret",
+            "uso excepcional",
+        ),
+    )
 
-    if classes & {SourceClass.NORMATIVE.value, SourceClass.INSTITUTIONAL.value}:
+    if historical_cue:
+        inferred.add(TemporalStatus.HISTORICAL.value)
+    if current_cue and classes & {SourceClass.NORMATIVE.value, SourceClass.INSTITUTIONAL.value}:
         inferred.add(TemporalStatus.CURRENT.value)
-    if classes & {
+    if contextual_cue and classes & {
         SourceClass.ACADEMIC.value,
         SourceClass.SCIENTIFIC.value,
         SourceClass.PROJECT.value,
@@ -344,24 +390,11 @@ def _knowledge_temporal_statuses(
     }:
         inferred.add(TemporalStatus.CONTEXTUAL.value)
 
-    if _contains_any(
-        normalized,
-        ("vigente", "atual", "responsabilidades", "ciclo operacional", "regime"),
-    ):
-        inferred.add(TemporalStatus.CURRENT.value)
-    if _contains_any(
-        normalized,
-        ("contextual", "cautela", "triagem", "interpret", "uso excepcional"),
-    ):
-        inferred.add(TemporalStatus.CONTEXTUAL.value)
-
     if inferred:
         return tuple(sorted(inferred))
 
     allowed = {status.value for status in TemporalStatus}
     retained = [value for value in raw if value in allowed]
-    if TemporalStatus.HISTORICAL.value in retained and "histor" not in normalized:
-        retained = [value for value in retained if value != TemporalStatus.HISTORICAL.value]
     if retained:
         return tuple(dict.fromkeys(retained))
     return ()
