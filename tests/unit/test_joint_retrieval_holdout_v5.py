@@ -59,6 +59,8 @@ def test_jh5_structure_catalog_and_novelty_contract() -> None:
     )
     assert novelty["prior_questions_compared"] == 326
     assert novelty["normalized_exact_overlap"] == 0
+    assert novelty["highest_sequence_similarity"] == 0.6801346801346801
+    assert novelty["highest_sequence_similarity_case"] == "JH5-014"
     assert novelty["highest_sequence_similarity"] <= 0.70
 
 
@@ -82,6 +84,27 @@ def test_jh5_manifest_freezes_benchmark_and_candidate_before_measurement() -> No
     assert candidate["route_type_dependency_router_blob_sha"] == _git_blob_sha(ROUTER)
     assert candidate["candidate_executed_during_authoring"] is False
     assert candidate["candidate_executed_during_preflight"] is False
+
+
+def test_jh5_clean_preflight_evidence_is_frozen() -> None:
+    observed = _manifest()["novelty"]["observed_preflight"]
+    assert observed["run_id"] == 31983949246
+    assert observed["evidence_head_sha"] == "f014aa62ad8793bdaeae50be13db2b7c22f410e5"
+    assert observed["python_3_11_job_id"] == 95255571480
+    assert observed["python_3_12_job_id"] == 95255571479
+    assert observed["python_3_11_artifact_id"] == 9273192096
+    assert observed["python_3_12_artifact_id"] == 9273201495
+    assert observed["preflight_json_bytes"] == 3849
+    assert observed["preflight_json_sha256"] == (
+        "4a1ac8eb94682c03bcfb7f40e8e2ff1281ebbe768cf6ff7510c22aaaa6c69c66"
+    )
+    assert observed["python_outputs_byte_identical"] is True
+    assert observed["prior_benchmarks_compared"] == 8
+    assert observed["prior_questions_compared"] == 326
+    assert observed["normalized_exact_overlap"] == 0
+    assert observed["highest_sequence_similarity"] == 0.6801346801346801
+    assert observed["highest_sequence_similarity_case"] == "JH5-014"
+    assert observed["status"] == "PASS"
 
 
 def test_jh5_acceptance_gate_was_defined_prospectively() -> None:
