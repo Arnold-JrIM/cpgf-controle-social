@@ -62,8 +62,6 @@ def _dispatch(state: OrchestrationState) -> str | list[Send]:
             {
                 "plan": plan,
                 "current_need": need,
-                "simulation_only": True,
-                "llm_called": False,
             },
         )
         for need in plan.needs
@@ -114,12 +112,7 @@ def _simulated_item(need: EvidenceNeed) -> EvidenceItem:
 
 
 def _simulated_worker(state: OrchestrationState) -> dict[str, object]:
-    need = state["current_need"]
-    return {
-        "worker_items": [_simulated_item(need)],
-        "simulation_only": True,
-        "llm_called": False,
-    }
+    return {"worker_items": [_simulated_item(state["current_need"])]}
 
 
 def _fan_in(state: OrchestrationState) -> dict[str, object]:
@@ -132,7 +125,7 @@ def _fan_in(state: OrchestrationState) -> dict[str, object]:
         )
     )
     bundle = EvidenceBundle(plan=plan, items=items, warnings=(_SIMULATION_WARNING,))
-    return {"bundle": bundle, "simulation_only": True, "llm_called": False}
+    return {"bundle": bundle}
 
 
 def build_evidence_orchestration_graph():
