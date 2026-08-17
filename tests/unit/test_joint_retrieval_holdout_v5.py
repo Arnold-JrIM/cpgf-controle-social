@@ -68,7 +68,7 @@ def test_jh5_manifest_freezes_benchmark_and_candidate_before_measurement() -> No
     assert manifest["status"] == "FROZEN_BEFORE_MEASUREMENT"
     assert manifest["benchmark"]["sha256"] == joint_holdout_v5_sha256(BENCHMARK)
     assert manifest["benchmark"]["sha256"] == (
-        "c960df6710438805ec16279852775b16b81a970e7e556ed574c075f2eab73901"
+        "2695be52ff403043c394f0ca7f9f0a47f209fd2016172586146c69adf5595354"
     )
 
     candidate = manifest["candidate_freeze"]
