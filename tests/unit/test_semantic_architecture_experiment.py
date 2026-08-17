@@ -7,6 +7,7 @@ from types import SimpleNamespace
 
 from cpgf.ai.router import Route, RouteDecision
 from cpgf.ai.semantic_experiment import (
+    DEFAULT_SEMANTIC_MODEL,
     OpenAIResponsesSemanticProvider,
     SemanticCallMetadata,
     SemanticPlanCall,
@@ -21,7 +22,7 @@ from cpgf.benchmark.semantic_architecture_experiment import (
 )
 
 BENCHMARK = Path("data/benchmarks/joint_retrieval_holdout_v4_0_0.csv")
-PROTOCOL = Path("data/manifests/semantic_architecture_experiment_1_0_0.json")
+PROTOCOL = Path("data/manifests/semantic_architecture_experiment_1_0_1.json")
 SEMANTIC_SOURCE = Path("src/cpgf/ai/semantic_experiment.py")
 EVALUATOR_SOURCE = Path("src/cpgf/benchmark/semantic_architecture_experiment.py")
 
@@ -117,7 +118,7 @@ class _FakeResponses:
         output = self.outputs.pop(0)
         return SimpleNamespace(
             id=f"resp-{len(self.calls)}",
-            model="gpt-5.6",
+            model=DEFAULT_SEMANTIC_MODEL,
             output_text=output,
             usage=SimpleNamespace(input_tokens=10, output_tokens=5),
         )
@@ -130,7 +131,7 @@ class _FakeClient:
 
 def test_openai_provider_uses_strict_structured_outputs_without_tools() -> None:
     client = _FakeClient()
-    provider = OpenAIResponsesSemanticProvider(model="gpt-5.6", client=client)
+    provider = OpenAIResponsesSemanticProvider(client=client)
 
     route_call = provider.classify_route("Qual norma deve orientar o uso do CPGF?")
     assert route_call.output.route == Route.KNOWLEDGE
@@ -146,7 +147,7 @@ def test_openai_provider_uses_strict_structured_outputs_without_tools() -> None:
 
     assert len(client.responses.calls) == 2
     for call in client.responses.calls:
-        assert call["model"] == "gpt-5.6"
+        assert call["model"] == "gpt-4o-mini-2024-07-18"
         assert call["store"] is False
         assert "tools" not in call
         text = call["text"]
@@ -154,12 +155,13 @@ def test_openai_provider_uses_strict_structured_outputs_without_tools() -> None:
         assert text["format"]["strict"] is True
 
 
-def test_protocol_is_frozen_before_first_llm_run() -> None:
+def test_protocol_101_is_frozen_before_first_llm_run() -> None:
     protocol = json.loads(PROTOCOL.read_text(encoding="utf-8"))
 
-    assert protocol["version"] == "1.0.0"
+    assert protocol["version"] == "1.0.1"
     assert protocol["status"] == "PROTOCOL_FROZEN_BEFORE_LLM_RUN"
-    assert protocol["execution"]["model_alias"] == "gpt-5.6"
+    assert protocol["execution"]["model"] == "gpt-4o-mini-2024-07-18"
+    assert protocol["execution"]["model_is_snapshot"] is True
     assert protocol["execution"]["llm_repetitions"] == 3
     assert protocol["prospective_selection_rule"]["minimum_absolute_joint_gain_over_A"] == 0.10
     assert protocol["prospective_selection_rule"]["minimum_mean_modal_stability"] == 0.90
@@ -167,6 +169,13 @@ def test_protocol_is_frozen_before_first_llm_run() -> None:
     assert protocol["measurement"]["performed"] is False
     assert protocol["governance"]["production_llm_activation_allowed"] is False
     assert protocol["governance"]["new_independent_jh5_required_after_architecture_selection"] is True
+
+    amendment = protocol["pre_measurement_amendment"]
+    assert amendment["previous_model"] == "gpt-5.6"
+    assert amendment["selected_model"] == "gpt-4o-mini-2024-07-18"
+    assert amendment["workflow_dispatch_runs_observed_before_amendment"] == 0
+    assert amendment["architecture_definitions_changed"] is False
+    assert amendment["selection_rule_changed"] is False
 
     freeze = protocol["experimental_code_freeze"]
     assert freeze["semantic_provider_source_git_blob_sha"] == _git_blob_sha(SEMANTIC_SOURCE)
