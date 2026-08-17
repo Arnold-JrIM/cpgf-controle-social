@@ -1,0 +1,120 @@
+name: semantic-candidate-jh5-measurement
+
+on:
+  pull_request:
+    paths:
+      - "data/manifests/semantic_candidate_jh5_measurement_1_0_0.json"
+      - "src/cpgf/benchmark/semantic_candidate_jh5.py"
+      - "scripts/run_semantic_candidate_jh5.py"
+      - "tests/unit/test_semantic_candidate_jh5_measurement.py"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - ".github/workflows/semantic_candidate_jh5_measurement.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: semantic-candidate-jh5-first-independent-measurement
+  cancel-in-progress: false
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Validate frozen JH5 measurement harness offline
+        run: |
+          pytest -q \
+            tests/unit/test_semantic_candidate_jh5_measurement.py \
+            tests/unit/test_semantic_candidate_b.py \
+            tests/unit/test_joint_retrieval_holdout_v5.py \
+            tests/unit/test_versions.py
+      - name: Enforce no-LLM pre-measurement governance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(
+              Path("data/manifests/semantic_candidate_jh5_measurement_1_0_0.json")
+              .read_text(encoding="utf-8")
+          )
+          assert p["status"] == "MEASUREMENT_HARNESS_FROZEN_BEFORE_FIRST_JH5_LLM_RUN"
+          assert p["measurement"]["performed"] is False
+          assert p["execution"]["model"] == "gpt-4o-mini-2024-07-18"
+          assert p["execution"]["llm_repetitions"] == 3
+          assert p["execution"]["expected_llm_calls"] == 144
+          assert p["execution"]["workflow_dispatch_has_model_or_repeat_overrides"] is False
+          assert p["governance"]["no_llm_call_allowed_on_pull_request"] is True
+          assert p["governance"]["first_completed_main_dispatch_is_official_measurement"] is True
+          assert p["governance"]["reruns_are_not_independent_measurements"] is True
+          PY
+
+  live-measurement:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Require API credential without exposing it
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::error::Configure o secret OPENAI_API_KEY antes da medição JH5."
+            exit 1
+          fi
+      - name: Revalidate frozen protocol before first model call
+        run: |
+          pytest -q \
+            tests/unit/test_semantic_candidate_jh5_measurement.py \
+            tests/unit/test_semantic_candidate_b.py \
+            tests/unit/test_joint_retrieval_holdout_v5.py \
+            tests/unit/test_versions.py
+      - name: Execute first independent candidate B measurement on JH5
+        run: |
+          python scripts/run_semantic_candidate_jh5.py \
+            --output semantic_candidate_jh5_first_measurement.json
+      - name: Validate measurement artifact without conditioning on performance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(Path("semantic_candidate_jh5_first_measurement.json").read_text())
+          assert p["status"] == "INDEPENDENT_JH5_FIRST_MEASUREMENT"
+          assert p["benchmark"]["cases"] == 48
+          assert p["benchmark"]["sha256"] == "2695be52ff403043c394f0ca7f9f0a47f209fd2016172586146c69adf5595354"
+          assert p["candidate"]["name"] == "B_llm_route"
+          assert p["candidate"]["model_requested"] == "gpt-4o-mini-2024-07-18"
+          b = p["evaluation"]["candidate_B"]
+          assert b["requested_repetitions"] == 3
+          assert b["aggregate"]["repetitions"] == 3
+          assert b["aggregate"]["llm_calls"] == 144
+          assert len(b["rows"]) == 144
+          assert isinstance(p["prospective_gate"]["passed"], bool)
+          assert p["governance"]["result_preserved_regardless_of_gate"] is True
+          assert p["governance"]["retriever_called"] is False
+          assert p["governance"]["production_activation"] is False
+          PY
+      - name: Upload first independent JH5 measurement evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-candidate-jh5-first-measurement-v1.0.0
+          path: semantic_candidate_jh5_first_measurement.json
+          if-no-files-found: error
