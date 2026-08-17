@@ -4,9 +4,12 @@ on:
   pull_request:
     paths:
       - "data/manifests/semantic_candidate_jh5_measurement_1_0_0.json"
+      - "data/manifests/semantic_candidate_jh5_first_measurement_1_0_0.json"
+      - "data/evidence/semantic_candidate_jh5_first_measurement_1_0_0.json.gz"
       - "src/cpgf/benchmark/semantic_candidate_jh5.py"
       - "scripts/run_semantic_candidate_jh5.py"
       - "tests/unit/test_semantic_candidate_jh5_measurement.py"
+      - "tests/unit/test_semantic_candidate_jh5_first_measurement.py"
       - "src/cpgf/version.py"
       - "tests/unit/test_versions.py"
       - ".github/workflows/semantic_candidate_jh5_measurement.yml"
@@ -31,14 +34,15 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - name: Validate frozen JH5 measurement harness offline
+      - name: Validate frozen JH5 measurement harness and result evidence offline
         run: |
           pytest -q \
             tests/unit/test_semantic_candidate_jh5_measurement.py \
+            tests/unit/test_semantic_candidate_jh5_first_measurement.py \
             tests/unit/test_semantic_candidate_b.py \
             tests/unit/test_joint_retrieval_holdout_v5.py \
             tests/unit/test_versions.py
-      - name: Enforce no-LLM pre-measurement governance
+      - name: Enforce historical pre-measurement governance remains frozen
         run: |
           python - <<'PY'
           import json
@@ -46,6 +50,10 @@ jobs:
 
           p = json.loads(
               Path("data/manifests/semantic_candidate_jh5_measurement_1_0_0.json")
+              .read_text(encoding="utf-8")
+          )
+          result = json.loads(
+              Path("data/manifests/semantic_candidate_jh5_first_measurement_1_0_0.json")
               .read_text(encoding="utf-8")
           )
           assert p["status"] == "MEASUREMENT_HARNESS_FROZEN_BEFORE_FIRST_JH5_LLM_RUN"
@@ -57,6 +65,9 @@ jobs:
           assert p["governance"]["no_llm_call_allowed_on_pull_request"] is True
           assert p["governance"]["first_completed_main_dispatch_is_official_measurement"] is True
           assert p["governance"]["reruns_are_not_independent_measurements"] is True
+          assert result["status"] == "MEASURED_INDEPENDENT_GATE_FAIL"
+          assert result["prospective_gate"]["passed"] is False
+          assert result["governance"]["gate_not_relaxed_post_hoc"] is True
           PY
 
   live-measurement:
@@ -68,6 +79,12 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+      - name: Block new dispatch after official independent result is frozen
+        run: |
+          if [ -f "data/manifests/semantic_candidate_jh5_first_measurement_1_0_0.json" ]; then
+            echo "::error::A primeira medição independente JH5 já foi congelada. Novos dispatches não são novas medições independentes e estão bloqueados neste workflow."
+            exit 1
+          fi
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
