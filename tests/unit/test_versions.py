@@ -76,7 +76,7 @@ def test_methodology_versions():
     assert ANSWER_POLICY_VERSION == "1.0.0"
     assert SEMANTIC_ORCHESTRATOR_VERSION == "1.0.0"
     assert SEMANTIC_ORCHESTRATOR_POLICY_VERSION == "1.0.0"
-    assert LLM_MODEL_POLICY_VERSION == "1.1.0"
+    assert LLM_MODEL_POLICY_VERSION == "1.0.0"
     assert RETRIEVAL_FLOW_DIAGNOSTIC_VERSION == "1.0.0"
     assert ROUTER_VERSION == "1.4.0"
     assert ROUTER_HOLDOUT_VERSION == "1.0.0"
