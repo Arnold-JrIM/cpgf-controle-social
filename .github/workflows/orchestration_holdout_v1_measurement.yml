@@ -1,0 +1,154 @@
+name: orchestration-holdout-v1-measurement
+
+on:
+  pull_request:
+    paths:
+      - "data/manifests/orchestration_holdout_measurement_1_0_0.json"
+      - "src/cpgf/benchmark/orchestration_holdout_measurement_v1.py"
+      - "scripts/run_orchestration_holdout_v1.py"
+      - "tests/unit/test_orchestration_holdout_measurement_v1.py"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - "docs/architecture/orchestration_holdout_measurement_1_0_0.md"
+      - ".github/workflows/orchestration_holdout_v1_measurement.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/manifests/orchestration_holdout_measurement_1_0_0.json"
+      - "src/cpgf/benchmark/orchestration_holdout_measurement_v1.py"
+      - "scripts/run_orchestration_holdout_v1.py"
+      - ".github/workflows/orchestration_holdout_v1_measurement.yml"
+
+concurrency:
+  group: orchestration-holdout-v1-first-independent-measurement
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Lint frozen OH1 measurement harness
+        run: >-
+          ruff check
+          src/cpgf/benchmark/orchestration_holdout_measurement_v1.py
+          scripts/run_orchestration_holdout_v1.py
+          tests/unit/test_orchestration_holdout_measurement_v1.py
+      - name: Validate frozen measurement harness offline
+        run: |
+          pytest -q \
+            tests/unit/test_orchestration_holdout_measurement_v1.py \
+            tests/unit/test_orchestration_holdout_v1.py \
+            tests/unit/test_semantic_orchestrator.py \
+            tests/unit/test_model_policy.py \
+            tests/unit/test_versions.py
+      - name: Enforce pre-measurement independence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(
+              Path("data/manifests/orchestration_holdout_measurement_1_0_0.json")
+              .read_text(encoding="utf-8")
+          )
+          assert p["status"] == "MEASUREMENT_HARNESS_FROZEN_BEFORE_FIRST_OH1_LLM_RUN"
+          assert p["execution"]["model"] == "gpt-4o-mini"
+          assert p["execution"]["llm_repetitions"] == 3
+          assert p["execution"]["expected_llm_calls"] == 168
+          assert p["measurement"]["performed"] is False
+          assert p["governance"]["no_llm_call_allowed_on_pull_request"] is True
+          assert p["governance"]["holdout_questions_remain_unseen_by_candidate_during_this_pr"] is True
+
+          for path in (
+              Path("src/cpgf/benchmark/orchestration_holdout_measurement_v1.py"),
+              Path("scripts/run_orchestration_holdout_v1.py"),
+          ):
+              source = path.read_text(encoding="utf-8")
+              for forbidden in (
+                  "execute_tool(",
+                  "retrieve_knowledge_need(",
+                  "retrieve_web_need(",
+                  "generate_grounded_answer(",
+                  "duckdb.connect",
+                  "SELECT ",
+                  "INSERT ",
+                  "UPDATE ",
+                  "DELETE ",
+              ):
+                  assert forbidden not in source, (path, forbidden)
+          PY
+
+  live-measurement:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Require API credential without exposing it
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::error::Configure o secret OPENAI_API_KEY antes da primeira medição OH1."
+            exit 1
+          fi
+      - name: Revalidate frozen protocol before first model call
+        run: |
+          pytest -q \
+            tests/unit/test_orchestration_holdout_measurement_v1.py \
+            tests/unit/test_orchestration_holdout_v1.py \
+            tests/unit/test_semantic_orchestrator.py \
+            tests/unit/test_model_policy.py \
+            tests/unit/test_versions.py
+      - name: Execute first independent Semantic Evidence Orchestrator measurement on OH1
+        run: |
+          python scripts/run_orchestration_holdout_v1.py \
+            --output orchestration_holdout_v1_first_measurement.json
+      - name: Validate measurement artifact without conditioning on performance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(Path("orchestration_holdout_v1_first_measurement.json").read_text())
+          assert p["status"] == "INDEPENDENT_OH1_FIRST_MEASUREMENT"
+          assert p["benchmark"]["cases"] == 56
+          assert p["benchmark"]["sha256"] == "9ef3d9ac59dc16eb6762f2ae2fd7672a2305c4854614f1e5a71ef893e5d525ef"
+          assert p["candidate"]["model_requested"] == "gpt-4o-mini"
+          e = p["evaluation"]
+          assert e["requested_repetitions"] == 3
+          assert e["aggregate"]["repetitions"] == 3
+          assert e["aggregate"]["llm_attempts"] == 168
+          assert len(e["rows"]) == 168
+          assert isinstance(p["prospective_gate"]["passed"], bool)
+          assert p["governance"]["result_preserved_regardless_of_gate"] is True
+          assert p["governance"]["workers_called"] is False
+          assert p["governance"]["retriever_called"] is False
+          assert p["governance"]["web_search_called"] is False
+          assert p["governance"]["production_activation"] is False
+          PY
+      - name: Upload first independent OH1 measurement evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orchestration-holdout-v1-first-measurement-v1.0.0
+          path: orchestration_holdout_v1_first_measurement.json
+          if-no-files-found: error

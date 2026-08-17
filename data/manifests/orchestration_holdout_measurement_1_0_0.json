@@ -1,0 +1,97 @@
+{
+  "artifact": "orchestration_holdout_measurement_protocol",
+  "version": "1.0.0",
+  "status": "MEASUREMENT_HARNESS_FROZEN_BEFORE_FIRST_OH1_LLM_RUN",
+  "benchmark": {
+    "path": "data/benchmarks/orchestration_holdout_v1_0_0.csv.gz",
+    "sha256": "9ef3d9ac59dc16eb6762f2ae2fd7672a2305c4854614f1e5a71ef893e5d525ef",
+    "uncompressed_sha256": "e5b512677325529101a6c670e5411013c6410b241aafe83231bd8981f9783d55",
+    "cases": 56,
+    "holdout_version": "1.0.0",
+    "holdout_merge_commit_sha": "ce4a12c400aa93854e1775cbbcb1c3df572a6ffa"
+  },
+  "preflight_evidence": {
+    "workflow": "orchestration-holdout-v1-preflight",
+    "run_id": 32036446356,
+    "head_sha": "2ee1f6bd18bfa4a5ab939ef24cc50bdab019ad3f",
+    "python_3_11_job_id": 95407797215,
+    "python_3_12_job_id": 95407797289,
+    "python_3_11_conclusion": "success",
+    "python_3_12_conclusion": "success",
+    "llm_called": false,
+    "measurement_performed": false
+  },
+  "candidate_freeze": {
+    "name": "semantic_evidence_orchestrator_v1",
+    "model": "gpt-4o-mini",
+    "model_policy_version": "1.0.0",
+    "model_policy_source_git_blob_sha": "92f836a26da8d2f6655357523763929bae13de35",
+    "orchestrator_version": "1.0.0",
+    "orchestrator_policy_version": "1.0.0",
+    "orchestrator_source_git_blob_sha": "a945d8686f4963c160d65add5129713856979918",
+    "evidence_contract_version": "1.0.0",
+    "evidence_contract_source_git_blob_sha": "fca0e2903d4b5a97a0680aa2470ee10e60b7b44e",
+    "evidence_worker_version": "1.0.0",
+    "evidence_worker_source_git_blob_sha": "176fb632cdb34eb4ee4bd65d2d5e5c812fbdb641",
+    "tool_registry_source_git_blob_sha": "82fc8ff35452ac2a0bb44aea8349fd0f8be4c6dd",
+    "web_evidence_policy_version": "1.0.0",
+    "web_evidence_source_git_blob_sha": "5a590536d4445b269dd5887a43567fb5e4524d50"
+  },
+  "harness_freeze": {
+    "evaluator_path": "src/cpgf/benchmark/orchestration_holdout_measurement_v1.py",
+    "evaluator_source_git_blob_sha": "4347d730a2c3e32b48e05b5b28c521d8f58f642a",
+    "runner_path": "scripts/run_orchestration_holdout_v1.py",
+    "runner_source_git_blob_sha": "7a3cfd0f2e07b3c4adf2851b2d0d162dad5560ba"
+  },
+  "execution": {
+    "model": "gpt-4o-mini",
+    "openai_sdk_version": "3.1.0",
+    "python_version": "3.12",
+    "llm_repetitions": 3,
+    "expected_llm_calls": 168,
+    "structured_outputs": true,
+    "store": false,
+    "official_trigger": "push_to_main_after_harness_merge",
+    "workflow_has_model_or_repeat_overrides": false
+  },
+  "prospective_acceptance_gate": {
+    "all_criteria_required_for_broad_generalization_gate": true,
+    "all_three_llm_repetitions_must_complete": true,
+    "defined_before_first_measurement": true,
+    "measurement_must_be_preserved_even_below_thresholds": true,
+    "minimum_data_arguments_exact_rate": 0.6,
+    "minimum_data_tool_exact_rate": 0.7,
+    "minimum_each_category_source_set_exact_rate": 0.5,
+    "minimum_knowledge_filters_joint_exact_rate": 0.5,
+    "minimum_mean_evidence_source_set_exact_rate": 0.65,
+    "minimum_mean_modal_stability": 0.9,
+    "minimum_mean_source_precision": 0.8,
+    "minimum_mean_source_recall": 0.8,
+    "minimum_web_parameters_exact_rate": 0.7,
+    "passing_gate_does_not_imply_production_readiness": true,
+    "performance_threshold_causes_measurement_workflow_failure": false,
+    "schema_violations_allowed": 0,
+    "thresholds_are_project_governance_not_significance_tests": true
+  },
+  "measurement": {
+    "performed": false,
+    "first_valid_measurement": null,
+    "result": null
+  },
+  "governance": {
+    "no_llm_call_allowed_on_pull_request": true,
+    "first_main_push_after_harness_merge_is_official_measurement": true,
+    "reruns_are_not_new_independent_measurements": true,
+    "holdout_questions_remain_unseen_by_candidate_during_this_pr": true,
+    "prompt_tuning_before_first_measurement_allowed": false,
+    "model_change_before_first_measurement_allowed": false,
+    "orchestrator_policy_change_before_first_measurement_allowed": false,
+    "tool_contract_change_before_first_measurement_allowed": false,
+    "workers_called_by_measurement": false,
+    "retriever_called_by_measurement": false,
+    "web_search_called_by_measurement": false,
+    "sql_executed_by_measurement": false,
+    "final_answer_llm_called_by_measurement": false,
+    "production_activation": false
+  }
+}
