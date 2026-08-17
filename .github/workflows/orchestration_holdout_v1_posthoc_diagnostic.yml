@@ -1,0 +1,91 @@
+name: orchestration-holdout-v1-posthoc-diagnostic
+
+on:
+  pull_request:
+    paths:
+      - "data/manifests/orchestration_holdout_first_measurement_1_0_0.json"
+      - "data/manifests/orchestration_holdout_diagnostic_1_0_0.json"
+      - "data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz.b64.*"
+      - "src/cpgf/benchmark/orchestration_holdout_diagnostic_v1.py"
+      - "scripts/diagnose_orchestration_holdout_v1.py"
+      - "tests/unit/test_orchestration_holdout_diagnostic_v1.py"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - "docs/architecture/orchestration_holdout_post_hoc_diagnostic_1_0_0.md"
+      - ".github/workflows/orchestration_holdout_v1_posthoc_diagnostic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic-contract:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Lint OH1 post-hoc diagnostic
+        run: >-
+          ruff check
+          src/cpgf/benchmark/orchestration_holdout_diagnostic_v1.py
+          scripts/diagnose_orchestration_holdout_v1.py
+          tests/unit/test_orchestration_holdout_diagnostic_v1.py
+          tests/unit/test_versions.py
+      - name: Validate frozen evidence and diagnostic offline
+        run: |
+          pytest -q \
+            tests/unit/test_orchestration_holdout_diagnostic_v1.py \
+            tests/unit/test_orchestration_holdout_first_measurement.py \
+            tests/unit/test_versions.py
+      - name: Enforce no tuning and no external execution
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          paths = (
+              Path("src/cpgf/benchmark/orchestration_holdout_diagnostic_v1.py"),
+              Path("scripts/diagnose_orchestration_holdout_v1.py"),
+          )
+          forbidden = (
+              "OpenAI(",
+              "OpenAIResponsesOrchestratorProvider",
+              "plan_evidence(",
+              "execute_tool(",
+              "retrieve_knowledge_need(",
+              "retrieve_web_need(",
+              "duckdb.connect",
+              "OPENAI_API_KEY",
+          )
+          for path in paths:
+              source = path.read_text(encoding="utf-8")
+              for token in forbidden:
+                  assert token not in source, (path, token)
+          PY
+
+  generate-diagnostic:
+    needs: diagnostic-contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Generate deterministic diagnostic from frozen OH1 evidence
+        run: >-
+          python scripts/diagnose_orchestration_holdout_v1.py
+          --output /tmp/orchestration_holdout_v1_post_hoc_diagnostic_1_0_0.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: orchestration-holdout-v1-post-hoc-diagnostic-v1.0.0
+          path: /tmp/orchestration_holdout_v1_post_hoc_diagnostic_1_0_0.json
+          if-no-files-found: error
+          retention-days: 30

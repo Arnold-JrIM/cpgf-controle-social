@@ -1,0 +1,140 @@
+{
+  "artifact": "orchestration_holdout_v1_post_hoc_diagnostic_summary",
+  "version": "1.0.0",
+  "status": "POST_HOC_DIAGNOSTIC_ONLY",
+  "source": {
+    "raw_measurement_sha256": "d2213529f505e9d566ab64f1f27aa412e14a348abf997dfdb3d868edbab8c4c5",
+    "generated_diagnostic_sha256": "963853b6b04cdb2c659b79a507474d7db89d76f3cd49d9c56fee150fd59f97d9",
+    "generated_diagnostic_size_bytes": 32644,
+    "workflow_run_id": 32052084762,
+    "workflow_artifact_id": 9295129243,
+    "workflow_artifact_digest": "sha256:8351993ebe8173288cdd871cac34937a2b0c16e4212ee3b33fca15a095b7e2c5"
+  },
+  "repetition_level": {
+    "rows": 168,
+    "source_set_exact": 141,
+    "full_plan_exact": 38,
+    "under_routed_rows": 10,
+    "over_routed_rows": 18,
+    "missing_sources": {
+      "data": 6,
+      "knowledge": 4,
+      "web": 5
+    },
+    "extra_sources": {
+      "knowledge": 18
+    },
+    "dominant_failure_signatures": {
+      "knowledge_filters": 75,
+      "knowledge_filters+web_parameters": 17,
+      "sources+web_parameters": 13,
+      "web_parameters": 11
+    }
+  },
+  "data_parameterization": {
+    "required_rows": 96,
+    "tool_exact": 90,
+    "arguments_exact": 90
+  },
+  "knowledge_parameterization": {
+    "required_rows": 96,
+    "joint_exact": 0,
+    "component_exact_rates": {
+      "scopes": 0.11458333333333333,
+      "temporal_statuses": 0.10416666666666667,
+      "source_classes": 0.23958333333333334
+    },
+    "dominant_patterns": {
+      "scope_overexpansion": "cpgf_core frequentemente expandido para control_external+cpgf_core+methodology",
+      "temporal_overexpansion": "contextual frequentemente previsto como current+historical",
+      "source_class_overexpansion": "classes frequentemente recebem normative/institutional adicionais"
+    }
+  },
+  "web_parameterization": {
+    "required_rows": 96,
+    "joint_exact": 51,
+    "key_exact_rates": {
+      "limit": 0.9375,
+      "max_age_days": 0.5833333333333334,
+      "official_only": 0.6770833333333334
+    },
+    "dominant_patterns": {
+      "official_only": "26 previsões false quando o esperado era true",
+      "max_age_days": "valor frequentemente convertido em null",
+      "limit": "parâmetro amplamente estável"
+    }
+  },
+  "stability": {
+    "unstable_cases": 47,
+    "component_mean_modal_share": {
+      "status": 0.9464285714285714,
+      "sources": 0.9047619047619048,
+      "data_tool": 0.9642857142857143,
+      "data_parameters": 0.9642857142857143,
+      "knowledge_filters": 0.5595238095238095,
+      "web_parameters": 0.8392857142857143,
+      "full_signature": 0.494047619047619
+    }
+  },
+  "category_summary": {
+    "data_web": {
+      "rows": 24,
+      "source_set_exact": 11,
+      "full_plan_exact": 8,
+      "over_routed_rows": 13,
+      "under_routed_rows": 1
+    },
+    "web_only": {
+      "rows": 24,
+      "source_set_exact": 16,
+      "full_plan_exact": 8,
+      "over_routed_rows": 5,
+      "under_routed_rows": 3
+    },
+    "knowledge_only": {
+      "rows": 24,
+      "source_set_exact": 24,
+      "full_plan_exact": 0
+    },
+    "knowledge_web": {
+      "rows": 24,
+      "source_set_exact": 24,
+      "full_plan_exact": 0
+    }
+  },
+  "structural_and_provider_failures": {
+    "schema_violations": 9,
+    "provider_failures": 7,
+    "plan_failures": 2,
+    "plan_failure_case_repetitions": [
+      "OH1-025/r1",
+      "OH1-049/r2"
+    ],
+    "provider_failure_case_repetitions": [
+      "OH1-001/r1",
+      "OH1-019/r1",
+      "OH1-029/r1",
+      "OH1-021/r2",
+      "OH1-004/r3",
+      "OH1-017/r3",
+      "OH1-030/r3"
+    ]
+  },
+  "diagnostic_reading": {
+    "source_selection": "forte no agregado, mas DATA+WEB sofre over-routing sistemático para KNOWLEDGE",
+    "knowledge": "principal gargalo é parametrização excessivamente ampla, não ausência de reconhecimento da fonte KNOWLEDGE",
+    "web": "official_only e max_age_days concentram a perda de exact match",
+    "stability": "seleção de fontes é estável, mas a assinatura completa degrada principalmente pelos filtros KNOWLEDGE",
+    "structural": "as nove violações correspondem a sete falhas de validação do provider e dois planos inválidos",
+    "next_change_scope": "priorizar normalização/contratos determinísticos e só então avaliar necessidade de ajuste de prompt"
+  },
+  "governance": {
+    "oh1_is_known": true,
+    "post_hoc_only": true,
+    "no_llm_call": true,
+    "no_prompt_or_policy_tuning": true,
+    "no_new_generalization_claim": true,
+    "production_activation": false,
+    "next_independent_evidence_requires_new_prospective_holdout_after_change": true
+  }
+}
