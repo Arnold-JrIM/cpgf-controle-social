@@ -1,0 +1,53 @@
+{
+  "artifact": "orchestration_holdout_v2_0_0_invalidation",
+  "version": "1.0.0",
+  "status": "INVALIDATED_BEFORE_MEASUREMENT_STRUCTURAL_REACHABILITY",
+  "measurement_performed": false,
+  "candidate_outputs_observed": false,
+  "llm_called_on_oh2": false,
+  "invalidated_artifact": {
+    "version": "2.0.0",
+    "path": "data/benchmarks/orchestration_holdout_v2_0_0.csv.gz",
+    "sha256": "2861255c0967cbf4d91648e790043fc72579a3e13f1a77c1d529089bb8dc24b0",
+    "uncompressed_sha256": "1f59395337a08daf309f2482908a897ea0d2fa9b00cdb3dc718c5fc058d656ae",
+    "original_preserved": true
+  },
+  "reason": {
+    "type": "STRUCTURAL_ORACLE_REACHABILITY",
+    "summary": "A static oracle detected five question/oracle incompatibilities with the frozen deterministic normalization before any candidate LLM execution.",
+    "affected_case_ids": [
+      "OH2-017",
+      "OH2-038",
+      "OH2-052",
+      "OH2-053",
+      "OH2-054"
+    ],
+    "affected_cases": 5,
+    "oh2_017": "The gold WEB freshness window is 15 days, while the question used the textual form 'quinze dias'; normalization 1.0.0 recognizes explicit numeric recency windows.",
+    "oh2_038_052_053_054": "The gold requires KNOWLEDGE together with WEB, while the question lacked an explicit governed-knowledge intent marker required by normalization 1.0.0."
+  },
+  "detection": {
+    "method": "STATIC_ORACLE_NO_LLM",
+    "first_offline_harness_run_id": 32061829759,
+    "knowledge_diagnostic_run_id": 32062156437,
+    "knowledge_diagnostic_python_3_11_job_id": 95485662489,
+    "knowledge_diagnostic_python_3_12_job_id": 95485662398,
+    "web_parameter_diagnostic_run_id": 32064972987,
+    "web_parameter_diagnostic_python_3_11_job_id": 95494749942,
+    "measurement_performed": false,
+    "candidate_outputs_observed": false,
+    "llm_called_on_oh2": false,
+    "live_measurement_jobs_before_invalidation": "skipped"
+  },
+  "governance": {
+    "invalidated_before_first_candidate_measurement": true,
+    "candidate_model_changed": false,
+    "candidate_prompt_changed": false,
+    "normalization_policy_changed": false,
+    "oracle_targets_changed": false,
+    "acceptance_thresholds_changed": false,
+    "candidate_outputs_used_to_design_correction": false,
+    "production_activation": false,
+    "replacement": "orchestration_holdout_v2_0_1"
+  }
+}

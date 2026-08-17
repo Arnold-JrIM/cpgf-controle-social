@@ -1,0 +1,152 @@
+name: orchestration-holdout-v2-patch-preflight
+
+on:
+  pull_request:
+    paths:
+      - "data/benchmarks/orchestration_holdout_v2_0_1.csv.gz"
+      - "data/manifests/orchestration_holdout_2_0_1.json"
+      - "data/manifests/orchestration_holdout_2_0_0_invalidation.json"
+      - "src/cpgf/benchmark/orchestration_holdout_v2_patch.py"
+      - "scripts/preflight_orchestration_holdout_v2_patch.py"
+      - "tests/unit/test_orchestration_holdout_v2_patch.py"
+      - "docs/architecture/orchestration_holdout_v2_0_1.md"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - "src/cpgf/ai/semantic_orchestrator.py"
+      - "src/cpgf/ai/orchestrator_normalization.py"
+      - "src/cpgf/ai/model_policy.py"
+      - "src/cpgf/ai/evidence_contracts.py"
+      - "src/cpgf/ai/evidence_workers.py"
+      - "src/cpgf/ai/contracts.py"
+      - "src/cpgf/ai/tools/registry.py"
+      - "src/cpgf/ai/web_evidence.py"
+      - "src/cpgf/knowledge/models.py"
+      - "pyproject.toml"
+      - ".github/workflows/orchestration_holdout_v2_patch_preflight.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/benchmarks/orchestration_holdout_v2_0_1.csv.gz"
+      - "data/manifests/orchestration_holdout_2_0_1.json"
+      - "data/manifests/orchestration_holdout_2_0_0_invalidation.json"
+      - "src/cpgf/benchmark/orchestration_holdout_v2_patch.py"
+      - "scripts/preflight_orchestration_holdout_v2_patch.py"
+      - "tests/unit/test_orchestration_holdout_v2_patch.py"
+      - "docs/architecture/orchestration_holdout_v2_0_1.md"
+      - "src/cpgf/version.py"
+      - "tests/unit/test_versions.py"
+      - ".github/workflows/orchestration_holdout_v2_patch_preflight.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+
+      - name: Lint OH2.0.1 correction boundary
+        run: >-
+          ruff check
+          src/cpgf/benchmark/orchestration_holdout_v2_patch.py
+          scripts/preflight_orchestration_holdout_v2_patch.py
+          tests/unit/test_orchestration_holdout_v2_patch.py
+
+      - name: Validate OH2.0.1 correction without candidate execution
+        run: |
+          python scripts/preflight_orchestration_holdout_v2_patch.py \
+            --output orchestration_holdout_v2_patch_preflight.json
+
+      - name: Run OH2.0.1 correction unit gates
+        run: >-
+          pytest -q
+          tests/unit/test_orchestration_holdout_v2_patch.py
+          tests/unit/test_orchestration_holdout_v2.py
+          tests/unit/test_versions.py
+
+      - name: Enforce question-only correction and static reachability
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(Path("orchestration_holdout_v2_patch_preflight.json").read_text())
+          assert p["status"] == "PASS"
+          assert p["benchmark_sha256"] == "427174c3d6217bd4ae2770779d38e83e1f9366d39f7ac4a3fc5d41afe64dbcb6"
+          assert p["benchmark_uncompressed_sha256"] == "574a46a330a1783494d7b7cbe39e9f7d62f29d33f84754fcbef9b934343af6e6"
+          assert p["patch_validation"]["changed_case_ids"] == [
+              "OH2-017", "OH2-038", "OH2-052", "OH2-053", "OH2-054"
+          ]
+          assert p["patch_validation"]["changed_field"] == "question"
+          assert p["patch_validation"]["oracles_changed"] is False
+          assert p["candidate_freeze_matches"] is True
+          assert p["novelty_validation"]["normalized_exact_overlap"] == 0
+          assert p["novelty_validation"]["highest_sequence_similarity"] <= 0.70
+          r = p["static_oracle_reachability"]
+          assert r["provider"] == "STATIC_ORACLE_NO_LLM"
+          assert r["calls"] == 168
+          assert r["mean_source_set_exact_rate"] == 1.0
+          assert r["mean_full_plan_exact_rate"] == 1.0
+          assert r["mean_knowledge_filters_joint_exact_rate"] == 1.0
+          assert r["mean_web_parameters_exact_rate"] == 1.0
+          assert r["schema_violations"] == 0
+          assert r["mean_modal_share"] == 1.0
+          for key in (
+              "llm_called",
+              "candidate_provider_called",
+              "openai_api_called",
+              "workers_called",
+              "retriever_called",
+              "web_called",
+              "sql_executed",
+              "measurement_performed",
+              "candidate_outputs_used_for_correction",
+          ):
+              assert p["governance"][key] is False, key
+          PY
+
+      - name: Enforce no live candidate access in correction preflight
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          source = Path("scripts/preflight_orchestration_holdout_v2_patch.py").read_text()
+          forbidden = (
+              "OpenAI(",
+              "responses.create",
+              "OpenAIResponsesOrchestratorProvider(",
+              "execute_tool(",
+              "run_evidence_orchestration(",
+              "retrieve_knowledge_need(",
+              "retrieve_web_need(",
+              "requests.",
+              "httpx.",
+              "duckdb.connect",
+              "SELECT ",
+          )
+          for token in forbidden:
+              assert token not in source, token
+          workflow = Path(
+              ".github/workflows/orchestration_holdout_v2_patch_preflight.yml"
+          ).read_text()
+          secret_name = "OPENAI" + "_API_KEY"
+          assert secret_name not in workflow
+          PY
+
+      - name: Upload OH2.0.1 correction preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orchestration-holdout-v2-patch-preflight-py${{ matrix.python-version }}
+          path: orchestration_holdout_v2_patch_preflight.json
+          if-no-files-found: error
