@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "data/manifests/orchestration_holdout_first_measurement_1_0_0.json"
+      - "data/manifests/orchestration_holdout_diagnostic_1_0_0.json"
       - "data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz.b64.*"
       - "src/cpgf/benchmark/orchestration_holdout_diagnostic_v1.py"
       - "scripts/diagnose_orchestration_holdout_v1.py"
