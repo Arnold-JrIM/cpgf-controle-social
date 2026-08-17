@@ -5,7 +5,7 @@ on:
     paths:
       - "data/manifests/orchestration_holdout_measurement_1_0_0.json"
       - "data/manifests/orchestration_holdout_first_measurement_1_0_0.json"
-      - "data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz"
+      - "data/evidence/orchestration_holdout_v1_first_measurement_1_0_0.json.gz.b64.*"
       - "src/cpgf/benchmark/orchestration_holdout_measurement_v1.py"
       - "scripts/run_orchestration_holdout_v1.py"
       - "tests/unit/test_orchestration_holdout_measurement_v1.py"
