@@ -17,12 +17,13 @@ from cpgf.ai.evidence_contracts import (
 )
 from cpgf.ai.evidence_workers import DATA_EVIDENCE_TOOLS, DEFAULT_KNOWLEDGE_LIMIT
 from cpgf.ai.model_policy import project_llm_model
+from cpgf.ai.orchestrator_normalization import normalize_orchestrator_payload
 from cpgf.ai.tools.registry import TOOL_REGISTRY
 from cpgf.ai.web_evidence import WebQueryOptions
 from cpgf.knowledge.models import CorpusScope, SourceClass, TemporalStatus
 
-SEMANTIC_ORCHESTRATOR_VERSION = "1.0.0"
-SEMANTIC_ORCHESTRATOR_POLICY_VERSION = "1.0.0"
+SEMANTIC_ORCHESTRATOR_VERSION = "1.1.0"
+SEMANTIC_ORCHESTRATOR_POLICY_VERSION = "1.1.0"
 
 ORCHESTRATOR_SYSTEM_PROMPT = """
 Você é o Semantic Evidence Orchestrator governado do projeto CPGF — Controle Social.
@@ -322,6 +323,7 @@ class OrchestratorCallMetadata(StrictOrchestratorModel):
 class OrchestratorDecisionCall:
     output: OrchestratorDecision
     metadata: OrchestratorCallMetadata
+    normalization_notes: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -332,6 +334,7 @@ class EvidencePlanningRun:
     clarification_question: str | None = None
     metadata: OrchestratorCallMetadata | None = None
     warning: str | None = None
+    normalization_notes: tuple[str, ...] = ()
 
 
 class OrchestratorProvider(Protocol):
@@ -521,9 +524,15 @@ class OpenAIResponsesOrchestratorProvider:
         text = getattr(response, "output_text", "")
         if not text:
             raise ValueError("Resposta estruturada do Orchestrator sem output_text")
+
+        raw = json.loads(text)
+        if not isinstance(raw, dict):
+            raise ValueError("Resposta estruturada do Orchestrator deve ser objeto JSON")
+        normalization = normalize_orchestrator_payload(question, raw)
         return OrchestratorDecisionCall(
-            output=OrchestratorDecision.model_validate(json.loads(text)),
+            output=OrchestratorDecision.model_validate(normalization.payload),
             metadata=self._metadata(response, elapsed_ms),
+            normalization_notes=normalization.notes,
         )
 
 
@@ -549,27 +558,47 @@ def plan_evidence(
             warning=f"ORCHESTRATOR_PROVIDER_FAILED:{type(exc).__name__}",
         )
 
-    if call.output.clarification_question is not None:
-        return EvidencePlanningRun(
-            status=PlanningStatus.CLARIFICATION_REQUIRED,
-            decision=call.output,
-            clarification_question=call.output.clarification_question,
-            metadata=call.metadata,
-        )
-
     try:
-        plan = build_evidence_plan(normalized_question, call.output)
+        normalization = normalize_orchestrator_payload(
+            normalized_question,
+            call.output.model_dump(mode="json"),
+        )
+        decision = OrchestratorDecision.model_validate(normalization.payload)
+        normalization_notes = tuple(
+            dict.fromkeys((*call.normalization_notes, *normalization.notes))
+        )
     except Exception as exc:
         return EvidencePlanningRun(
             status=PlanningStatus.FAILED,
-            decision=call.output,
+            metadata=call.metadata,
+            warning=f"ORCHESTRATOR_NORMALIZATION_FAILED:{type(exc).__name__}",
+            normalization_notes=call.normalization_notes,
+        )
+
+    if decision.clarification_question is not None:
+        return EvidencePlanningRun(
+            status=PlanningStatus.CLARIFICATION_REQUIRED,
+            decision=decision,
+            clarification_question=decision.clarification_question,
+            metadata=call.metadata,
+            normalization_notes=normalization_notes,
+        )
+
+    try:
+        plan = build_evidence_plan(normalized_question, decision)
+    except Exception as exc:
+        return EvidencePlanningRun(
+            status=PlanningStatus.FAILED,
+            decision=decision,
             metadata=call.metadata,
             warning=f"ORCHESTRATOR_PLAN_INVALID:{type(exc).__name__}",
+            normalization_notes=normalization_notes,
         )
 
     return EvidencePlanningRun(
         status=PlanningStatus.PLANNED,
-        decision=call.output,
+        decision=decision,
         plan=plan,
         metadata=call.metadata,
+        normalization_notes=normalization_notes,
     )

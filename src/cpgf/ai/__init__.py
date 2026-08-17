@@ -52,6 +52,11 @@ from .orchestration_graph import (
     run_evidence_orchestration,
     run_simulated_orchestration,
 )
+from .orchestrator_normalization import (
+    ORCHESTRATOR_NORMALIZATION_VERSION,
+    NormalizationResult,
+    normalize_orchestrator_payload,
+)
 from .retrieval_planner import (
     PlannedKnowledgeRetriever,
     RetrievalPlan,
@@ -101,6 +106,7 @@ __all__ = [
     "MAX_WEB_LIMIT",
     "OFFICIAL_DOMAIN_SUFFIXES",
     "ORCHESTRATION_GRAPH_VERSION",
+    "ORCHESTRATOR_NORMALIZATION_VERSION",
     "SEMANTIC_ORCHESTRATOR_POLICY_VERSION",
     "SEMANTIC_ORCHESTRATOR_VERSION",
     "WEB_EVIDENCE_POLICY_VERSION",
@@ -124,6 +130,7 @@ __all__ = [
     "GroundedAnswer",
     "KnowledgeSearcher",
     "KnowledgeSelection",
+    "NormalizationResult",
     "OpenAIResponsesAnswerProvider",
     "OpenAIResponsesOrchestratorProvider",
     "OrchestrationState",
@@ -157,6 +164,7 @@ __all__ = [
     "execute_tool",
     "generate_grounded_answer",
     "is_official_domain",
+    "normalize_orchestrator_payload",
     "plan_evidence",
     "plan_knowledge_retrieval",
     "prepare_assistant_state",

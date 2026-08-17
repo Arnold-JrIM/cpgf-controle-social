@@ -1,0 +1,56 @@
+{
+  "artifact": "orchestrator_normalization_policy",
+  "version": "1.0.0",
+  "status": "POST_HOC_DEVELOPMENT_POLICY",
+  "basis": {
+    "oh1_is_known": true,
+    "oh1_first_measurement_result": "MEASURED_INDEPENDENT_GATE_FAIL",
+    "oh1_raw_measurement_sha256": "d2213529f505e9d566ab64f1f27aa412e14a348abf997dfdb3d868edbab8c4c5",
+    "oh1_diagnostic_sha256": "963853b6b04cdb2c659b79a507474d7db89d76f3cd49d9c56fee150fd59f97d9",
+    "diagnostic_findings": {
+      "source_set_exact": "141/168",
+      "full_plan_exact": "38/168",
+      "knowledge_filters_joint_exact": "0/96",
+      "web_parameters_exact": "51/96",
+      "data_tool_exact": "90/96",
+      "data_arguments_exact": "90/96",
+      "schema_violations": 9
+    }
+  },
+  "intervention": {
+    "type": "deterministic_post_llm_normalization",
+    "prompt_changed": false,
+    "model_changed": false,
+    "model": "gpt-4o-mini",
+    "prompt_sha256": "9255a15213b96a9ba219fd43fb402e8d797842064c73d5a9e629d73f0b3269c2",
+    "rules": [
+      "sanitize fields emitted for unselected sources before strict Pydantic validation",
+      "clarification is fail-closed and clears all selected sources",
+      "drop KNOWLEDGE when WEB is selected without explicit governed-corpus intent",
+      "canonicalize KNOWLEDGE scopes, temporal statuses and source classes from explicit documentary intent",
+      "canonicalize KNOWLEDGE retrieval limit independently of unrelated numeric counts",
+      "derive WEB freshness window only from explicit recency language",
+      "set WEB official_only when official-source intent is explicit",
+      "default WEB result limit independently of unrelated DATA top-N counts",
+      "record deterministic normalization notes for auditability"
+    ]
+  },
+  "versioning": {
+    "app_version": "0.39.0-dev",
+    "semantic_orchestrator_version": "1.1.0",
+    "semantic_orchestrator_policy_version": "1.1.0",
+    "orchestrator_normalization_version": "1.0.0",
+    "llm_model_policy_version": "1.0.0"
+  },
+  "governance": {
+    "oh1_may_be_used_only_as_known_development_evidence": true,
+    "no_new_independence_claim_on_oh1": true,
+    "no_llm_call_required_by_this_pr": true,
+    "no_worker_execution_required_by_this_pr": true,
+    "no_retriever_execution_required_by_this_pr": true,
+    "no_web_execution_required_by_this_pr": true,
+    "no_sql_execution_required_by_this_pr": true,
+    "production_activation": false,
+    "new_generalization_claim_requires_new_prospectively_frozen_holdout": true
+  }
+}

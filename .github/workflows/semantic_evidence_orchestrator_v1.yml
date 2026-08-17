@@ -3,27 +3,39 @@ name: semantic-evidence-orchestrator-v1
 on:
   pull_request:
     paths:
+      - "data/manifests/orchestrator_normalization_1_0_0.json"
       - "src/cpgf/ai/semantic_orchestrator.py"
+      - "src/cpgf/ai/orchestrator_normalization.py"
       - "src/cpgf/ai/model_policy.py"
       - "src/cpgf/ai/__init__.py"
       - "src/cpgf/version.py"
       - "tests/unit/test_semantic_orchestrator.py"
+      - "tests/unit/test_semantic_orchestrator_normalization.py"
+      - "tests/unit/test_orchestrator_normalization.py"
       - "tests/unit/test_model_policy.py"
       - "tests/unit/test_versions.py"
       - "docs/architecture/semantic_evidence_orchestrator_1_0_0.md"
+      - "docs/architecture/orchestrator_normalization_1_0_0.md"
       - ".github/workflows/semantic_evidence_orchestrator_v1.yml"
+      - ".github/workflows/orchestrator_normalization_v1.yml"
   push:
     branches: [main]
     paths:
+      - "data/manifests/orchestrator_normalization_1_0_0.json"
       - "src/cpgf/ai/semantic_orchestrator.py"
+      - "src/cpgf/ai/orchestrator_normalization.py"
       - "src/cpgf/ai/model_policy.py"
       - "src/cpgf/ai/__init__.py"
       - "src/cpgf/version.py"
       - "tests/unit/test_semantic_orchestrator.py"
+      - "tests/unit/test_semantic_orchestrator_normalization.py"
+      - "tests/unit/test_orchestrator_normalization.py"
       - "tests/unit/test_model_policy.py"
       - "tests/unit/test_versions.py"
       - "docs/architecture/semantic_evidence_orchestrator_1_0_0.md"
+      - "docs/architecture/orchestrator_normalization_1_0_0.md"
       - ".github/workflows/semantic_evidence_orchestrator_v1.yml"
+      - ".github/workflows/orchestrator_normalization_v1.yml"
 
 permissions:
   contents: read
@@ -46,39 +58,52 @@ jobs:
         run: >-
           ruff check
           src/cpgf/ai/semantic_orchestrator.py
+          src/cpgf/ai/orchestrator_normalization.py
           src/cpgf/ai/model_policy.py
           tests/unit/test_semantic_orchestrator.py
+          tests/unit/test_semantic_orchestrator_normalization.py
+          tests/unit/test_orchestrator_normalization.py
           tests/unit/test_model_policy.py
       - name: Validate orchestrator and versions
         run: >-
           pytest -q
           tests/unit/test_semantic_orchestrator.py
+          tests/unit/test_semantic_orchestrator_normalization.py
+          tests/unit/test_orchestrator_normalization.py
           tests/unit/test_model_policy.py
           tests/unit/test_versions.py
       - name: Enforce planning-only boundary and model policy
         run: |
           python - <<'PY'
+          import hashlib
           import inspect
           from pathlib import Path
 
           from cpgf.ai.contracts import ToolName
           from cpgf.ai.evidence_workers import DATA_EVIDENCE_TOOLS
           from cpgf.ai.model_policy import DEFAULT_LLM_MODEL, resolve_project_llm_model
+          from cpgf.ai.orchestrator_normalization import ORCHESTRATOR_NORMALIZATION_VERSION
           from cpgf.ai.semantic_orchestrator import (
+              ORCHESTRATOR_SYSTEM_PROMPT,
               SEMANTIC_ORCHESTRATOR_POLICY_VERSION,
               SEMANTIC_ORCHESTRATOR_VERSION,
               OpenAIResponsesOrchestratorProvider,
           )
 
-          source = Path("src/cpgf/ai/semantic_orchestrator.py").read_text(encoding="utf-8")
-          assert SEMANTIC_ORCHESTRATOR_VERSION == "1.0.0"
-          assert SEMANTIC_ORCHESTRATOR_POLICY_VERSION == "1.0.0"
+          orchestrator_source = Path("src/cpgf/ai/semantic_orchestrator.py").read_text(encoding="utf-8")
+          normalization_source = Path("src/cpgf/ai/orchestrator_normalization.py").read_text(encoding="utf-8")
+          assert SEMANTIC_ORCHESTRATOR_VERSION == "1.1.0"
+          assert SEMANTIC_ORCHESTRATOR_POLICY_VERSION == "1.1.0"
+          assert ORCHESTRATOR_NORMALIZATION_VERSION == "1.0.0"
           assert DEFAULT_LLM_MODEL == "gpt-4o-mini"
           assert resolve_project_llm_model() == "gpt-4o-mini"
           assert ToolName.METHODOLOGY not in DATA_EVIDENCE_TOOLS
           assert "model" not in inspect.signature(OpenAIResponsesOrchestratorProvider).parameters
+          assert hashlib.sha256(ORCHESTRATOR_SYSTEM_PROMPT.encode("utf-8")).hexdigest() == (
+              "9255a15213b96a9ba219fd43fb402e8d797842064c73d5a9e629d73f0b3269c2"
+          )
 
-          forbidden = (
+          forbidden_orchestrator = (
               "execute_tool(",
               "run_evidence_orchestration(",
               "retrieve_knowledge_need(",
@@ -91,6 +116,20 @@ jobs:
               "UPDATE ",
               "DELETE ",
           )
-          for token in forbidden:
-              assert token not in source, token
+          for token in forbidden_orchestrator:
+              assert token not in orchestrator_source, token
+
+          forbidden_normalizer = (
+              "OpenAI(",
+              "responses.create",
+              "execute_tool(",
+              "retrieve_knowledge_need(",
+              "retrieve_web_need(",
+              "requests.",
+              "httpx.",
+              "duckdb.connect",
+              "SELECT ",
+          )
+          for token in forbidden_normalizer:
+              assert token not in normalization_source, token
           PY
