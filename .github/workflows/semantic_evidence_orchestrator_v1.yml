@@ -3,6 +3,7 @@ name: semantic-evidence-orchestrator-v1
 on:
   pull_request:
     paths:
+      - "data/manifests/orchestrator_normalization_1_0_0.json"
       - "src/cpgf/ai/semantic_orchestrator.py"
       - "src/cpgf/ai/orchestrator_normalization.py"
       - "src/cpgf/ai/model_policy.py"
@@ -20,6 +21,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "data/manifests/orchestrator_normalization_1_0_0.json"
       - "src/cpgf/ai/semantic_orchestrator.py"
       - "src/cpgf/ai/orchestrator_normalization.py"
       - "src/cpgf/ai/model_policy.py"
