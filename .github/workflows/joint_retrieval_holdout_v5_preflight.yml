@@ -9,6 +9,7 @@ on:
       - "src/cpgf/benchmark/joint_retrieval_v5.py"
       - "scripts/preflight_joint_retrieval_holdout_v5.py"
       - "tests/unit/test_joint_retrieval_holdout_v5.py"
+      - "tests/unit/test_semantic_candidate_b.py"
       - "src/cpgf/ai/semantic_experiment.py"
       - "src/cpgf/ai/router.py"
       - "src/cpgf/ai/retrieval_planner.py"
@@ -40,7 +41,7 @@ jobs:
         run: |
           pytest -q \
             tests/unit/test_joint_retrieval_holdout_v5.py \
-            tests/unit/test_semantic_candidate_freeze.py \
+            tests/unit/test_semantic_candidate_b.py \
             tests/unit/test_versions.py
       - name: Enforce pre-measurement independence
         run: |
