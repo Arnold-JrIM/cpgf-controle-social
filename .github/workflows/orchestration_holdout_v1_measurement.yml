@@ -81,10 +81,10 @@ jobs:
           assert result["governance"]["reruns_are_not_new_independent_measurements"] is True
           assert result["governance"]["production_activation"] is False
 
-          workflow = Path(".github/workflows/orchestration_holdout_v1_measurement.yml").read_text(
-              encoding="utf-8"
-          )
-          assert "  push:" not in workflow
-          assert "OPENAI_API_KEY" not in workflow
-          assert "live-measurement:" not in workflow
+          workflow_lines = Path(
+              ".github/workflows/orchestration_holdout_v1_measurement.yml"
+          ).read_text(encoding="utf-8").splitlines()
+          assert not any(line == "  push:" for line in workflow_lines)
+          assert not any(line.startswith("      OPENAI_API_KEY:") for line in workflow_lines)
+          assert not any(line == "  live-measurement:" for line in workflow_lines)
           PY
